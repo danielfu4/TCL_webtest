@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant-TW">
+<html lang="zh-Hant-TW" class="dr-fade">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -351,14 +351,16 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 /* ---------- 手機選單（漢堡選單） ---------- */
 :root{
-  --dr-dur:.45s; --dr-pad:24px;
-  --dr-l1-fs:18px; --dr-l1-w:600; --dr-l1-py:18px; --dr-div:1;
-  --dr-h5-fs:12px; --dr-l2-fs:15px; --dr-l2-lh:1.5; --dr-l2-gap:12px; --dr-indent:0px; --dr-sec-gap:24px;
-  --dr-acc-dur:.4s; --dr-stagger:.05s; --dr-delay:.12s; --dr-dist:16px; --dr-sub-stagger:.025s;
+  /* 文字：2026-11-17 測試頁定案值；動畫：參照 Apple 官網手機選單（cubic-bezier(.4,0,.6,1)、0.24–0.32s、延遲 80ms、逐項 20ms） */
+  --dr-ease:cubic-bezier(.4,0,.6,1);
+  --dr-dur:.32s; --dr-pad:24px;
+  --dr-l1-fs:21px; --dr-l1-w:600; --dr-l1-py:22px; --dr-div:1.1;
+  --dr-h5-fs:14px; --dr-l2-fs:15px; --dr-l2-lh:1.5; --dr-l2-gap:12px; --dr-indent:0px; --dr-sec-gap:24px;
+  --dr-acc-dur:.32s; --dr-stagger:.02s; --dr-delay:.08s; --dr-dist:4px; --dr-sub-stagger:.02s; --dr-item-dur:.24s;
 }
 .drawer{position:fixed;inset:var(--header-h) 0 0 0;background:#fff;z-index:99;overflow:auto;overscroll-behavior:contain;visibility:hidden;
-  transform:translateX(100%);transition:transform var(--dr-dur) var(--ease),opacity var(--dr-dur) var(--ease),clip-path var(--dr-dur) var(--ease),visibility 0s var(--dr-dur)}
-.drawer.open{visibility:visible;transform:none;transition:transform var(--dr-dur) var(--ease),opacity var(--dr-dur) var(--ease),clip-path var(--dr-dur) var(--ease)}
+  transform:translateX(100%);transition:transform var(--dr-dur) var(--dr-ease),opacity var(--dr-dur) var(--dr-ease),clip-path var(--dr-dur) var(--dr-ease),visibility 0s var(--dr-dur)}
+.drawer.open{visibility:visible;transform:none;transition:transform var(--dr-dur) var(--dr-ease),opacity var(--dr-dur) var(--dr-ease),clip-path var(--dr-dur) var(--dr-ease)}
 html.dr-down .drawer{transform:none;clip-path:inset(0 0 100% 0)}
 html.dr-down .drawer.open{clip-path:inset(0 0 0 0)}
 html.dr-fade .drawer{transform:none;opacity:0}
@@ -366,11 +368,11 @@ html.dr-fade .drawer.open{opacity:1}
 .dr-inner{padding:8px var(--dr-pad) 40px}
 /* 第一層 */
 .dr-l1{border-bottom:1px solid rgba(0,0,0,calc(.08 * var(--dr-div)));opacity:0;transform:translateY(var(--dr-dist))}
-.drawer.open .dr-l1,.drawer.open .dr-foot{opacity:1;transform:none;transition:opacity .45s var(--ease) calc(var(--dr-delay) + var(--dr-stagger) * var(--i)),transform .45s var(--ease) calc(var(--dr-delay) + var(--dr-stagger) * var(--i))}
+.drawer.open .dr-l1,.drawer.open .dr-foot{opacity:1;transform:none;transition:opacity var(--dr-item-dur) var(--dr-ease) calc(var(--dr-delay) + var(--dr-stagger) * var(--i)),transform var(--dr-item-dur) var(--dr-ease) calc(var(--dr-delay) + var(--dr-stagger) * var(--i))}
 .dr-head{width:100%;display:flex;align-items:center;justify-content:space-between;padding:var(--dr-l1-py) 0;font-size:var(--dr-l1-fs);font-weight:var(--dr-l1-w);text-align:left;color:var(--black)}
 /* 展開圖示：＋ → － */
 .dr-ico{position:relative;width:14px;height:14px;flex:none}
-.dr-ico::before,.dr-ico::after{content:"";position:absolute;left:0;right:0;top:50%;height:1.6px;margin-top:-.8px;background:currentColor;transition:transform var(--dr-acc-dur) var(--ease)}
+.dr-ico::before,.dr-ico::after{content:"";position:absolute;left:0;right:0;top:50%;height:1.6px;margin-top:-.8px;background:currentColor;transition:transform var(--dr-acc-dur) var(--dr-ease)}
 .dr-ico::after{transform:rotate(90deg)}
 .dr-l1.open .dr-ico::after{transform:rotate(0)}
 html.ico-chev .dr-ico::before{width:8px;height:8px;left:3px;top:1px;margin:0;background:none;border-right:1.6px solid;border-bottom:1.6px solid;transform:rotate(45deg)}
@@ -378,7 +380,7 @@ html.ico-chev .dr-ico::after{display:none}
 html.ico-chev .dr-l1.open .dr-ico::before{transform:translateY(4px) rotate(225deg)}
 .dr-arr{width:8px;height:8px;border-right:1.6px solid;border-top:1.6px solid;transform:rotate(45deg);margin-right:3px}
 /* 第二層：展開動畫 */
-.dr-acc{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--dr-acc-dur) var(--ease)}
+.dr-acc{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--dr-acc-dur) var(--dr-ease)}
 .dr-l1.open .dr-acc{grid-template-rows:1fr}
 .dr-acc-in{overflow:hidden;padding-left:var(--dr-indent)}
 .dr-sec{padding-bottom:var(--dr-sec-gap)}
@@ -388,13 +390,13 @@ html.ico-chev .dr-l1.open .dr-ico::before{transform:translateY(4px) rotate(225de
 html.dr-2col .dr-sec ul{grid-template-columns:1fr 1fr}
 .dr-sec a{font-size:var(--dr-l2-fs);line-height:var(--dr-l2-lh);color:#333}
 .dr-sec li{opacity:0;transform:translateX(-12px);transition:opacity .2s,transform .2s}
-.dr-l1.open .dr-sec li{opacity:1;transform:none;transition:opacity .35s var(--ease) calc(.1s + var(--dr-sub-stagger) * var(--j,0)),transform .35s var(--ease) calc(.1s + var(--dr-sub-stagger) * var(--j,0))}
+.dr-l1.open .dr-sec li{opacity:1;transform:none;transition:opacity var(--dr-item-dur) var(--dr-ease) calc(.16s + var(--dr-sub-stagger) * var(--j,0)),transform var(--dr-item-dur) var(--dr-ease) calc(.16s + var(--dr-sub-stagger) * var(--j,0))}
 /* 底部 */
 .dr-foot{display:flex;justify-content:space-between;align-items:center;padding-top:24px;font-size:13px;color:#8a8a8a;opacity:0;transform:translateY(var(--dr-dist))}
 .dr-foot a{color:var(--black);font-weight:500}
 /* 漢堡 → X */
 .burger{position:relative}
-.burger i{position:absolute;left:5px;right:5px;height:1.8px;background:currentColor;border-radius:2px;transition:transform var(--dr-dur) var(--ease),opacity .2s,top var(--dr-dur) var(--ease)}
+.burger i{position:absolute;left:5px;right:5px;height:1.8px;background:currentColor;border-radius:2px;transition:transform var(--dr-dur) var(--dr-ease),opacity .2s,top var(--dr-dur) var(--dr-ease)}
 .burger i:nth-child(1){top:9px}.burger i:nth-child(2){top:15px}.burger i:nth-child(3){top:21px}
 .burger.on i:nth-child(1){top:15px;transform:rotate(45deg)}
 .burger.on i:nth-child(2){opacity:0}
