@@ -467,6 +467,17 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
   .immersive .tabs button:first-child,.na-tabs li:first-child{margin-left:auto}
   .immersive .tabs button:last-child,.na-tabs li:last-child{margin-right:auto}
 }
+
+/* ---------- INSPIRE GREATNESS：SVG 標誌＋捲動到才由下往上淡入（同新品上市進場） ---------- */
+.brand h2{line-height:0}
+.brand h2 picture{display:inline-block}
+.brand .inspire{display:block;width:clamp(320px,56vw,960px);height:auto;margin:0 auto}
+@media (max-width:720px){.brand .inspire{width:min(76vw,300px)}}
+.brand .rv{opacity:0;transform:translateY(var(--na-in-y,40px))}
+.brand.play .rv{opacity:1;transform:none;transition:opacity var(--na-in-dur,.6s) var(--ease),transform var(--na-in-dur,.6s) var(--ease)}
+.brand.play .rv:nth-child(2){transition-delay:.15s}
+.brand.play .rv:nth-child(3){transition-delay:.3s}
+@media (prefers-reduced-motion:reduce){.brand .rv{opacity:1!important;transform:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -760,9 +771,9 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 <!-- ================= BRAND ================= -->
 <section class="sec brand">
   <div class="wrap">
-    <h2>INSPIRE GREATNESS</h2>
-    <p class="sub">TCL 奧林匹克全球合作夥伴</p>
-    <div class="media"><img src="https://www.tcl-shop.com.tw/upload/adrv/2504240933480000001.jpg" alt="TCL Worldwide Olympic Partner"></div>
+    <h2 class="rv"><picture><source media="(max-width:720px)" srcset="images/inspire_mb.svg"><img class="inspire" src="images/inspire_pc.svg" alt="INSPIRE GREATNESS"></picture></h2>
+    <p class="sub rv">TCL 奧林匹克全球合作夥伴</p>
+    <div class="media rv"><img src="https://www.tcl-shop.com.tw/upload/adrv/2504240933480000001.jpg" alt="TCL Worldwide Olympic Partner"></div>
   </div>
 </section>
 
@@ -940,6 +951,11 @@ document.querySelectorAll('[data-imm]').forEach(sec=>{
     btns[n].click();
   },{passive:true});
 });
+
+
+/* ---------- INSPIRE GREATNESS：捲動到才播放進場 ---------- */
+(function(){const b=document.querySelector('section.brand');if(!b)return;
+  new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){b.classList.add('play');o.disconnect()}}),{threshold:.2}).observe(b);})();
 
 /* ---------- Immersive category tabs ---------- */
 document.querySelectorAll('[data-imm]').forEach(sec=>{
