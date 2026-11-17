@@ -414,6 +414,26 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 /* 灰底分類：文案往上靠近顯示器（大卡上移 36px、小卡上移 16px） */
 .na-panel.gray .na-card.lg .na-text{padding-bottom:64px}
 .na-panel.gray .na-card.xs .na-text{padding-bottom:32px}
+
+/* ---------- 新品上市 手機版：大卡滿版，小卡改成滿版左右滑 ---------- */
+.na-xs-wrap{display:contents}
+@media (max-width:720px){
+  .na-panel.on{display:flex;flex-direction:column;gap:12px}
+  .na-col.lg{flex:none;width:100%}
+  .na-panel.n2 .na-col.lg{width:100%}
+  .na-xs-wrap{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+    margin:0 -24px;padding:0 24px 4px;scroll-padding:0 24px;-webkit-overflow-scrolling:touch}
+  .na-xs-wrap::-webkit-scrollbar{display:none}
+  .na-col.xs{display:contents}
+  .na-xs-wrap .na-card{flex:0 0 86%;scroll-snap-align:start;order:var(--i,0)}
+  /* 圖片：裁掉商品圖上下留白，電視放大 */
+  .na-card .na-bg,.na-card.lg .na-bg,.na-card.xs .na-bg{aspect-ratio:3/2}
+  .na-bg img{object-fit:cover;padding:0 5%}
+  .na-text,.na-card.xs .na-text{padding:0 16px 20px}
+  .na-card.xs .na-text h3,.na-card.lg .na-text h3{font-size:20px;line-height:1.3}
+  .na-card.xs .na-text p,.na-card.lg .na-text p{font-size:13px;line-height:1.5;margin-top:4px}
+  .na-panel.gray .na-card.lg .na-text,.na-panel.gray .na-card.xs .na-text{padding-bottom:22px}
+}
 </style>
 </head>
 <body>
@@ -534,7 +554,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
             <div class="na-text"><h3>X11L</h3><p><span class="en">SQD-Mini LED</span> 量子智能連網液晶顯示器</p></div>
           </a>
           <div class="na-pop"><p>X11L</p><a class="btn-pop" href="#">了解更多</a></div>
-        </div></div><div class="na-col xs"><div class="na-card xs" style="--i:1">
+        </div></div><div class="na-xs-wrap"><div class="na-col xs"><div class="na-card xs" style="--i:1">
           <a class="na-link" href="#">
             <div class="na-bg"><img src="images/na_c8l.jpg" alt="C8L" loading="lazy"></div>
             <div class="na-text"><h3>C8L</h3><p><span class="en">SQD-Mini LED</span> 量子液晶顯示器</p></div>
@@ -558,14 +578,14 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
             <div class="na-text"><h3>RM9L</h3><p><span class="en">RGB-Mini LED</span> 量子液晶顯示器</p></div>
           </a>
           <div class="na-pop"><p>RM9L</p><a class="btn-pop" href="#">了解更多</a></div>
-        </div></div></div>
+        </div></div></div></div>
     <div class="na-panel n3 gray" data-panel="arr"><div class="na-col lg"><div class="na-card lg" style="--i:0">
           <a class="na-link" href="#">
             <div class="na-bg"><img src="images/na_x11l.jpg" alt="X11L" loading="lazy"></div>
             <div class="na-text"><h3>X11L</h3><p><span class="en">SQD-Mini LED</span> 量子智能連網液晶顯示器</p></div>
           </a>
           <div class="na-pop"><p>X11L</p><a class="btn-pop" href="#">了解更多</a></div>
-        </div></div><div class="na-col xs"><div class="na-card xs" style="--i:1">
+        </div></div><div class="na-xs-wrap"><div class="na-col xs"><div class="na-card xs" style="--i:1">
           <a class="na-link" href="#">
             <div class="na-bg"><img src="images/na_c8l.jpg" alt="C8L" loading="lazy"></div>
             <div class="na-text"><h3>C8L</h3><p><span class="en">SQD-Mini LED</span> 量子液晶顯示器</p></div>
@@ -577,7 +597,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
             <div class="na-text"><h3>C7L</h3><p><span class="en">SQD-Mini LED</span> 量子智能液晶顯示器</p></div>
           </a>
           <div class="na-pop"><p>C7L</p><a class="btn-pop" href="#">了解更多</a></div>
-        </div></div></div>
+        </div></div></div></div>
     <div class="na-panel n2 gray" data-panel="arr"><div class="na-col lg"><div class="na-card lg" style="--i:0">
           <a class="na-link" href="#">
             <div class="na-bg"><img src="images/na_rm9l.jpg" alt="RM9L" loading="lazy"></div>
@@ -597,7 +617,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
             <div class="na-text"><h3>A400 Pro</h3><p><span class="en">QD-Mini LED</span> 藝術智能液晶顯示器</p></div>
           </a>
           <div class="na-pop"><p>A400 Pro</p><a class="btn-pop" href="#">了解更多</a></div>
-        </div></div><div class="na-col xs"><div class="na-card xs" style="--i:1">
+        </div></div><div class="na-xs-wrap"><div class="na-col xs"><div class="na-card xs" style="--i:1">
           <a class="na-link" href="#">
             <div class="na-bg"><img src="images/na_a400m.jpg" alt="A400M" loading="lazy"></div>
             <div class="na-text"><h3>A400M</h3><p><span class="en">QD-Mini LED</span> 量子智能連網液晶顯示器</p></div>
@@ -609,14 +629,14 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
             <div class="na-text"><h3>A400</h3><p><span class="en">QLED</span> 藝術智能液晶顯示器</p></div>
           </a>
           <div class="na-pop"><p>A400</p><a class="btn-pop" href="#">了解更多</a></div>
-        </div></div></div>
+        </div></div></div></div>
     <div class="na-panel n3 gray" data-panel="arr"><div class="na-col lg"><div class="na-card lg" style="--i:0">
           <a class="na-link" href="#">
             <div class="na-bg"><img src="images/na_p7l.jpg" alt="P7L" loading="lazy"></div>
             <div class="na-text"><h3>P7L</h3><p>高階 <span class="en">QLED Google TV</span><br>量子智能液晶顯示器</p></div>
           </a>
           <div class="na-pop"><p>P7L</p><a class="btn-pop" href="#">了解更多</a></div>
-        </div></div><div class="na-col xs"><div class="na-card xs" style="--i:1">
+        </div></div><div class="na-xs-wrap"><div class="na-col xs"><div class="na-card xs" style="--i:1">
           <a class="na-link" href="#">
             <div class="na-bg"><img src="images/na_t6d.jpg" alt="T6D" loading="lazy"></div>
             <div class="na-text"><h3>T6D</h3><p>高階 <span class="en">QLED Google TV</span><br>量子智能液晶顯示器</p></div>
@@ -628,7 +648,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
             <div class="na-text"><h3>T8D</h3><p>高階 <span class="en">QLED Google TV</span><br>量子智能液晶顯示器</p></div>
           </a>
           <div class="na-pop"><p>T8D</p><a class="btn-pop" href="#">了解更多</a></div>
-        </div></div></div>
+        </div></div></div></div>
   </div>
 </section>
 
