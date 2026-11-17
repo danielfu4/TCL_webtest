@@ -437,6 +437,18 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
   .na-dots i.on{width:20px;background:#111}
   .na-dots[hidden]{display:none}
 }
+
+/* ---------- 新品上市 手機版：標題與分類比照「顯示器」區塊 ---------- */
+@media (max-width:720px){
+  .na-title{font-size:33px;font-weight:600;letter-spacing:.06em;line-height:1.5;margin-bottom:8px}
+  .na-tabs{gap:24px;margin:0 -24px 24px;padding:0 20px 8px;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;scroll-padding:0 20px;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 32px),transparent 100%);
+            mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 32px),transparent 100%)}
+  .na-tabs::-webkit-scrollbar{display:none}
+  .na-tabs li{flex:none}
+  .na-tabs button{font-size:16.5px;line-height:1.5;white-space:nowrap;opacity:.75;transition:opacity .2s}
+  .na-tabs button.on{opacity:1}
+}
 </style>
 </head>
 <body>
@@ -867,7 +879,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
     panels.forEach((p,i)=>{p.classList.remove('play');p.classList.toggle('on',i===n)});
     const p=panels[n];void p.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>p.classList.add('play')));
   }
-  btns.forEach((b,i)=>b.onclick=()=>{seen=true;show(i)});
+  btns.forEach((b,i)=>b.onclick=()=>{seen=true;show(i);if(innerWidth<=720)b.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'})});  /* 手機：點選的分類自動置中 */
   const box=panels[0].parentElement;
   new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting&&!seen){seen=true;show(cur);o.disconnect()}}),{threshold:.25}).observe(box);
 })();
