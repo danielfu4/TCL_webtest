@@ -928,6 +928,19 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
   addEventListener('resize',()=>{if(!mob())hd.classList.remove('hd-hide')});
 })();
 
+
+/* ---------- 顯示器／生活家電：手機左右滑動切換分類 ---------- */
+document.querySelectorAll('[data-imm]').forEach(sec=>{
+  const btns=[...sec.querySelectorAll('.tabs button')];let x0=null,y0=null;
+  sec.addEventListener('touchstart',e=>{if(e.target.closest('.tabs')){x0=null;return}x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  sec.addEventListener('touchend',e=>{
+    if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
+    if(Math.abs(dx)<50||Math.abs(dx)<Math.abs(dy)*1.5)return;   /* 水平滑動才觸發，上下捲動不受影響 */
+    const cur=btns.findIndex(b=>b.classList.contains('on'));const n=(cur+(dx<0?1:-1)+btns.length)%btns.length;
+    btns[n].click();
+  },{passive:true});
+});
+
 /* ---------- Immersive category tabs ---------- */
 document.querySelectorAll('[data-imm]').forEach(sec=>{
   const imgs=[...sec.querySelectorAll('.bg > picture, .bg > img')],btns=[...sec.querySelectorAll('.tabs button')],
