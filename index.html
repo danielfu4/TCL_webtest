@@ -417,6 +417,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 /* ---------- 新品上市 手機版：大卡滿版，小卡改成滿版左右滑 ---------- */
 .na-xs-wrap{display:contents}
+.na-dots{display:none}
 @media (max-width:720px){
   .na-panel.on{display:flex;flex-direction:column;gap:12px}
   .na-col.lg{flex:none;width:100%}
@@ -425,14 +426,22 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
     margin:0 -24px;padding:0 24px 4px;scroll-padding:0 24px;-webkit-overflow-scrolling:touch}
   .na-xs-wrap::-webkit-scrollbar{display:none}
   .na-col.xs{display:contents}
-  .na-xs-wrap .na-card{flex:0 0 86%;scroll-snap-align:start;order:var(--i,0)}
+  .na-xs-wrap .na-card{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;order:var(--i,0)}  /* 一次只顯示一個產品 */
   /* 圖片：裁掉商品圖上下留白，電視放大 */
   .na-card .na-bg,.na-card.lg .na-bg,.na-card.xs .na-bg{aspect-ratio:3/2}
+  /* 上下留白加寬（參照國際版手機版） */
+  .na-link{padding-top:40px}
   .na-bg img{object-fit:cover;padding:0 5%}
   .na-text,.na-card.xs .na-text{padding:0 16px 20px}
   .na-card.xs .na-text h3,.na-card.lg .na-text h3{font-size:20px;line-height:1.3}
   .na-card.xs .na-text p,.na-card.lg .na-text p{font-size:13px;line-height:1.5;margin-top:4px}
-  .na-panel.gray .na-card.lg .na-text,.na-panel.gray .na-card.xs .na-text{padding-bottom:22px}
+  .na-text,.na-card.xs .na-text{padding-top:28px}
+  .na-panel.gray .na-card.lg .na-text,.na-panel.gray .na-card.xs .na-text,.na-text,.na-card.xs .na-text{padding-bottom:44px}
+  .na-panel.on{gap:16px}.na-xs-wrap{gap:16px}
+  /* 左右滑指示點 */
+  .na-dots{display:flex;justify-content:center;gap:8px;margin-top:4px}
+  .na-dots i{width:6px;height:6px;border-radius:999px;background:#ccc;transition:width .3s var(--ease),background .3s}
+  .na-dots i.on{width:20px;background:#111}
 }
 </style>
 </head>
@@ -868,6 +877,16 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
   const box=panels[0].parentElement;
   new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting&&!seen){seen=true;show(cur);o.disconnect()}}),{threshold:.25}).observe(box);
 })();
+
+
+/* ---------- 新品上市 手機版：左右滑指示點 ---------- */
+document.querySelectorAll('.na-xs-wrap').forEach(w=>{
+  const cards=[...w.querySelectorAll('.na-card')].sort((a,b)=>(+a.style.getPropertyValue('--i'))-(+b.style.getPropertyValue('--i')));
+  const d=document.createElement('div');d.className='na-dots';d.innerHTML=cards.map(()=>'<i></i>').join('');w.after(d);
+  const dots=[...d.children];
+  const upd=()=>{const i=Math.round(w.scrollLeft/(w.clientWidth-32||1));dots.forEach((x,n)=>x.classList.toggle('on',n===Math.min(i,dots.length-1)))};
+  w.addEventListener('scroll',()=>requestAnimationFrame(upd),{passive:true});upd();
+});
 
 /* ---------- Immersive category tabs ---------- */
 document.querySelectorAll('[data-imm]').forEach(sec=>{
