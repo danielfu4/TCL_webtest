@@ -455,6 +455,12 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
   .na-panel .na-card{background:#f5f5f5}
   .na-panel .na-bg img{mix-blend-mode:multiply}
 }
+
+/* 手機版：頂部選單不固定顯示，捲動時出現，停止 1 秒後淡出 */
+@media (max-width:720px){
+  .header{transition:opacity .35s var(--ease),transform .35s var(--ease)}
+  .header.hd-hide{opacity:0;transform:translateY(-100%);pointer-events:none}
+}
 </style>
 </head>
 <body>
@@ -904,6 +910,18 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
   /* 只在切換分類時重設（監聽分類面板本身的 on 狀態） */
   const sync=()=>panels.forEach(p=>{const on=p.classList.contains('on');if(p._on===on)return;p._on=on;p._dots.hidden=!on;if(on){p.scrollLeft=0;p._upd()}});
   const mo=new MutationObserver(sync);panels.forEach(p=>mo.observe(p,{attributes:true,attributeFilter:['class']}));sync();
+})();
+
+
+/* ---------- 手機版頂部選單：捲動時顯示，停止 1 秒後淡出（回到頁首或開啟選單時保持顯示） ---------- */
+(function(){
+  const hd=document.querySelector('.header'),drawer=document.querySelector('.drawer');let t=null;
+  const mob=()=>innerWidth<=720;
+  const atTop=()=>scrollY<=hd.offsetHeight;
+  const show=()=>{hd.classList.remove('hd-hide');clearTimeout(t);
+    t=setTimeout(()=>{if(mob()&&!atTop()&&!(drawer&&drawer.classList.contains('open')))hd.classList.add('hd-hide')},1000)};
+  addEventListener('scroll',()=>{if(mob())show();else hd.classList.remove('hd-hide')},{passive:true});
+  addEventListener('resize',()=>{if(!mob())hd.classList.remove('hd-hide')});
 })();
 
 /* ---------- Immersive category tabs ---------- */
