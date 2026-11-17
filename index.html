@@ -449,6 +449,12 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
   .na-tabs button{font-size:16.5px;line-height:1.5;white-space:nowrap;opacity:.75;transition:opacity .2s}
   .na-tabs button.on{opacity:1}
 }
+
+/* 手機版：「顯示器」分類也加灰色面板（電腦版維持白底） */
+@media (max-width:720px){
+  .na-panel .na-card{background:#f5f5f5}
+  .na-panel .na-bg img{mix-blend-mode:multiply}
+}
 </style>
 </head>
 <body>
