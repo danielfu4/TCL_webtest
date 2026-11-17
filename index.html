@@ -415,33 +415,27 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 .na-panel.gray .na-card.lg .na-text{padding-bottom:64px}
 .na-panel.gray .na-card.xs .na-text{padding-bottom:32px}
 
-/* ---------- 新品上市 手機版：大卡滿版，小卡改成滿版左右滑 ---------- */
+/* ---------- 新品上市 手機版：所有產品排成一行，一次顯示一個，左右滑 ---------- */
+:root{--nm-side:24px; --nm-gap:16px; --nm-peek:0px; --nm-pt:40px; --nm-ar:1.5; --nm-tt:28px; --nm-tb:44px; --nm-h3:20px; --nm-p:13px; --nm-radius:10px; --nm-inset:5%;}
 .na-xs-wrap{display:contents}
 .na-dots{display:none}
 @media (max-width:720px){
-  .na-panel.on{display:flex;flex-direction:column;gap:12px}
-  .na-col.lg{flex:none;width:100%}
-  .na-panel.n2 .na-col.lg{width:100%}
-  .na-xs-wrap{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
-    margin:0 -24px;padding:0 24px 4px;scroll-padding:0 24px;-webkit-overflow-scrolling:touch}
-  .na-xs-wrap::-webkit-scrollbar{display:none}
-  .na-col.xs{display:contents}
-  .na-xs-wrap .na-card{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;order:var(--i,0)}  /* 一次只顯示一個產品 */
-  /* 圖片：裁掉商品圖上下留白，電視放大 */
-  .na-card .na-bg,.na-card.lg .na-bg,.na-card.xs .na-bg{aspect-ratio:3/2}
-  /* 上下留白加寬（參照國際版手機版） */
-  .na-link{padding-top:40px}
-  .na-bg img{object-fit:cover;padding:0 5%}
-  .na-text,.na-card.xs .na-text{padding:0 16px 20px}
-  .na-card.xs .na-text h3,.na-card.lg .na-text h3{font-size:20px;line-height:1.3}
-  .na-card.xs .na-text p,.na-card.lg .na-text p{font-size:13px;line-height:1.5;margin-top:4px}
-  .na-text,.na-card.xs .na-text{padding-top:28px}
-  .na-panel.gray .na-card.lg .na-text,.na-panel.gray .na-card.xs .na-text,.na-text,.na-card.xs .na-text{padding-bottom:44px}
-  .na-panel.on{gap:16px}.na-xs-wrap{gap:16px}
-  /* 左右滑指示點 */
-  .na-dots{display:flex;justify-content:center;gap:8px;margin-top:4px}
+  .na-panel.on{display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:flex-start;gap:var(--nm-gap);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+    margin:0 -24px;padding:0 var(--nm-side) 4px;scroll-padding:0 var(--nm-side);-webkit-overflow-scrolling:touch}
+  .na-panel.on::-webkit-scrollbar{display:none}
+  .na-col.lg,.na-col.xs,.na-xs-wrap,.na-panel.n2 .na-col.lg{display:contents}
+  .na-panel .na-card{flex:0 0 calc(100% - var(--nm-peek));scroll-snap-align:center;scroll-snap-stop:always;order:var(--i,0);border-radius:var(--nm-radius);aspect-ratio:auto}
+  .na-link{position:relative;padding-top:var(--nm-pt)}
+  .na-card .na-bg,.na-card.lg .na-bg,.na-card.xs .na-bg{position:relative;inset:auto;aspect-ratio:var(--nm-ar)}
+  .na-bg img{object-fit:cover;padding:0 var(--nm-inset)}
+  .na-text,.na-card.xs .na-text,.na-panel.gray .na-card.lg .na-text,.na-panel.gray .na-card.xs .na-text{margin-top:0;padding:var(--nm-tt) 16px var(--nm-tb)}
+  .na-card.xs .na-text h3,.na-card.lg .na-text h3{font-size:var(--nm-h3);line-height:1.3}
+  .na-card.xs .na-text p,.na-card.lg .na-text p{font-size:var(--nm-p);line-height:1.5;margin-top:4px}
+  .na-pop{border-radius:var(--nm-radius)}
+  .na-dots{display:flex;justify-content:center;gap:8px;margin-top:16px}
   .na-dots i{width:6px;height:6px;border-radius:999px;background:#ccc;transition:width .3s var(--ease),background .3s}
   .na-dots i.on{width:20px;background:#111}
+  .na-dots[hidden]{display:none}
 }
 </style>
 </head>
@@ -879,14 +873,20 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 })();
 
 
-/* ---------- 新品上市 手機版：左右滑指示點 ---------- */
-document.querySelectorAll('.na-xs-wrap').forEach(w=>{
-  const cards=[...w.querySelectorAll('.na-card')].sort((a,b)=>(+a.style.getPropertyValue('--i'))-(+b.style.getPropertyValue('--i')));
-  const d=document.createElement('div');d.className='na-dots';d.innerHTML=cards.map(()=>'<i></i>').join('');w.after(d);
-  const dots=[...d.children];
-  const upd=()=>{const i=Math.round(w.scrollLeft/(w.clientWidth-32||1));dots.forEach((x,n)=>x.classList.toggle('on',n===Math.min(i,dots.length-1)))};
-  w.addEventListener('scroll',()=>requestAnimationFrame(upd),{passive:true});upd();
-});
+/* ---------- 新品上市 手機版：左右滑指示點（每個分類一組） ---------- */
+(function(){
+  const panels=[...document.querySelectorAll('[data-panel="arr"]')];
+  panels.forEach(p=>{
+    const n=p.querySelectorAll('.na-card').length,d=document.createElement('div');
+    d.className='na-dots';d.innerHTML='<i></i>'.repeat(n);p.after(d);p._dots=d;
+    const upd=()=>{const c=p.querySelector('.na-card');if(!c)return;const step=c.getBoundingClientRect().width+parseFloat(getComputedStyle(p).columnGap||0);
+      const i=Math.round(p.scrollLeft/(step||1));[...d.children].forEach((x,k)=>x.classList.toggle('on',k===Math.min(i,n-1)))};
+    p.addEventListener('scroll',()=>requestAnimationFrame(upd),{passive:true});p._upd=upd;
+  });
+  /* 只在切換分類時重設（監聽分類面板本身的 on 狀態） */
+  const sync=()=>panels.forEach(p=>{const on=p.classList.contains('on');if(p._on===on)return;p._on=on;p._dots.hidden=!on;if(on){p.scrollLeft=0;p._upd()}});
+  const mo=new MutationObserver(sync);panels.forEach(p=>mo.observe(p,{attributes:true,attributeFilter:['class']}));sync();
+})();
 
 /* ---------- Immersive category tabs ---------- */
 document.querySelectorAll('[data-imm]').forEach(sec=>{
