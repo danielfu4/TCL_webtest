@@ -385,11 +385,12 @@ html.ico-chev .dr-l1.open .dr-ico::before{transform:translateY(4px) rotate(225de
 .dr-acc-in{overflow:hidden;padding-left:var(--dr-indent)}
 .dr-sec{padding-bottom:var(--dr-sec-gap)}
 .dr-sec:first-child{padding-top:2px}
-.dr-sec h5{font-size:var(--dr-h5-fs);font-weight:500;color:#8a8a8a;letter-spacing:.04em;margin-bottom:10px}
+.dr-sec h5{opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s;font-size:var(--dr-h5-fs);font-weight:500;color:#8a8a8a;letter-spacing:.04em;margin-bottom:10px}
 .dr-sec ul{list-style:none;display:grid;gap:var(--dr-l2-gap) 16px}
 html.dr-2col .dr-sec ul{grid-template-columns:1fr 1fr}
 .dr-sec a{font-size:var(--dr-l2-fs);line-height:var(--dr-l2-lh);color:#333}
-.dr-sec li{opacity:0;transform:translateX(-12px);transition:opacity .2s,transform .2s}
+.dr-sec li{opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s}
+.dr-l1.open .dr-sec h5{opacity:1;transform:none;transition:opacity var(--dr-item-dur) var(--dr-ease) .16s,transform var(--dr-item-dur) var(--dr-ease) .16s}
 .dr-l1.open .dr-sec li{opacity:1;transform:none;transition:opacity var(--dr-item-dur) var(--dr-ease) calc(.16s + var(--dr-sub-stagger) * var(--j,0)),transform var(--dr-item-dur) var(--dr-ease) calc(.16s + var(--dr-sub-stagger) * var(--j,0))}
 /* 底部 */
 .dr-foot{display:flex;justify-content:space-between;align-items:center;padding-top:24px;font-size:13px;color:#8a8a8a;opacity:0;transform:translateY(var(--dr-dist))}
