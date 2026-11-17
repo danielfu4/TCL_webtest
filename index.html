@@ -523,6 +523,17 @@ html.dr-lock,html.dr-lock body{overflow:hidden}
 .brand.play .rv:nth-child(2){transition-delay:.15s}
 .brand.play .rv:nth-child(3){transition-delay:.3s}
 @media (prefers-reduced-motion:reduce){.brand .rv{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* ---------- 斷行改善：中文不在詞中間斷行、各行長度平均 ---------- */
+.hero-copy p,.immersive .bottom p,.na-text p{word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
+@media (max-width:720px){
+  /* 手機版 banner 副標：型號一行、標語一行 */
+  .hero-copy p .pm{display:block}
+  .hero-copy p .ps{display:none}
+  .hero-copy p .pt{display:block}
+}
+/* ---------- 手機選單打開時，頂部列固定顯示（修正捲動後打開選單，頂部列消失的問題） ---------- */
+html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;transform:none!important;pointer-events:auto!important}
 </style>
 </head>
 <body>
@@ -575,7 +586,7 @@ html.dr-lock,html.dr-lock body{overflow:hidden}
       <picture><source media="(max-width:720px)" srcset="images/hero_x11l_mb.jpg"><img src="images/hero_x11l.jpg" alt="X11L"></picture>
       <div class="hero-copy">
         <h2><img class="title-svg" src="images/title_sqd-miniled_pc.svg" alt="TCL SQD-Mini LED TV"></h2>
-        <p>X11L｜Mini LED 巔峰之作</p>
+        <p><span class="pm">X11L</span><span class="ps">｜</span><span class="pt">Mini LED 巔峰之作</span></p>
         <a class="btn btn-hero" href="#">了解更多</a>
       </div>
     </div>
@@ -583,7 +594,7 @@ html.dr-lock,html.dr-lock body{overflow:hidden}
       <picture><source media="(max-width:720px)" srcset="images/hero_c8l_mb.jpg"><img src="images/hero_c8l.jpg" alt="C8L"></picture>
       <div class="hero-copy">
         <h2><img class="title-svg" src="images/title_sqd-miniled_pc.svg" alt="TCL SQD-Mini LED TV"></h2>
-        <p>C8L｜全新旗艦之選</p>
+        <p><span class="pm">C8L</span><span class="ps">｜</span><span class="pt">全新旗艦之選</span></p>
         <a class="btn btn-hero" href="#">了解更多</a>
       </div>
     </div>
@@ -591,7 +602,7 @@ html.dr-lock,html.dr-lock body{overflow:hidden}
       <picture><source media="(max-width:720px)" srcset="images/hero_rm9l_mb.jpg"><img src="images/hero_rm9l.jpg" alt="RM9L"></picture>
       <div class="hero-copy">
         <h2><img class="title-svg" src="images/title_rgb-miniled_pc.svg" alt="TCL RGB-Mini LED TV"></h2>
-        <p>RM9L｜RGB 色彩新典範</p>
+        <p><span class="pm">RM9L</span><span class="ps">｜</span><span class="pt">RGB 色彩新典範</span></p>
         <a class="btn btn-hero" href="#">了解更多</a>
       </div>
     </div>
@@ -599,7 +610,7 @@ html.dr-lock,html.dr-lock body{overflow:hidden}
       <picture><source media="(max-width:720px)" srcset="images/hero_a400m_mb.jpg"><img src="images/hero_a400m.jpg" alt="A400M"></picture>
       <div class="hero-copy">
         <h2><img class="title-svg" src="images/title_qd-miniled_pc.svg" alt="TCL QD-Mini LED TV"></h2>
-        <p>A400M｜沉浸大畫面 細膩每一刻</p>
+        <p><span class="pm">A400M</span><span class="ps">｜</span><span class="pt">沉浸大畫面 細膩每一刻</span></p>
         <a class="btn btn-hero" href="#">了解更多</a>
       </div>
     </div>
@@ -607,7 +618,7 @@ html.dr-lock,html.dr-lock body{overflow:hidden}
       <picture><source media="(max-width:720px)" srcset="images/hero_a400pro_mb.jpg"><img src="images/hero_a400pro.jpg" alt="A400 Pro"></picture>
       <div class="hero-copy">
         <h2><img class="title-svg" src="images/title_nxtvision_pc_dark.svg" alt="TCL NXTVISION TV"></h2>
-        <p>A400 Pro｜藝術級升級 美學與性能極致演繹</p>
+        <p><span class="pm">A400 Pro</span><span class="ps">｜</span><span class="pt">藝術級升級 美學與性能極致演繹</span></p>
         <a class="btn btn-hero" href="#">了解更多</a>
       </div>
     </div>
@@ -615,7 +626,7 @@ html.dr-lock,html.dr-lock body{overflow:hidden}
       <picture><source media="(max-width:720px)" srcset="images/hero_32x3b_mb.jpg"><img src="images/hero_32x3b.jpg" alt="TCL 32X3B OLED+ Gaming Monitor"></picture>
       <div class="hero-copy">
         <h2><img class="title-svg" src="images/title_qled-plus_pc_dark.svg" alt="TCL QLED+"></h2>
-        <p>32X3B｜晶透畫質 真實還原每一刻</p>
+        <p><span class="pm">32X3B</span><span class="ps">｜</span><span class="pt">晶透畫質 真實還原每一刻</span></p>
         <a class="btn btn-hero" href="#">了解更多</a>
       </div>
       <div class="hero-credit"><picture><source media="(max-width:720px)" srcset="images/bo_logo_mb.svg"><img src="images/bo_logo.svg" alt="Audio by Bang &amp; Olufsen"></picture></div>
@@ -1013,7 +1024,7 @@ document.querySelectorAll('[data-imm]').forEach(sec=>{
 (function(){
   const dr=document.querySelector('.drawer'),bg=document.querySelector('.burger');
   dr.querySelectorAll('.dr-sec ul').forEach(u=>[...u.children].forEach((li,j)=>li.style.setProperty('--j',j)));
-  const set=on=>{dr.classList.toggle('open',on);bg.classList.toggle('on',on);bg.setAttribute('aria-expanded',on);dr.setAttribute('aria-hidden',!on);document.documentElement.classList.toggle('dr-lock',on);
+  const set=on=>{if(on)document.querySelector('.header').classList.remove('hd-hide');dr.classList.toggle('open',on);bg.classList.toggle('on',on);bg.setAttribute('aria-expanded',on);dr.setAttribute('aria-hidden',!on);document.documentElement.classList.toggle('dr-lock',on);
     if(!on)dr.querySelectorAll('.dr-l1.open').forEach(l=>l.classList.remove('open'))};
   bg.addEventListener('click',()=>set(!dr.classList.contains('open')));
   dr.querySelectorAll('button.dr-head').forEach(h=>h.addEventListener('click',()=>{
