@@ -851,7 +851,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   </div>
 </section>
 
-<div class="cmp-bar" id="cmpBar"><div class="wrap"><div class="cmp-items"></div><span class="tip">最多可比較 3 項產品</span><button class="go" disabled>開始比較</button></div></div>
+<div class="cmp-bar" id="cmpBar"><div class="wrap"><div class="cmp-items"></div><span class="tip">最多可比較 5 項產品</span><button class="go" disabled>開始比較</button></div></div>
 
 <!-- ================= SEO 文案 ================= -->
 <section class="seo"><div class="wrap">
@@ -1106,14 +1106,14 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   /* 比較列（最多 3 項） */
   const cmp=[],bar=document.getElementById('cmpBar');
   function toggleCmp(p,box){const i=cmp.findIndex(x=>x.s===p.s);
-    if(box.checked){if(cmp.length>=3){box.checked=false;return bar.querySelector('.tip').animate([{color:'#e64c3d'},{color:''}],900)}cmp.push(p)}else if(i>-1)cmp.splice(i,1);drawCmp()}
+    if(box.checked){if(cmp.length>=5){box.checked=false;return bar.querySelector('.tip').animate([{color:'#e64c3d'},{color:''}],900)}cmp.push(p)}else if(i>-1)cmp.splice(i,1);drawCmp()}
   function drawCmp(){try{sessionStorage.setItem('tclCompare',JSON.stringify(cmp.map(p=>({s:p.s,size:p.sz[0][0]}))))}catch(e){}bar.classList.toggle('on',cmp.length>0);bar.querySelector('.go').disabled=cmp.length<2;
     bar.querySelector('.cmp-items').innerHTML=cmp.map(p=>`<div><img src="${imgFor(p,p.sz[0][0])}" alt="">${p.s}<button data-s="${p.s}" aria-label="移除">×</button></div>`).join('')}
   bar.querySelector('.cmp-items').onclick=e=>{const s=e.target.dataset.s;if(!s)return;cmp.splice(cmp.findIndex(x=>x.s===s),1);drawCmp();const b=pg.querySelector(`.pc[data-s="${s}"] .cmp input`);if(b)b.checked=false};
   /* 開始比較：帶目前卡片選取的尺寸到比較頁 */
   bar.querySelector('.go').onclick=()=>{const m=cmp.map(p=>{const c=pg.querySelector(`.pc[data-s="${CSS.escape(p.s)}"] button.s.on`);return encodeURIComponent(p.s)+'-'+(c?c.textContent:p.sz[0][0])}).join(',');location.href='compare.html?m='+m};
   /* 從比較頁返回時，保留已勾選的比較項目 */
-  try{JSON.parse(sessionStorage.getItem('tclCompare')||'[]').forEach(x=>{const p=DATA.find(d=>d.s===x.s);if(p&&cmp.length<3&&!cmp.includes(p))cmp.push(p)})}catch(e){}
+  try{JSON.parse(sessionStorage.getItem('tclCompare')||'[]').forEach(x=>{const p=DATA.find(d=>d.s===x.s);if(p&&cmp.length<5&&!cmp.includes(p))cmp.push(p)})}catch(e){}
 
 
   /* 由選單連結帶入篩選條件（例：tvs.html?tech=QLED、?size=98+、?feat=gtv） */
