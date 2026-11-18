@@ -555,13 +555,13 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   .hero.kb .hero-ui{bottom:calc(32 / 1920 * 100vw)}
 }
 /* 全部顯示器 Banner 文案（數值可在 kb-demo.html 調整；桌機數值以 1920 寬為基準） */
-:root{--kb-h:400; --kb-title:37; --kb-sub:35; --kb-sub-w:400; --kb-gap:32; --kb-left:18.5%; --kb-left-l:18.5%; --kb-top:50%;
+:root{--kb-h:400; --kb-title:37; --kb-sub:35; --kb-sub-w:400; --kb-gap:32; --kb-sub-lh:1.5; --kb-sub-ls:0; --kb-maxw:63%; --kb-left:18.5%; --kb-left-l:18.5%; --kb-top:50%;
   --kbm-title-w:100%; --kbm-sub:18px; --kbm-gap:12px; --kbm-btn-gap:14px; --kbm-top:16%;}
 @media (min-width:721px){
   .hero.kb .hero-slide > picture img{aspect-ratio:1920 / var(--kb-h)}
   .hero.kb .hero-slide .hero-copy .title-svg{height:calc(var(--kb-title) / 1920 * 100vw)}
-  .hero.kb .hero-copy p{font-size:calc(var(--kb-sub) / 1920 * 100vw);font-weight:var(--kb-sub-w);margin-top:calc(var(--kb-gap) / 1920 * 100vw)}
-  .hero.kb .hero-copy{left:var(--kb-left);top:var(--kb-top)}
+  .hero.kb .hero-copy p{font-size:calc(var(--kb-sub) / 1920 * 100vw);line-height:var(--kb-sub-lh);letter-spacing:calc(var(--kb-sub-ls) * 1em);font-weight:var(--kb-sub-w);margin-top:calc(var(--kb-gap) / 1920 * 100vw)}
+  .hero.kb .hero-copy{left:var(--kb-left);top:var(--kb-top);max-width:var(--kb-maxw)}
   .hero.kb .hero-slide.left-copy .hero-copy{left:var(--kb-left-l);top:var(--kb-top)}
 }
 @media (max-width:720px){
@@ -789,19 +789,24 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
         <p><span class="pm">X11L</span><span class="ps">｜</span><span class="pt">Mini LED 巔峰之作</span></p><a class="btn btn-hero" href="#">了解更多</a></div>
     </div>
     <div class="hero-slide" data-label="RM9L">
-      <picture><source media="(max-width:720px)" srcset="images/hero_rm9l_mb.jpg"><img src="images/hero_rm9l.jpg" alt="RM9L"></picture>
+      <picture><source media="(max-width:720px)" srcset="images/hero_rm9l_mb.jpg"><img src="images/kb_rm9l_pc.jpg" alt="RM9L"></picture>
       <div class="hero-copy"><h2><img class="title-svg" src="images/title_rgb-miniled_pc.svg" alt="TCL RGB-Mini LED TV"></h2>
         <p><span class="pm">RM9L</span><span class="ps">｜</span><span class="pt">RGB 色彩新典範</span></p><a class="btn btn-hero" href="#">了解更多</a></div>
     </div>
     <div class="hero-slide" data-label="C8L">
-      <picture><source media="(max-width:720px)" srcset="images/hero_c8l_mb.jpg"><img src="images/hero_c8l.jpg" alt="C8L"></picture>
+      <picture><source media="(max-width:720px)" srcset="images/hero_c8l_mb.jpg"><img src="images/kb_c8l_pc.jpg" alt="C8L"></picture>
       <div class="hero-copy"><h2><img class="title-svg" src="images/title_sqd-miniled_pc.svg" alt="TCL SQD-Mini LED TV"></h2>
         <p><span class="pm">C8L</span><span class="ps">｜</span><span class="pt">全新旗艦之選</span></p><a class="btn btn-hero" href="#">了解更多</a></div>
     </div>
     <div class="hero-slide dark left-copy" data-label="A400 Pro">
-      <picture><source media="(max-width:720px)" srcset="images/hero_a400pro_mb.jpg"><img src="images/hero_a400pro.jpg" alt="A400 Pro"></picture>
+      <picture><source media="(max-width:720px)" srcset="images/hero_a400pro_mb.jpg"><img src="images/kb_a400pro_pc.jpg" alt="A400 Pro"></picture>
       <div class="hero-copy"><h2><img class="title-svg" src="images/title_nxtvision_pc_dark.svg" alt="TCL NXTVISION TV"></h2>
         <p><span class="pm">A400 Pro</span><span class="ps">｜</span><span class="pt">藝術級升級 美學與性能極致演繹</span></p><a class="btn btn-hero" href="#">了解更多</a></div>
+    </div>
+    <div class="hero-slide" data-label="A400M">
+      <picture><source media="(max-width:720px)" srcset="images/hero_a400m_mb.jpg"><img src="images/kb_a400m_pc.jpg" alt="A400M"></picture>
+      <div class="hero-copy"><h2><img class="title-svg" src="images/title_qd-miniled_pc.svg" alt="TCL QD-Mini LED TV"></h2>
+        <p><span class="pm">A400M</span><span class="ps">｜</span><span class="pt">沉浸大畫面 細膩每一刻</span></p><a class="btn btn-hero" href="#">了解更多</a></div>
     </div>
   </div>
   <button class="hero-arrow prev" aria-label="上一張"><svg viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8"/></svg></button>
