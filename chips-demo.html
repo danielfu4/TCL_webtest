@@ -96,6 +96,17 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 .mm-list a:hover{color:var(--red)}
 .nav > li.active .mm-thumb,.nav > li.active .mm-title,.nav > li.active .mm-list li{opacity:1;transform:none}
 .nav > li:not(.active) .mm-thumb,.nav > li:not(.active) .mm-title,.nav > li:not(.active) .mm-list li{transition:none}
+/* 分隔線：等白底展開後再出現——橫線由左到右，接著直線由上到下 */
+:root{--hl-delay:.5s; --hl-dur:.5s; --vl-after:.25s; --vl-dur:.45s}
+.mm-row{position:relative}
+.mm-row + .mm-row{border-top:0}
+.mm-row + .mm-row::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:#e6e6e6;transform:scaleX(0);transform-origin:left center}
+.mm-col{position:relative}
+.mm-col + .mm-col{border-left:0}
+.mm-col + .mm-col::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:#ececec;transform:scaleY(0);transform-origin:center top}
+.nav > li.active .mm-row + .mm-row::before{transform:none;transition:transform var(--hl-dur) var(--ease) var(--hl-delay)}
+.nav > li.active .mm-col + .mm-col::before{transform:none;transition:transform var(--vl-dur) var(--ease) calc(var(--hl-delay) + var(--vl-after))}
+.nav > li:not(.active) .mm-row + .mm-row::before,.nav > li:not(.active) .mm-col + .mm-col::before{transition:none}
 /* 背景遮罩 */
 .hd-dim{position:fixed;inset:0;z-index:1999;background:#000;opacity:0;visibility:hidden;pointer-events:none;transition:opacity var(--dim-dur) var(--ease),visibility 0s var(--dim-dur)}
 .hd-dim.on{opacity:var(--dim-op);visibility:visible;transition:opacity var(--dim-dur) var(--ease) var(--dim-delay)}
