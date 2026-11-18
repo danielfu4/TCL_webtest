@@ -552,10 +552,18 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .hero.kb .hero-copy p .pt{font-weight:400}
 @media (min-width:721px){
   .hero.kb .hero-label{display:none}   /* 參照國際版：只留指示點 */
-  .hero.kb .hero-ui{bottom:calc(32 / 1920 * 100vw)}
+  .hero.kb{--kbd-u:calc(100vw / 1920)}
+  .hero.kb .hero-ui{bottom:calc(var(--kbd-bottom) * var(--kbd-u))}
+  .hero.kb .hero-dots{gap:calc(var(--kbd-gap) * var(--kbd-u))}
+  .hero.kb .hero-dots button{width:calc(var(--kbd-dot) * var(--kbd-u));height:calc(var(--kbd-dot) * var(--kbd-u))}
+  .hero.kb .hero-dots button.on{width:calc(var(--kbd-bar) * var(--kbd-u));background:rgba(255,255,255,var(--kbd-bar-op))}
+  .hero.kb.on-dark .hero-dots button.on{background:rgba(0,0,0,calc(var(--kbd-bar-op) * .6))}
+  .hero.kb .hero-dots .hero-pause{width:auto;height:calc(var(--kbd-pause-h) * var(--kbd-u));padding:0 calc(var(--kbd-pause-px) * var(--kbd-u));margin-left:calc(var(--kbd-pause-gap) * var(--kbd-u));border-radius:calc(var(--kbd-pause-r) * var(--kbd-u))}
+  .hero.kb .hero-pause svg{height:calc(var(--kbd-icon) * var(--kbd-u))}
+  .hero.kb .hero-pause .sl{height:calc(var(--kbd-icon) * 1.3 * var(--kbd-u))}
 }
 /* 全部顯示器 Banner 文案（數值可在 kb-demo.html 調整；桌機數值以 1920 寬為基準） */
-:root{--kb-h:405; --kb-title:29; --kb-sub:24; --kb-sub-w:400; --kb-gap:11; --kb-sub-lh:1.5; --kb-sub-ls:0em; --kb-maxw:63%; --kb-left:20%; --kb-left-l:18.5%; --kb-top:50%;
+:root{--kb-h:405; --kbd-bottom:32; --kbd-dot:10; --kbd-gap:20; --kbd-bar:120; --kbd-bar-op:.35; --kbd-pause-h:30; --kbd-pause-px:11; --kbd-pause-gap:8; --kbd-pause-r:4; --kbd-icon:11; --kb-title:29; --kb-sub:24; --kb-sub-w:400; --kb-gap:11; --kb-sub-lh:1.5; --kb-sub-ls:0em; --kb-maxw:63%; --kb-left:20%; --kb-left-l:18.5%; --kb-top:50%;
   --kbm-title-w:100%; --kbm-sub:18px; --kbm-gap:12px; --kbm-btn-gap:14px; --kbm-top:16%;}
 @media (min-width:721px){
   .hero.kb .hero-slide > picture img{aspect-ratio:1920 / var(--kb-h)}

@@ -552,10 +552,18 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .hero.kb .hero-copy p .pt{font-weight:400}
 @media (min-width:721px){
   .hero.kb .hero-label{display:none}   /* 參照國際版：只留指示點 */
-  .hero.kb .hero-ui{bottom:calc(32 / 1920 * 100vw)}
+  .hero.kb{--kbd-u:calc(100vw / 1920)}
+  .hero.kb .hero-ui{bottom:calc(var(--kbd-bottom) * var(--kbd-u))}
+  .hero.kb .hero-dots{gap:calc(var(--kbd-gap) * var(--kbd-u))}
+  .hero.kb .hero-dots button{width:calc(var(--kbd-dot) * var(--kbd-u));height:calc(var(--kbd-dot) * var(--kbd-u))}
+  .hero.kb .hero-dots button.on{width:calc(var(--kbd-bar) * var(--kbd-u));background:rgba(255,255,255,var(--kbd-bar-op))}
+  .hero.kb.on-dark .hero-dots button.on{background:rgba(0,0,0,calc(var(--kbd-bar-op) * .6))}
+  .hero.kb .hero-dots .hero-pause{width:auto;height:calc(var(--kbd-pause-h) * var(--kbd-u));padding:0 calc(var(--kbd-pause-px) * var(--kbd-u));margin-left:calc(var(--kbd-pause-gap) * var(--kbd-u));border-radius:calc(var(--kbd-pause-r) * var(--kbd-u))}
+  .hero.kb .hero-pause svg{height:calc(var(--kbd-icon) * var(--kbd-u))}
+  .hero.kb .hero-pause .sl{height:calc(var(--kbd-icon) * 1.3 * var(--kbd-u))}
 }
 /* 全部顯示器 Banner 文案（數值可在 kb-demo.html 調整；桌機數值以 1920 寬為基準） */
-:root{--kb-h:405; --kb-title:29; --kb-sub:24; --kb-sub-w:400; --kb-gap:11; --kb-sub-lh:1.5; --kb-sub-ls:0em; --kb-maxw:63%; --kb-left:20%; --kb-left-l:18.5%; --kb-top:50%;
+:root{--kb-h:405; --kbd-bottom:32; --kbd-dot:10; --kbd-gap:20; --kbd-bar:120; --kbd-bar-op:.35; --kbd-pause-h:30; --kbd-pause-px:11; --kbd-pause-gap:8; --kbd-pause-r:4; --kbd-icon:11; --kb-title:29; --kb-sub:24; --kb-sub-w:400; --kb-gap:11; --kb-sub-lh:1.5; --kb-sub-ls:0em; --kb-maxw:63%; --kb-left:20%; --kb-left-l:18.5%; --kb-top:50%;
   --kbm-title-w:100%; --kbm-sub:18px; --kbm-gap:12px; --kbm-btn-gap:14px; --kbm-top:16%;}
 @media (min-width:721px){
   .hero.kb .hero-slide > picture img{aspect-ratio:1920 / var(--kb-h)}
@@ -1107,7 +1115,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   if(inFrame){document.body.classList.add('inframe');
     let done=false;const go=()=>{if(done||!innerHeight)return;done=true;document.querySelector('.hero-pause')&&document.querySelector('.hero-pause').click()};
     addEventListener('message',e=>{const d=e.data||{};if(d.vars)Object.entries(d.vars).forEach(([k,v])=>root.style.setProperty(k,v));setTimeout(go,80)});return;}
-  const G={d:[["文案大小（以 1920 寬計）", [["--kb-title", "標題 SVG 高度", 16, 90, 1, ""], ["--kb-sub", "副標字級", 12, 60, 0.5, ""], ["--kb-sub-w", "副標粗細", 300, 700, 100, ""], ["--kb-sub-ls", "副標字距", -0.05, 0.2, 0.005, "em"]]], ["行距", [["--kb-gap", "標題與副標距離", 0, 80, 1, ""], ["--kb-sub-lh", "副標行高（換行時）", 0.9, 2.2, 0.05, ""], ["--kb-maxw", "文案最大寬度（超過會換行）", 20, 80, 1, "%"]]], ["位置", [["--kb-left", "一般 左側距離", 2, 30, 0.1, "%"], ["--kb-left-l", "A400 Pro 左側距離", 2, 30, 0.1, "%"], ["--kb-top", "垂直位置（中心點）", 20, 80, 0.5, "%"]]], ["Banner", [["--kb-h", "Banner 高度（以 1920 寬計）", 300, 900, 5, ""]]]],m:[["手機文案", [["--kbm-title-w", "標題寬度", 40, 100, 1, "%"], ["--kbm-sub", "副標字級", 12, 26, 0.5, "px"], ["--kbm-gap", "標題與副標距離", 0, 40, 1, "px"], ["--kbm-btn-gap", "副標與按鈕距離", 0, 40, 1, "px"], ["--kbm-top", "文案上方位置", 2, 40, 0.5, "%"]]]]};
+  const G={d:[["文案大小（以 1920 寬計）", [["--kb-title", "標題 SVG 高度", 16, 90, 1, ""], ["--kb-sub", "副標字級", 12, 60, 0.5, ""], ["--kb-sub-w", "副標粗細", 300, 700, 100, ""], ["--kb-sub-ls", "副標字距", -0.05, 0.2, 0.005, "em"]]], ["行距", [["--kb-gap", "標題與副標距離", 0, 80, 1, ""], ["--kb-sub-lh", "副標行高（換行時）", 0.9, 2.2, 0.05, ""], ["--kb-maxw", "文案最大寬度（超過會換行）", 20, 80, 1, "%"]]], ["位置", [["--kb-left", "一般 左側距離", 2, 30, 0.1, "%"], ["--kb-left-l", "A400 Pro 左側距離", 2, 30, 0.1, "%"], ["--kb-top", "垂直位置（中心點）", 20, 80, 0.5, "%"]]], ["Banner", [["--kb-h", "Banner 高度（以 1920 寬計）", 300, 900, 5, ""]]], ["輪播指示（以 1920 寬計）", [["--kbd-bottom", "距離底部", 0, 120, 1, ""], ["--kbd-dot", "圓點大小", 3, 20, 0.5, ""], ["--kbd-gap", "圓點間距", 2, 48, 1, ""], ["--kbd-bar", "進度條長度", 20, 240, 1, ""], ["--kbd-bar-op", "進度條底色深淺", 0, 1, 0.05, ""], ["--kbd-pause-h", "暫停鈕高度", 12, 48, 1, ""], ["--kbd-pause-px", "暫停鈕左右內距", 0, 24, 0.5, ""], ["--kbd-pause-gap", "暫停鈕與圓點距離", 0, 40, 1, ""], ["--kbd-pause-r", "暫停鈕圓角", 0, 24, 0.5, ""], ["--kbd-icon", "暫停圖示大小", 4, 20, 0.5, ""]]]],m:[["手機文案", [["--kbm-title-w", "標題寬度", 40, 100, 1, "%"], ["--kbm-sub", "副標字級", 12, 26, 0.5, "px"], ["--kbm-gap", "標題與副標距離", 0, 40, 1, "px"], ["--kbm-btn-gap", "副標與按鈕距離", 0, 40, 1, "px"], ["--kbm-top", "文案上方位置", 2, 40, 0.5, "%"]]]]};
   const DEF={};Object.values(G).flat().forEach(([,cs])=>cs.forEach(c=>DEF[c[0]]=parseFloat(getComputedStyle(root).getPropertyValue(c[0]))));
   const val={...DEF};let mode='d';
   const tb=document.getElementById('tb'),fr=document.getElementById('tframe');
