@@ -697,6 +697,12 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .cmp-items div{display:flex;align-items:center;gap:10px;background:#f5f5f5;padding:6px 12px 6px 6px;min-width:0;border-radius:6px}
 .cmp-items img{width:52px;height:40px;object-fit:contain}
 .cmp-items button{font-size:18px;line-height:1;color:var(--gray-500)}
+.cmp-items{position:relative}
+.cmp-items .c-new{opacity:0;transform:translateX(var(--fc-in-x))}
+.cmp-items .c-in{opacity:1;transform:none;transition:opacity var(--fc-in-dur) var(--ease) var(--fc-in-delay),transform var(--fc-in-dur) var(--fc-ease) var(--fc-in-delay)}
+.cmp-items .c-shift{transition:transform var(--fc-shift-dur) var(--fc-ease)}
+.cmp-items .c-leave{position:absolute;margin:0;pointer-events:none;opacity:1;transform:none}
+.cmp-items .c-leave.c-out{opacity:0;transform:translateX(var(--fc-in-x));transition:opacity var(--fc-out-dur) var(--ease),transform var(--fc-out-dur) var(--ease)}
 .cmp-items .nm{display:flex;flex-direction:column;line-height:1.25;min-width:0}
 .cmp-items .nm b{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:14px;font-weight:600;color:#111}
 .cmp-items .nm small{font-size:12px;color:var(--gray-500)}
@@ -848,6 +854,8 @@ html:has(.cp){overflow-anchor:none}
 .cp-row .v.best{color:#e64c3d;font-weight:600}
 .cp-row .v.best::after{content:"最高";display:inline-block;margin-left:6px;padding:1px 6px;border-radius:4px;background:rgba(230,76,61,.1);font-size:11px;font-weight:500;vertical-align:1px}
 .cp-row .v.na{color:#bbb}
+.cp-row .v .ck{width:var(--cp-ck,20px);height:var(--cp-ck,20px);display:inline-block;vertical-align:middle;fill:none;stroke:#111;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.cp-row .v .ck-t{display:block;font-size:.85em;color:var(--gray-500);margin-top:2px}
 .cp-row.same .v{color:var(--gray-700)}
 .cp.diff-only .cp-row.same{display:none}
 .cp.diff-only .cp-grp.all-same{display:none}
@@ -1132,6 +1140,9 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   const val=(x,key)=>{const o=OV[idOf(x)];if(o&&key in o)return o[key];const b=SPEC[x.s];return b&&b[key]!=null?b[key]:null};
   const num=(v,mode)=>{if(!v)return null;const ns=(v.replace(/,/g,'').match(/\d+(\.\d+)?/g)||[]).map(Number);if(!ns.length)return null;return mode==='max'?Math.max(...ns):ns[0]};
   const nm=x=>x.size+x.s.replace(' ','');
+  /* 打勾改用圓角粗線圖示 */
+  const CHK='<svg class="ck" viewBox="0 0 24 24" aria-label="有"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const fmtV=v=>v==='✓'?CHK:v.startsWith('✓')?CHK+'<span class="ck-t">'+v.slice(1).replace(/^（|）$/g,'')+'</span>':v;
 
   function sizeUI(x){const p=find(x.s);const i=p.sz.findIndex(z=>z[0]===x.size);
     if(mob())return `<label class="cpm-size"><select aria-label="尺寸">${p.sz.map(z=>`<option value="${z[0]}"${z[0]===x.size?' selected':''}>${z[0]} 吋</option>`).join('')}</select></label>`;
@@ -1198,7 +1209,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
         const same=real.length>1&&real.every(x=>x===real[0]);if(!same)allSame=false;
         let bi=null,ns=[];
         if(best&&real.length>1){ns=vs.map(x=>x==null?null:num(x,best));const ok=ns.filter(n=>n!=null);const m=Math.max(...ok);if(isFinite(m)&&ok.filter(n=>n===m).length<ok.length)bi=m}
-        return `<div class="cp-row cp-grid${same?' same':''}"><div class="lab lab-cell">${label}</div>`+vs.map((x,i)=>x===undefined?'<div></div>':`<div class="v${x==null?' na':''}${bi!=null&&ns[i]===bi?' best':''}">${x??'—'}</div>`).join('')+'</div>'}).join('');
+        return `<div class="cp-row cp-grid${same?' same':''}"><div class="lab lab-cell">${label}</div>`+vs.map((x,i)=>x===undefined?'<div></div>':`<div class="v${x==null?' na':''}${bi!=null&&ns[i]===bi?' best':''}">${x==null?'—':fmtV(x)}</div>`).join('')+'</div>'}).join('');
       if(!rows)return '';
       return `<div class="cp-grp${openGroups.has(g.k)?' open':''}${allSame&&shown.length>1?' all-same':''}" data-k="${g.k}"><button>${g.h}<i></i></button><div class="cp-rows"><div>${rows}</div></div></div>`}).join('');
     specs.querySelectorAll('.cp-grp > button').forEach(b=>b.onclick=()=>{const g=b.parentElement;g.classList.toggle('open');
