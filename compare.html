@@ -866,7 +866,9 @@ html:has(.cp){overflow-anchor:none}
 /* ---------- 手機：固定兩欄並排、3 台時用膠囊切換、底部固定「了解更多」 ---------- */
 .cpm-pills,.cpm-mini,.cpm-size,.cpm-cta,.cpm-sel{display:none}
 @media (max-width:720px){
-  .cp-head{padding:24px 0 12px;flex-direction:row;align-items:center;gap:12px}
+  .cp-head{padding:24px 0 8px;flex-direction:column;align-items:stretch;gap:10px}
+  .cp-head h1{word-break:keep-all;text-wrap:balance}
+  .cp-head .cp-diff{align-self:flex-end;white-space:nowrap}
   .cp-head h1{font-size:24px}.cp-head p{display:none}
   .cp-head .cp-diff{font-size:13px}
   .cp-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;column-gap:0}
@@ -982,7 +984,7 @@ html:has(.cp){overflow-anchor:none}
 
 <section class="cp" id="cp"><div class="wrap">
   <div class="cp-head">
-    <div><h1>找尋適合您的商品</h1><p>最多可同時比較 5 項產品，可直接在下方切換尺寸</p></div>
+    <div><h1>找尋適合您的智慧顯示器</h1><p>購買前比較不同產品型號。</p></div>
     <label class="cp-diff"><input type="checkbox" id="cpDiff">只顯示差異</label>
   </div>
   <div class="cpm-sel" id="cpmSel"></div>
