@@ -555,12 +555,12 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   .hero.kb .hero-ui{bottom:calc(32 / 1920 * 100vw)}
 }
 /* 全部顯示器 Banner 文案（數值可在 kb-demo.html 調整；桌機數值以 1920 寬為基準） */
-:root{--kb-h:400; --kb-title:37; --kb-sub:35; --kb-sub-w:400; --kb-gap:32; --kb-sub-lh:1.5; --kb-sub-ls:0; --kb-maxw:63%; --kb-left:18.5%; --kb-left-l:18.5%; --kb-top:50%;
+:root{--kb-h:405; --kb-title:29; --kb-sub:24; --kb-sub-w:400; --kb-gap:11; --kb-sub-lh:1.5; --kb-sub-ls:0em; --kb-maxw:63%; --kb-left:20%; --kb-left-l:18.5%; --kb-top:50%;
   --kbm-title-w:100%; --kbm-sub:18px; --kbm-gap:12px; --kbm-btn-gap:14px; --kbm-top:16%;}
 @media (min-width:721px){
   .hero.kb .hero-slide > picture img{aspect-ratio:1920 / var(--kb-h)}
   .hero.kb .hero-slide .hero-copy .title-svg{height:calc(var(--kb-title) / 1920 * 100vw)}
-  .hero.kb .hero-copy p{font-size:calc(var(--kb-sub) / 1920 * 100vw);line-height:var(--kb-sub-lh);letter-spacing:calc(var(--kb-sub-ls) * 1em);font-weight:var(--kb-sub-w);margin-top:calc(var(--kb-gap) / 1920 * 100vw)}
+  .hero.kb .hero-copy p{font-size:calc(var(--kb-sub) / 1920 * 100vw);line-height:var(--kb-sub-lh);letter-spacing:var(--kb-sub-ls);font-weight:var(--kb-sub-w);margin-top:calc(var(--kb-gap) / 1920 * 100vw)}
   .hero.kb .hero-copy{left:var(--kb-left);top:var(--kb-top);max-width:var(--kb-maxw)}
   .hero.kb .hero-slide.left-copy .hero-copy{left:var(--kb-left-l);top:var(--kb-top)}
 }
