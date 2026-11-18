@@ -604,7 +604,8 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .pl-chips .c-new{opacity:0;transform:translateX(var(--fc-in-x))}
 .pl-chips .c-in{opacity:1;transform:none;transition:opacity var(--fc-in-dur) var(--ease) var(--fc-in-delay),transform var(--fc-in-dur) var(--fc-ease) var(--fc-in-delay)}
 .pl-chips .c-shift{transition:transform var(--fc-shift-dur) var(--fc-ease)}
-.pl-chips .c-out{position:absolute;margin:0;opacity:0;transform:translateX(var(--fc-in-x));transition:opacity var(--fc-out-dur) var(--ease),transform var(--fc-out-dur) var(--ease);pointer-events:none}
+.pl-chips .c-leave{position:absolute;margin:0;pointer-events:none;opacity:1;transform:none}
+.pl-chips .c-leave.c-out{opacity:0;transform:translateX(var(--fc-in-x));transition:opacity var(--fc-out-dur) var(--ease),transform var(--fc-out-dur) var(--ease)}
 
 
 .pl-body{display:flex;gap:var(--pl-gap);padding-top:var(--pl-gap);align-items:flex-start}
@@ -1097,31 +1098,33 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
     for(let i=chipOrder.length-1;i>=0;i--)if(!ids.includes(chipOrder[i]))chipOrder.splice(i,1);
     ids.forEach(id=>{if(!chipOrder.includes(id))chipOrder.unshift(id)});
     const wrap=document.getElementById('plChipsWrap'),cr=chips.getBoundingClientRect();
-    const cur=[...chips.children].filter(e=>!e.classList.contains('c-out'));
+    const cur=[...chips.children].filter(e=>!e.classList.contains('c-leave'));
     const first=new Map(cur.map(e=>[e,e.getBoundingClientRect()]));
+    const leaving=[];
     const outMs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fc-out-dur'))*1000||250;
     cur.forEach(e=>{const keep=e.classList.contains('clear')?chipOrder.length>0:chipOrder.includes(e.dataset.id);if(keep)return;
       const r=first.get(e);e.style.left=(r.left-cr.left)+'px';e.style.top=(r.top-cr.top)+'px';e.classList.remove('c-in','c-shift');e.style.transform='';
-      e.classList.add('c-out');setTimeout(()=>e.remove(),outMs+30)});
+      e.classList.add('c-leave');leaving.push(e);setTimeout(()=>e.remove(),outMs+80)});
     const fresh=[];
-    chipOrder.forEach(id=>{let e=chips.querySelector(`[data-id="${CSS.escape(id)}"]:not(.c-out)`);
+    chipOrder.forEach(id=>{let e=chips.querySelector(`[data-id="${CSS.escape(id)}"]:not(.c-leave)`);
       if(!e){const w=want.find(x=>x.id===id);e=document.createElement('button');e.dataset.id=id;e.dataset.g=w.g;e.dataset.k=w.k;e.textContent=w.l;e.className='c-new';fresh.push(e)}
       chips.appendChild(e)});
-    let clr=chips.querySelector('.clear:not(.c-out)');
+    let clr=chips.querySelector('.clear:not(.c-leave)');
     if(chipOrder.length){if(!clr){clr=document.createElement('button');clr.className='clear c-new';clr.textContent='清除全部';fresh.push(clr)}chips.appendChild(clr)}
-    chips.querySelectorAll('.c-out').forEach(e=>chips.appendChild(e));
+    
     /* FLIP：原有標籤從舊位置滑到新位置 */
-    first.forEach((r,e)=>{if(!e.isConnected||e.classList.contains('c-out'))return;const n=e.getBoundingClientRect(),dx=r.left-n.left,dy=r.top-n.top;
+    first.forEach((r,e)=>{if(!e.isConnected||e.classList.contains('c-leave'))return;const n=e.getBoundingClientRect(),dx=r.left-n.left,dy=r.top-n.top;
       if(!dx&&!dy)return;e.classList.remove('c-shift');e.style.transition='none';e.style.transform=`translate(${dx}px,${dy}px)`});
     void chips.offsetWidth;
+    leaving.forEach(e=>e.classList.add('c-out'));   /* 位置固定後才開始淡出 */
     wrap.classList.toggle('on',chipOrder.length>0);
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      first.forEach((r,e)=>{if(e.isConnected&&!e.classList.contains('c-out')&&e.style.transform){e.style.transition='';e.classList.add('c-shift');e.style.transform=''}});
+      first.forEach((r,e)=>{if(e.isConnected&&!e.classList.contains('c-leave')&&e.style.transform){e.style.transition='';e.classList.add('c-shift');e.style.transform=''}});
       fresh.forEach(e=>{e.classList.add('c-in');e.classList.remove('c-new')});
     }));
   }
   function clearAll(){Object.values(sel).forEach(s=>s.clear());pf.querySelectorAll('input').forEach(i=>i.checked=false);render()}
-  chips.onclick=e=>{const b=e.target.closest('button');if(!b||b.classList.contains('c-out'))return;if(b.classList.contains('clear'))return clearAll();
+  chips.onclick=e=>{const b=e.target.closest('button');if(!b||b.classList.contains('c-leave'))return;if(b.classList.contains('clear'))return clearAll();
     sel[b.dataset.g].delete(b.dataset.k);pf.querySelector(`[data-g="${b.dataset.g}"] [data-k="${b.dataset.k}"]`).checked=false;render()};
   sortSel.onchange=render;
 
