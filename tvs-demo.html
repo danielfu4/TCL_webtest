@@ -556,7 +556,10 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .pl-bar{background:#fff;position:sticky;top:var(--hd-h,64px);z-index:20;border-bottom:1px solid var(--gray-100)}
 .pl-bar .wrap{display:flex;align-items:center;height:60px;gap:16px}
 .pl-toggle{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:500}
-.pl-toggle svg{width:18px;height:18px;stroke:#e64c3d;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.pl-toggle{transition:color .3s}
+.pl.collapsed .pl-toggle{color:#bdbdbd}
+.pl.collapsed .pl-toggle svg{stroke:#bdbdbd}
+.pl-toggle svg{transition:stroke .3s;width:18px;height:18px;stroke:#e64c3d;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
 
 .pl-count{font-size:15px;color:var(--gray-700);padding-left:16px;border-left:1px solid var(--gray-300)}
 .pl-count b{font-weight:600;color:var(--black)}
