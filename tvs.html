@@ -694,9 +694,12 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .cmp-bar.on{transform:none;visibility:visible}
 .cmp-bar .wrap{display:flex;align-items:center;gap:16px;height:84px}
 .cmp-items{display:flex;gap:12px;flex:1;min-width:0}
-.cmp-items div{display:flex;align-items:center;gap:10px;background:#f5f5f5;padding:6px 12px 6px 6px;font-size:13px;font-weight:500;min-width:0}
+.cmp-items div{display:flex;align-items:center;gap:10px;background:#f5f5f5;padding:6px 12px 6px 6px;min-width:0;border-radius:6px}
 .cmp-items img{width:52px;height:40px;object-fit:contain;background:#fff}
 .cmp-items button{font-size:18px;line-height:1;color:var(--gray-500)}
+.cmp-items .nm{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.cmp-items .nm b{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:14px;font-weight:600;color:#111}
+.cmp-items .nm small{font-size:12px;color:var(--gray-500)}
 .cmp-bar .go{height:40px;padding:0 28px;border-radius:20px;background:#111;color:#fff;font-size:14px;font-weight:500}
 .cmp-bar .go:disabled{background:#ccc}
 .cmp-bar .tip{font-size:13px;color:var(--gray-500)}
@@ -1034,7 +1037,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
     const center=()=>{const b=bs[cur];row.style.transform=`translateX(${rail.clientWidth/2-(b.offsetLeft+b.offsetWidth/2)}px)`};
     const pick=i=>{i=Math.max(0,Math.min(bs.length-1,i));if(i===cur&&bs[i].classList.contains('on'))return;cur=i;
       bs.forEach((o,k)=>o.classList.toggle('on',k===i));L.disabled=i===0;R.disabled=i===bs.length-1;center();
-      el.querySelector('.md').textContent=sz[i][0]+p.s.replace(' ','');
+      el.querySelector('.md').textContent=sz[i][0]+p.s.replace(' ','');const ce=cmp.find(x=>x.p.s===p.s);if(ce){ce.size=sz[i][0];drawCmp()}
       const im=el.querySelector('.pc-img img'),u=imgFor(p,sz[i][0]);if(!im.src.endsWith(u)){im.style.opacity=0;setTimeout(()=>{im.src=u;im.onload=()=>im.style.opacity=1},180)}};
     bs.forEach((b,i)=>b.onclick=()=>pick(i));
     L.onclick=()=>pick(cur-1);R.onclick=()=>pick(cur+1);
@@ -1053,7 +1056,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
     if(v==='new')list=[...list].sort((a,b)=>b.new-a.new);
     if(v==='big')list=[...list].sort((a,b)=>big(b)-big(a));
     pg.innerHTML=list.length?list.map(card).join(''):'<div class="pg-empty">沒有符合條件的產品<br><button>清除篩選條件</button></div>';
-    [...pg.querySelectorAll('.pc')].forEach(el=>{bindCard(el,DATA.find(p=>p.s===el.dataset.s));const c=el.querySelector('.cmp input');c.checked=cmp.some(x=>x.s===el.dataset.s);io.observe(el)});
+    [...pg.querySelectorAll('.pc')].forEach(el=>{bindCard(el,DATA.find(p=>p.s===el.dataset.s));const c=el.querySelector('.cmp input');c.checked=cmp.some(x=>x.p.s===el.dataset.s);io.observe(el)});
     const eb=pg.querySelector('.pg-empty button');if(eb)eb.onclick=clearAll;
     document.getElementById('plN').textContent=document.getElementById('plN2').textContent=list.length;
     /* 各選項後方顯示符合數量 */
@@ -1107,16 +1110,20 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   document.querySelector('.pf-foot .reset').onclick=clearAll;
 
   /* 比較列（最多 3 項） */
+  /* 比較清單：每一筆記錄型號與目前選的尺寸（同型號只會有一筆） */
   const cmp=[],bar=document.getElementById('cmpBar');
-  function toggleCmp(p,box){const i=cmp.findIndex(x=>x.s===p.s);
-    if(box.checked){if(cmp.length>=5){box.checked=false;return bar.querySelector('.tip').animate([{color:'#e64c3d'},{color:''}],900)}cmp.push(p)}else if(i>-1)cmp.splice(i,1);drawCmp()}
-  function drawCmp(){try{sessionStorage.setItem('tclCompare',JSON.stringify(cmp.map(p=>({s:p.s,size:p.sz[0][0]}))))}catch(e){}bar.classList.toggle('on',cmp.length>0);bar.querySelector('.go').disabled=cmp.length<2;
-    bar.querySelector('.cmp-items').innerHTML=cmp.map(p=>`<div><img src="${imgFor(p,p.sz[0][0])}" alt="">${p.s}<button data-s="${p.s}" aria-label="移除">×</button></div>`).join('')}
-  bar.querySelector('.cmp-items').onclick=e=>{const s=e.target.dataset.s;if(!s)return;cmp.splice(cmp.findIndex(x=>x.s===s),1);drawCmp();const b=pg.querySelector(`.pc[data-s="${s}"] .cmp input`);if(b)b.checked=false};
-  /* 開始比較：帶目前卡片選取的尺寸到比較頁 */
-  bar.querySelector('.go').onclick=()=>{const m=cmp.map(p=>{const c=pg.querySelector(`.pc[data-s="${CSS.escape(p.s)}"] button.s.on`);return encodeURIComponent(p.s)+'-'+(c?c.textContent:p.sz[0][0])}).join(',');location.href='compare.html?m='+m};
-  /* 從比較頁返回時，保留已勾選的比較項目 */
-  try{JSON.parse(sessionStorage.getItem('tclCompare')||'[]').forEach(x=>{const p=DATA.find(d=>d.s===x.s);if(p&&cmp.length<5&&!cmp.includes(p))cmp.push(p)})}catch(e){}
+  const cardSize=p=>{const c=pg.querySelector(`.pc[data-s="${CSS.escape(p.s)}"] button.s.on`);return c?+c.textContent:p.sz[0][0]};
+  function toggleCmp(p,box){const i=cmp.findIndex(x=>x.p.s===p.s);
+    if(box.checked){if(i>-1)return drawCmp();if(cmp.length>=5){box.checked=false;return bar.querySelector('.tip').animate([{color:'#e64c3d'},{color:''}],900)}cmp.push({p,size:cardSize(p)})}
+    else if(i>-1)cmp.splice(i,1);drawCmp()}
+  function drawCmp(){try{sessionStorage.setItem('tclCompare',JSON.stringify(cmp.map(x=>({s:x.p.s,size:x.size}))))}catch(e){}
+    bar.classList.toggle('on',cmp.length>0);bar.querySelector('.go').disabled=cmp.length<2;
+    bar.querySelector('.cmp-items').innerHTML=cmp.map(x=>`<div><img src="${imgFor(x.p,x.size)}" alt=""><span class="nm"><b>${x.p.s}</b><small>${x.size} 吋</small></span><button data-s="${x.p.s}" aria-label="移除">×</button></div>`).join('')}
+  bar.querySelector('.cmp-items').onclick=e=>{const s=e.target.dataset.s;if(!s)return;const i=cmp.findIndex(x=>x.p.s===s);if(i>-1)cmp.splice(i,1);drawCmp();const b=pg.querySelector(`.pc[data-s="${CSS.escape(s)}"] .cmp input`);if(b)b.checked=false};
+  /* 開始比較：帶各自選的尺寸到比較頁 */
+  bar.querySelector('.go').onclick=()=>{location.href='compare.html?m='+cmp.map(x=>encodeURIComponent(x.p.s)+'-'+x.size).join(',')};
+  /* 從比較頁返回時，保留已勾選的比較項目（去除重複） */
+  try{JSON.parse(sessionStorage.getItem('tclCompare')||'[]').forEach(x=>{const p=DATA.find(d=>d.s===x.s);if(p&&cmp.length<5&&!cmp.some(c=>c.p===p))cmp.push({p,size:p.sz.some(z=>z[0]===x.size)?x.size:p.sz[0][0]})})}catch(e){}
 
 
   /* 由選單連結帶入篩選條件（例：tvs.html?tech=QLED、?size=98+、?feat=gtv） */
