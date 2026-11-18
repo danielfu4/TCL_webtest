@@ -574,7 +574,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .pl.collapsed .pf{margin-left:calc(-1 * (var(--pl-side) + var(--pl-gap)));opacity:0;pointer-events:none}
 .pf-g{border-bottom:1px solid var(--gray-100)}
 .pf-g:last-child{border-bottom:0}
-.pf-h{display:flex;justify-content:space-between;align-items:center;width:100%;padding:16px 0;font-size:15px;font-weight:600}
+.pf-h{display:flex;justify-content:space-between;align-items:center;width:100%;padding:16px 0;font-size:var(--pf-h);font-weight:var(--pf-h-w)}
 .pf-h i{position:relative;width:12px;height:12px}
 .pf-h i::before,.pf-h i::after{content:"";position:absolute;left:0;top:5.5px;width:12px;height:1.3px;background:#111;transition:transform .3s var(--ease)}
 .pf-h i::after{transform:rotate(90deg)}
@@ -583,7 +583,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .pf-g.open .pf-list{grid-template-rows:1fr}
 .pf-list > div{overflow:hidden}
 .pf-list ul{padding-bottom:14px}
-.pf label{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:14px;cursor:pointer;color:var(--gray-700)}
+.pf label{display:flex;align-items:center;gap:10px;padding:var(--pf-opt-py) 0;font-size:var(--pf-opt);cursor:pointer;color:var(--gray-700)}
 .pf label:hover{color:var(--black)}
 .pf input{appearance:none;width:16px;height:16px;border:1px solid #999;border-radius:2px;flex:none;display:grid;place-items:center;transition:.2s}
 .pf input:checked{background:#111;border-color:#111}
@@ -591,39 +591,51 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .pf label em{font-style:normal;margin-left:auto;font-size:12px;color:var(--gray-500)}
 .pf-foot{display:none}
 
-/* 產品格線 */
+/* 產品格線（數值皆可在 tvs-demo.html 調整） */
+:root{
+  --pc-pad:20px; --pc-img-w:82%; --pc-img-ar:1.33; --pc-tag:11px;
+  --pc-sz-fs:14px; --pc-sz-h:28px; --pc-sz-mt:12px; --pc-sz-mb:14px;
+  --pc-h3:16px; --pc-h3-w:600; --pc-h3-lh:1.45;
+  --pc-md:13px; --pc-md-w:400; --pc-md-mt:4px;
+  --pc-ul-mt:14px; --pc-ul-pt:12px;
+  --pc-li:13.5px; --pc-li-w:400; --pc-li-lh:1.5; --pc-li-py:3px;
+  --pc-btn-mt:16px; --pc-btn-h:40px; --pc-btn-fs:14px; --pc-btn-w:500;
+  --pc-cmp-mt:14px; --pc-cmp-fs:13px;
+  --pf-h:15px; --pf-h-w:600; --pf-opt:14px; --pf-opt-py:7px;
+  /* 手機 */
+  --m-pl-gap:12px; --m-pc-pad:20px; --m-pc-img-w:72%; --m-pc-img-ar:1.6;
+  --m-pc-sz-fs:14px; --m-pc-sz-h:28px; --m-pc-h3:17px; --m-pc-h3-w:600; --m-pc-h3-lh:1.45;
+  --m-pc-md:13px; --m-pc-li:14px; --m-pc-li-lh:1.5; --m-pc-li-py:3px; --m-pc-btn-h:42px; --m-pc-btn-fs:15px;
+}
 .pg{flex:1;min-width:0;display:grid;grid-template-columns:repeat(var(--pl-cols),minmax(0,1fr));gap:var(--pl-gap)}
 .pl.collapsed .pg{--pl-cols:4}
 .pc{background:#fff;border-radius:var(--pc-radius);padding:var(--pc-pad);display:flex;flex-direction:column;position:relative;
   opacity:0;transform:translateY(var(--pc-in-y));transition:opacity var(--pc-in-dur) var(--ease),transform var(--pc-in-dur) var(--ease);transition-delay:calc(var(--k,0) * var(--pc-stagger))}
 .pc.in{opacity:1;transform:none}
-.pc .tag{position:absolute;left:var(--pc-pad);top:var(--pc-pad);z-index:1;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:11px;font-weight:600;letter-spacing:.04em;color:#e64c3d}
+.pc .tag{position:absolute;left:var(--pc-pad);top:var(--pc-pad);z-index:1;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-tag);font-weight:600;letter-spacing:.04em;color:#e64c3d}
 .pc-img{aspect-ratio:var(--pc-img-ar);display:grid;place-items:center;overflow:hidden}
-.pc-img img{width:82%;height:100%;object-fit:contain;transition:transform .5s var(--ease)}
+.pc-img img{width:var(--pc-img-w);height:100%;object-fit:contain;transition:transform .5s var(--ease)}
 .pc:hover .pc-img img{transform:scale(var(--pc-zoom))}
-.pc-sz{display:flex;align-items:center;gap:4px;margin:12px 0 14px}
-.pc-sz .arr{width:22px;height:28px;display:grid;place-items:center;color:#111;flex:none}
+.pc-sz{display:flex;align-items:center;gap:4px;margin:var(--pc-sz-mt) 0 var(--pc-sz-mb)}
+.pc-sz .arr{width:22px;height:var(--pc-sz-h);display:grid;place-items:center;color:#111;flex:none}
 .pc-sz .arr:disabled{color:#ccc}
 .pc-sz .arr svg{width:7px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5}
 .pc-sz .rail{flex:1;overflow:hidden;-webkit-mask:linear-gradient(90deg,#000 85%,transparent);mask:linear-gradient(90deg,#000 85%,transparent)}
 .pc-sz .rail.end{-webkit-mask:none;mask:none}
 .pc-sz .rail div{display:flex;gap:4px;transition:transform .35s var(--ease)}
-.pc-sz button.s{flex:none;min-width:34px;height:28px;padding:0 6px;border-radius:16px;border:1px solid transparent;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:14px;transition:.2s}
+.pc-sz button.s{flex:none;min-width:calc(var(--pc-sz-h) + 6px);height:var(--pc-sz-h);padding:0 6px;border-radius:999px;border:1px solid transparent;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-sz-fs);transition:.2s}
 .pc-sz button.s:hover{border-color:var(--gray-300)}
 .pc-sz button.s.on{color:#e64c3d;border-color:#e64c3d}
-.pc h3{font-size:16px;font-weight:600;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
-.pc h3 .en{white-space:nowrap;font-family:"Gotham","Noto Sans TC",sans-serif;font-weight:600}
-.pc .md{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:13px;color:var(--gray-500);margin-top:4px}
-.pc ul{list-style:none;border-top:1px solid var(--gray-100);margin-top:14px;padding-top:12px;flex:1}
-.pc li{font-size:13.5px;line-height:1.5;color:var(--gray-700);padding:3px 0 3px 12px;position:relative}
-.pc li::before{content:"";position:absolute;left:0;top:11px;width:4px;height:1px;background:#999}
-.pc .pr{margin-top:14px;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:18px;font-weight:600}
-.pc .pr small{font-size:12px;font-weight:400;color:var(--gray-500);margin-left:4px}
-.pc .act{display:flex;gap:8px;margin-top:14px}
-.pc .act a{flex:1;height:40px;border-radius:20px;display:grid;place-items:center;font-size:14px;font-weight:500;transition:.25s}
-.pc .act .buy{background:#111;color:#fff}.pc .act .buy:hover{background:#333}
-.pc .act .more{border:1px solid #111}.pc .act .more:hover{background:#111;color:#fff}
-.pc .cmp{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px;color:var(--gray-700);cursor:pointer}
+.pc h3{font-size:var(--pc-h3);font-weight:var(--pc-h3-w);line-height:var(--pc-h3-lh);word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
+.pc h3 .en{white-space:nowrap;font-family:"Gotham","Noto Sans TC",sans-serif}
+.pc .md{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-md);font-weight:var(--pc-md-w);color:var(--gray-500);margin-top:var(--pc-md-mt)}
+.pc ul{list-style:none;border-top:1px solid var(--gray-100);margin-top:var(--pc-ul-mt);padding-top:var(--pc-ul-pt);flex:1}
+.pc li{font-size:var(--pc-li);font-weight:var(--pc-li-w);line-height:var(--pc-li-lh);color:var(--gray-700);padding:var(--pc-li-py) 0 var(--pc-li-py) 12px;position:relative}
+.pc li::before{content:"";position:absolute;left:0;top:calc(var(--pc-li-py) + var(--pc-li) * var(--pc-li-lh) / 2);width:4px;height:1px;background:#999}
+.pc .act{margin-top:var(--pc-btn-mt)}
+.pc .act a{height:var(--pc-btn-h);border-radius:calc(var(--pc-btn-h) / 2);display:grid;place-items:center;font-size:var(--pc-btn-fs);font-weight:var(--pc-btn-w);background:#111;color:#fff;transition:background .25s}
+.pc .act a:hover{background:#333}
+.pc .cmp{display:flex;align-items:center;gap:8px;margin-top:var(--pc-cmp-mt);font-size:var(--pc-cmp-fs);color:var(--gray-700);cursor:pointer}
 .pc .cmp input{appearance:none;width:15px;height:15px;border:1px solid #999;border-radius:2px;display:grid;place-items:center}
 .pc .cmp input:checked{background:#111;border-color:#111}
 .pc .cmp input:checked::after{content:"";width:7px;height:3.5px;border:solid #fff;border-width:0 0 1.5px 1.5px;transform:translate(0,-1px) rotate(-45deg)}
@@ -668,10 +680,10 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   .pl-sort > span{display:none}
   .pl-sort select{padding:6px 30px 6px 12px;font-size:13px}
   .pl-body{display:block;padding-top:12px}
-  .pg{--pl-cols:1!important;gap:12px}
-  .pc{--pc-pad:20px}
-  .pc-img{aspect-ratio:16/10}
-  .pc-img img{width:72%}
+  .pg{--pl-cols:1!important;gap:var(--m-pl-gap)}
+  :root{--pc-pad:var(--m-pc-pad);--pc-img-w:var(--m-pc-img-w);--pc-img-ar:var(--m-pc-img-ar);--pc-sz-fs:var(--m-pc-sz-fs);--pc-sz-h:var(--m-pc-sz-h);
+    --pc-h3:var(--m-pc-h3);--pc-h3-w:var(--m-pc-h3-w);--pc-h3-lh:var(--m-pc-h3-lh);--pc-md:var(--m-pc-md);--pc-li:var(--m-pc-li);--pc-li-lh:var(--m-pc-li-lh);--pc-li-py:var(--m-pc-li-py);
+    --pc-btn-h:var(--m-pc-btn-h);--pc-btn-fs:var(--m-pc-btn-fs)}
   /* 篩選改為由下往上的面板 */
   .pf{position:fixed;inset:auto 0 0 0;top:auto;max-height:82vh;height:82vh;z-index:120;margin:0!important;opacity:1!important;padding:8px 24px 96px;border-radius:16px 16px 0 0;
       transform:translateY(105%);visibility:hidden;transition:transform .42s var(--ease),visibility 0s .42s;pointer-events:auto!important}
@@ -777,7 +789,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   <div class="pl-bar"><div class="wrap">
     <button class="pl-toggle" aria-expanded="true"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8.5V20l-4-2v-4.5z"/></svg>篩選</button>
     <span class="pl-count">共 <b id="plN">0</b> 項產品</span>
-    <label class="pl-sort"><span>排序</span><select id="plSort"><option value="rec">推薦排序</option><option value="new">最新上市</option><option value="lo">價格：低到高</option><option value="hi">價格：高到低</option><option value="big">尺寸：大到小</option></select></label>
+    <label class="pl-sort"><span>排序</span><select id="plSort"><option value="rec">推薦排序</option><option value="new">最新上市</option><option value="big">尺寸：大到小</option></select></label>
   </div></div>
   <div class="wrap">
     <div class="pl-chips" id="plChips"></div>
@@ -929,7 +941,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 })();
 /* ---------- 全部顯示器：篩選／排序／尺寸切換／比較 ---------- */
 (function(){
-  const DATA=[{"s": "X11L", "t": "Mini LED 巔峰之作", "tech": "SQD-Mini LED", "f": ["最高 20,736 區精準控光", "HDR 峰值亮度最高 10,000 nits", "100% BT.2020 全場景廣色域"], "img": "b_2604101118130000001.webp", "new": true, "art": false, "sz": [[98, 369990, "207"], [85, 299990, "208"], [75, 169990, "209"]]}, {"s": "RM9L", "t": "RGB 色彩新典範", "tech": "RGB-Mini LED", "f": ["16,848 區精準色彩分區", "HVA Pro 面板", "100% BT.2020 廣色域"], "img": "b_2604271607480000001.webp", "new": true, "art": false, "sz": [[85, 239990, "210"]]}, {"s": "C8L", "t": "全新旗艦之選", "tech": "SQD-Mini LED", "f": ["最高 4,032 區精準控光", "HDR 峰值亮度最高 6,000 nits", "100% BT.2020 全場景廣色域"], "img": "b_26051217273500000001.webp", "new": true, "art": false, "sz": [[98, 179990, "211"], [85, 129990, "212"], [75, 89990, "213"], [65, 59990, "214"], [55, 43990, "220"]]}, {"s": "C7L", "t": "高階 SQD 入門首選", "tech": "SQD-Mini LED", "f": ["SQD-Mini LED 量子控光", "Google TV 智慧系統", "55–98 吋多尺寸"], "img": "b_26050615294700000001.webp", "new": true, "art": false, "sz": [[98, 139990, "215"], [85, 99990, "216"], [75, 79990, "217"], [65, 53990, "218"], [55, 39990, "219"]]}, {"s": "Q7D Pro", "t": "SQD-Mini LED 智慧之選", "tech": "SQD-Mini LED", "f": ["最高 1,152 區精準控光", "HDR 峰值亮度最高 2,000 nits", "100% BT.2020 全場景廣色域"], "img": "b_2605251104410000001.webp", "new": true, "art": false, "sz": [[85, 99990, "221"], [75, 79990, "222"], [65, 53990, "223"], [55, 39990, "224"]]}, {"s": "Q7D", "t": "RGB-Mini LED 色彩新境", "tech": "RGB-Mini LED", "f": ["RGB-Mini LED 背光", "量子智能畫質", "Google TV 智慧系統"], "img": "b_26071611205400000001.webp", "new": true, "art": false, "sz": [[75, 69990, "257"], [65, 49990, "258"]]}, {"s": "A400 Pro", "t": "藝術級升級 美學與性能極致演繹", "tech": "QD-Mini LED", "f": ["畫框式設計", "藝術收藏模式", "QD-Mini LED"], "img": "b_26052011010100000001.webp", "new": true, "art": true, "sz": [[85, 79900, "262"], [75, 59990, "225"], [65, 39990, "226"], [55, 29990, "227"]]}, {"s": "A400M", "t": "超薄貼牆 藝術美學", "tech": "QD-Mini LED", "f": ["平整超薄設計", "最高 448 區精準控光", "QD-Mini LED"], "img": "b_26060417214900000001.webp", "new": true, "art": true, "sz": [[98, 99990, "233"], [85, 69990, "234"], [75, 49990, "235"], [65, 36990, "236"], [55, 26990, "237"]]}, {"s": "A400", "t": "藝術融入生活", "tech": "QLED", "f": ["平整纖薄設計", "藝術生活模式", "QLED 量子點"], "img": "b_26060316373200000001.webp", "new": true, "art": true, "sz": [[98, 79990, "228"], [85, 59990, "229"], [75, 39990, "230"], [65, 29990, "231"], [55, 26990, "232"]]}, {"s": "T8D", "t": "高階 QLED 量子畫質", "tech": "QLED", "f": ["QLED 量子點廣色域", "Google TV 智慧系統", "55–85 吋多尺寸"], "img": "b_26070217544200000001.jpg", "new": true, "art": false, "sz": [[85, 59990, "252"], [75, 39990, "253"], [65, 29990, "254"], [55, 22990, "255"]]}, {"s": "T6D", "t": "高階 QLED 全尺寸選擇", "tech": "QLED", "f": ["QLED 量子點廣色域", "Google TV 智慧系統", "43–75 吋多尺寸"], "img": "b_26070217340200000001.jpg", "new": true, "art": false, "sz": [[75, 36990, "247"], [65, 26990, "248"], [55, 19990, "249"], [50, 15990, "250"], [43, 12990, "251"]]}, {"s": "P7L", "t": "高階 QLED 量子智能", "tech": "QLED", "f": ["QLED 量子點廣色域", "Google TV 智慧系統", "43–85 吋多尺寸"], "img": "b_26061512144700000001.webp", "new": true, "art": false, "sz": [[85, 52990, "238"], [75, 36990, "239"], [65, 26990, "240"], [55, 19990, "241"], [50, 15990, "242"], [43, 12990, "243"]]}, {"s": "P6L", "t": "4K 智慧連網", "tech": "4K HDR", "f": ["HVA 面板", "4K HDR", "AiPQ 畫質處理器"], "img": "b_26061710442700000001.jpg", "new": true, "art": false, "sz": [[75, 31990, "244"], [65, 22990, "245"], [55, 16990, "246"]]}, {"s": "V6D", "t": "4K Google TV 輕鬆入門", "tech": "4K HDR", "f": ["4K HDR", "Google TV 智慧系統", "55–75 吋多尺寸"], "img": "b_26071616031700000001.jpg", "new": true, "art": false, "sz": [[75, 31990, "259"], [65, 22990, "260"], [55, 16990, "261"]]}, {"s": "C7K", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["QD-Mini LED", "最大 115 吋", "Google TV 智慧系統"], "img": "b_25080516165000000001.webp", "new": false, "art": false, "sz": [[115, 499990, "201"], [98, 169990, "152"], [85, 79990, "153"], [75, 59990, "154"], [65, 44990, "155"], [55, 35990, "156"]]}, {"s": "X11K", "t": "頂級 QD-Mini LED 旗艦", "tech": "QD-Mini LED", "f": ["QD-Mini LED", "Google TV 智慧系統", "85 吋"], "img": "b_2506020947430000001.webp", "new": false, "art": false, "sz": [[85, 169990, "163"]]}, {"s": "C8K", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["QD-Mini LED", "Google TV 智慧系統", "65–98 吋"], "img": "b_25051918254500000001.webp", "new": false, "art": false, "sz": [[98, 199990, "157"], [85, 99990, "158"], [75, 79990, "159"], [65, 54990, "160"]]}, {"s": "C6K", "t": "QD-Mini LED 高 CP 值", "tech": "QD-Mini LED", "f": ["QD-Mini LED", "Google TV 智慧系統", "55–98 吋"], "img": "b_2505151719100000001.webp", "new": false, "art": false, "sz": [[98, 119990, "143"], [85, 69990, "148"], [75, 49990, "149"], [65, 34990, "150"], [55, 26990, "151"]]}, {"s": "Q7C", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["QD-Mini LED", "Google TV 智慧系統", "55–85 吋"], "img": "b_25061717011800000001.jpg", "new": false, "art": false, "sz": [[85, 79990, "174"], [75, 59990, "178"], [65, 42990, "179"], [55, 33990, "180"]]}, {"s": "Q6C", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["QD-Mini LED", "Google TV 智慧系統", "55–85 吋"], "img": "b_25061719471700000001.jpg", "new": false, "art": false, "sz": [[85, 69990, "181"], [75, 49990, "182"], [65, 34990, "183"], [55, 26990, "184"]]}, {"s": "P8K", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED 量子點", "Google TV 智慧系統", "55–98 吋"], "img": "b_2505121717500000001.jpg", "new": false, "art": false, "sz": [[98, 99990, "142"], [85, 59990, "144"], [75, 43990, "145"], [65, 29990, "146"], [55, 21990, "147"]]}, {"s": "T8C", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED 量子點", "Google TV 智慧系統", "55–85 吋"], "img": "b_25061909235500000001.jpg", "new": false, "art": false, "sz": [[85, 59990, "185"], [75, 43990, "188"], [65, 29990, "189"], [55, 21990, "190"]]}, {"s": "T6C", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED 量子點", "Google TV 智慧系統", "43–85 吋"], "img": "b_25061909303200000001.jpg", "new": false, "art": false, "sz": [[85, 55990, "186"], [75, 38990, "191"], [65, 27990, "192"], [55, 19990, "193"], [50, 16990, "194"], [43, 12990, "195"]]}, {"s": "P7K", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED 量子點", "Google TV 智慧系統", "43–85 吋"], "img": "b_25060617513400000001.webp", "new": false, "art": false, "sz": [[85, 55990, "165"], [75, 38990, "166"], [65, 27990, "167"], [55, 19990, "168"], [50, 16990, "169"], [43, 12990, "170"]]}, {"s": "P6K", "t": "4K 智慧連網", "tech": "4K HDR", "f": ["4K HDR", "Google TV 智慧系統", "55–75 吋"], "img": "b_25060618040500000001.webp", "new": false, "art": false, "sz": [[75, 29990, "171"], [65, 21990, "172"], [55, 16990, "173"]]}, {"s": "V6C", "t": "4K 智慧連網", "tech": "4K HDR", "f": ["4K HDR", "Google TV 智慧系統", "43–75 吋"], "img": "b_25061909401400000001.jpg", "new": false, "art": false, "sz": [[75, 29990, "187"], [65, 21990, "196"], [55, 16990, "197"], [50, 13990, "198"], [43, 10990, "199"]]}, {"s": "S5K", "t": "QLED 小尺寸首選", "tech": "QLED", "f": ["QLED 量子點", "Google TV 智慧系統", "40 / 50 吋"], "img": "b_25121609494000000001.webp", "new": false, "art": false, "sz": [[50, 12990, "204"], [40, 8990, "164"]]}], IMG='https://www.tcl-shop.com.tw/upload/products/';
+  const DATA=[{"s": "X11L", "t": "Mini LED 巔峰之作", "tech": "SQD-Mini LED", "f": ["高達100% BT.2020 全景廣色域", "20,736 精準區域控光", "高達HDR 10,000尼特峰值亮度"], "img": "b_2604101118130000001.webp", "new": true, "art": false, "sz": [[98, "207"], [85, "208"], [75, "209"]], "draft": true}, {"s": "RM9L", "t": "RGB-Mini LED 新標竿", "tech": "RGB-Mini LED", "f": ["高達100% BT.2020全景廣色域", "WHVA 2.0 Ultra 面板，色彩精準", "8736 區精準區域控光"], "img": "b_2604271607480000001.webp", "new": true, "art": false, "sz": [[85, "210"]], "draft": true}, {"s": "C8L", "t": "全新之選 SQD-Mini LED 顯示器", "tech": "SQD-Mini LED", "f": ["高達100% BT.2020全景廣色域", "4,032區精準區域控光", "高達HDR 6,000尼特峰值亮度"], "img": "b_26051217273500000001.webp", "new": true, "art": false, "sz": [[98, "211"], [85, "212"], [75, "213"], [65, "214"], [55, "220"]], "draft": false}, {"s": "C7L", "t": "輕奢之選 SQD-Mini LED 顯示器", "tech": "SQD-Mini LED", "f": ["高達100% BT.2020全景廣色域", "2,176 區精準區域控光", "高達HDR 3,000尼特峰值亮度"], "img": "b_26050615294700000001.webp", "new": true, "art": false, "sz": [[98, "215"], [85, "216"], [75, "217"], [65, "218"], [55, "219"]], "draft": false}, {"s": "Q7D Pro", "t": "匠心之選", "tech": "SQD-Mini LED", "f": ["高達100% BT.2020全景廣色域", "1,056區精準區域控光", "高達HDR 2,000尼特峰值亮度"], "img": "b_2605251104410000001.webp", "new": true, "art": false, "sz": [[85, "221"], [75, "222"], [65, "223"], [55, "224"]], "draft": false}, {"s": "Q7D", "t": "RGB-Mini LED 色彩新境", "tech": "RGB-Mini LED", "f": ["高達100% BT.2020全景廣色域", "HVA Pro 面板，光色精準", "1800 區精準區域控光"], "img": "b_26071611205400000001.webp", "new": true, "art": false, "sz": [[75, "257"], [65, "258"]], "draft": true}, {"s": "A400 Pro", "t": "美學與性能極致演繹", "tech": "QD-Mini LED", "f": ["畫框式靈感設計", "藝術館收藏", "QD-Mini LED旗艦畫質"], "img": "b_26052011010100000001.webp", "new": true, "art": true, "sz": [[85, "262"], [75, "225"], [65, "226"], [55, "227"]], "draft": false}, {"s": "A400M", "t": "智慧升級 締造極致畫質", "tech": "QD-Mini LED", "f": ["超薄一體化機身", "448區精準區域控光", "QLED超過10億種生動色彩"], "img": "b_26060417214900000001.webp", "new": true, "art": true, "sz": [[98, "233"], [85, "234"], [75, "235"], [65, "236"], [55, "237"]], "draft": false}, {"s": "A400", "t": "藝術融入生活", "tech": "QLED", "f": ["纖薄設計，優雅純粹", "藝術生活，超越想像的美學呈現", "QLED色彩升級大進化"], "img": "b_26060316373200000001.webp", "new": true, "art": true, "sz": [[98, "228"], [85, "229"], [75, "230"], [65, "231"], [55, "232"]], "draft": true}, {"s": "T8D", "t": "高階 QLED 量子畫質", "tech": "QLED", "f": ["QD-Mini LED調光技術，還原每一處精彩", "ONKYO 2.1 Hi-Fi 系統，震撼音效", "144Hz 原生刷新率，為速度而生"], "img": "b_26070217544200000001.jpg", "new": true, "art": false, "sz": [[85, "252"], [75, "253"], [65, "254"], [55, "255"]], "draft": true}, {"s": "T6D", "t": "高階 QLED 全尺寸選擇", "tech": "QLED", "f": ["QLED重塑色彩的定義，綻放無限光彩", "纖薄一體式設計", "AiPQ處理器 強大處理效能"], "img": "b_26070217340200000001.jpg", "new": true, "art": false, "sz": [[75, "247"], [65, "248"], [55, "249"], [50, "250"], [43, "251"]], "draft": true}, {"s": "P7L", "t": "高階 QLED 量子智能", "tech": "QLED", "f": ["QLED重塑色彩的定義，綻放無限光彩", "ONKYO 2.1 Hi-Fi 系統震撼音效 卓越家庭劇院體驗", "纖薄一體式設計"], "img": "b_26061512144700000001.webp", "new": true, "art": false, "sz": [[85, "238"], [75, "239"], [65, "240"], [55, "241"], [50, "242"], [43, "243"]], "draft": true}, {"s": "P6L", "t": "4K 智慧連網", "tech": "4K HDR", "f": ["4K HDR微小細節 清晰可見", "AiPQ 處理器 強大處理效能", "MEMC流暢不受限"], "img": "b_26061710442700000001.jpg", "new": true, "art": false, "sz": [[75, "244"], [65, "245"], [55, "246"]], "draft": true}, {"s": "V6D", "t": "4K Google TV 輕鬆入門", "tech": "4K HDR", "f": ["4K HDR微小細節 清晰可見", "AiPQ 處理器 強大處理效能", "MEMC流暢不受限"], "img": "b_26071616031700000001.jpg", "new": true, "art": false, "sz": [[75, "259"], [65, "260"], [55, "261"]], "draft": true}, {"s": "C7K", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["QD-Mini LED高達 2880 區精準區域控光", "HDR 3000 nits 明亮鮮豔的細節", "QLED 精采絕倫 超過10億種生動色彩"], "img": "b_25080516165000000001.webp", "new": false, "art": false, "sz": [[115, "201"], [98, "152"], [85, "153"], [75, "154"], [65, "155"], [55, "156"]], "draft": true}, {"s": "X11K", "t": "頂級 QD-Mini LED 旗艦", "tech": "QD-Mini LED", "f": ["QD-Mini LED高達10368區精準區域控光", "HDR 6500nits 明亮鮮豔的細節", "B&O 揚聲器 卓越音效 完美體驗"], "img": "b_2506020947430000001.webp", "new": false, "art": false, "sz": [[85, "163"]], "draft": true}, {"s": "C8K", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["QD-Mini LED高達 3840 區精準區域控光", "HDR 5000 nits 明亮鮮豔的細節", "QLED 精采絕倫 超過10億種生動色彩"], "img": "b_25051918254500000001.webp", "new": false, "art": false, "sz": [[98, "157"], [85, "158"], [75, "159"], [65, "160"]], "draft": true}, {"s": "C6K", "t": "QD-Mini LED 高 CP 值", "tech": "QD-Mini LED", "f": ["QD-Mini LED高達512區 精準區域控光", "高HDR亮度 畫面璀璨明亮", "QLED 精采絕倫 超過10億種生動色彩"], "img": "b_2505151719100000001.webp", "new": false, "art": false, "sz": [[98, "143"], [85, "148"], [75, "149"], [65, "150"], [55, "151"]], "draft": true}, {"s": "Q7C", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["QD-Mini LED高達 1568 區精準區域控光", "HDR 3000 nits 明亮鮮豔的細節", "QLED 精采絕倫 超過10億種生動色彩"], "img": "b_25061717011800000001.jpg", "new": false, "art": false, "sz": [[85, "174"], [75, "178"], [65, "179"], [55, "180"]], "draft": true}, {"s": "Q6C", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["高達420區 精準區域控光", "高HDR亮度 畫面璀璨明亮", "QLED 精采絕倫 超過10億種生動色彩"], "img": "b_25061719471700000001.jpg", "new": false, "art": false, "sz": [[85, "181"], [75, "182"], [65, "183"], [55, "184"]], "draft": true}, {"s": "P8K", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED重塑色彩的定義，綻放無限光彩", "144Hz NRR 讓您快速獲得勝利", "ONKYO 2.1 Hi-Fi 系統震撼音效 卓越家庭劇院體驗"], "img": "b_2505121717500000001.jpg", "new": false, "art": false, "sz": [[98, "142"], [85, "144"], [75, "145"], [65, "146"], [55, "147"]], "draft": true}, {"s": "T8C", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED重塑色彩的定義，綻放無限光彩", "144Hz NRR 讓您快速獲得勝利", "ONKYO 2.1 Hi-Fi 系統震撼音效 卓越家庭劇院體驗"], "img": "b_25061909235500000001.jpg", "new": false, "art": false, "sz": [[85, "185"], [75, "188"], [65, "189"], [55, "190"]], "draft": true}, {"s": "T6C", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED 重塑色彩的定義，綻放無限光彩", "AiPQ 處理器 強大處理效能", "Dolby Vision · Atmos 有如身歷其境的體驗"], "img": "b_25061909303200000001.jpg", "new": false, "art": false, "sz": [[85, "186"], [75, "191"], [65, "192"], [55, "193"], [50, "194"], [43, "195"]], "draft": true}, {"s": "P7K", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED 重塑色彩的定義，綻放無限光彩", "AiPQ 處理器 強大處理效能", "Dolby Vision · Atmos 有如身歷其境的體驗"], "img": "b_25060617513400000001.webp", "new": false, "art": false, "sz": [[85, "165"], [75, "166"], [65, "167"], [55, "168"], [50, "169"], [43, "170"]], "draft": true}, {"s": "P6K", "t": "4K 智慧連網", "tech": "4K HDR", "f": ["AiPQ 處理器 強大處理效能", "MEMC流暢不受限", "HVA 面板呈現震撼細節"], "img": "b_25060618040500000001.webp", "new": false, "art": false, "sz": [[75, "171"], [65, "172"], [55, "173"]], "draft": true}, {"s": "V6C", "t": "4K 智慧連網", "tech": "4K HDR", "f": ["AiPQ 處理器 強大處理效能", "MEMC流暢不受限", "HVA 面板呈現震撼細節"], "img": "b_25061909401400000001.jpg", "new": false, "art": false, "sz": [[75, "187"], [65, "196"], [55, "197"], [50, "198"], [43, "199"]], "draft": true}, {"s": "S5K", "t": "QLED 小尺寸首選", "tech": "QLED", "f": ["QLED 超廣色域 栩栩如生的畫面體驗", "2K FHD 展現更多細節", "HDR 10微小細節 清晰可見"], "img": "b_25121609494000000001.webp", "new": false, "art": false, "sz": [[50, "204"], [40, "164"]], "draft": true}], IMG='https://www.tcl-shop.com.tw/upload/products/';
   const SZ=[['98+','98 吋以上',s=>s>=98],['85-97','85–97 吋',s=>s>=85&&s<98],['75-84','75–84 吋',s=>s>=75&&s<85],['65-74','65–74 吋',s=>s>=65&&s<75],['55-64','55–64 吋',s=>s>=55&&s<65],['44-50','44–50 吋',s=>s>=44&&s<=50],['43','43 吋以下',s=>s<=43]];
   const GROUPS=[
     {k:'tech',h:'顯示技術',o:['SQD-Mini LED','RGB-Mini LED','QD-Mini LED','QLED','4K HDR'].map(t=>[t,t,p=>p.tech===t])},
@@ -956,10 +968,9 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
       <div class="pc-sz"><button class="arr l" aria-label="較大尺寸" disabled><svg viewBox="0 0 7 12"><path d="M6 1 1 6l5 5"/></svg></button><div class="rail${sz.length<=4?' end':''}"><div>`+
       sz.map((x,i)=>`<button class="s${i?'':' on'}" data-i="${i}">${x[0]}</button>`).join('')+
       `</div></div><button class="arr r" aria-label="較小尺寸"${sz.length<=4?' disabled':''}><svg viewBox="0 0 7 12"><path d="m1 1 5 5-5 5"/></svg></button></div>
-      <h3>${en(p.s)}｜${en(p.t)}</h3><div class="md">${sz[0][0]}${p.s.replace(' ','')}</div>
+      <h3>${en(p.t)}</h3><div class="md">${sz[0][0]}${p.s.replace(' ','')}</div>
       <ul>${p.f.map(f=>`<li>${f}</li>`).join('')}</ul>
-      <div class="pr">${fmt(sz[0][1])}<small>建議售價</small></div>
-      <div class="act"><a class="more" href="#">了解更多</a><a class="buy" href="https://www.tcl-shop.com.tw/item/${sz[0][2]}/" target="_blank" rel="noopener">立即購買</a></div>
+      <div class="act"><a class="more" href="#">了解更多</a></div>
       <label class="cmp"><input type="checkbox">加入比較</label></article>`;
   }
   function bindCard(el,p){
@@ -967,7 +978,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
     const shift=()=>{const max=Math.max(0,row.scrollWidth-rail.clientWidth);off=Math.max(0,Math.min(off,max));row.style.transform=`translateX(${-off}px)`;L.disabled=off<=0;R.disabled=off>=max-1;rail.classList.toggle('end',off>=max-1)};
     L.onclick=()=>{off-=rail.clientWidth*.6;shift()};R.onclick=()=>{off+=rail.clientWidth*.6;shift()};
     bs.forEach(b=>b.onclick=()=>{const x=sz[+b.dataset.i];bs.forEach(o=>o.classList.toggle('on',o===b));
-      el.querySelector('.md').textContent=x[0]+p.s.replace(' ','');el.querySelector('.pr').firstChild.textContent=fmt(x[1]);el.querySelector('.buy').href='https://www.tcl-shop.com.tw/item/'+x[2]+'/'});
+      el.querySelector('.md').textContent=x[0]+p.s.replace(' ','')});
     el.querySelector('.cmp input').onchange=e=>toggleCmp(p,e.target);
     requestAnimationFrame(shift);
   }
@@ -975,10 +986,8 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 
   function render(){
     let list=DATA.filter(p=>match(p));
-    const v=sortSel.value,min=p=>Math.min(...sizesFor(p).map(x=>x[1])),big=p=>Math.max(...p.sz.map(x=>x[0]));
+    const v=sortSel.value,big=p=>Math.max(...p.sz.map(x=>x[0]));
     if(v==='new')list=[...list].sort((a,b)=>b.new-a.new);
-    if(v==='lo')list=[...list].sort((a,b)=>min(a)-min(b));
-    if(v==='hi')list=[...list].sort((a,b)=>min(b)-min(a));
     if(v==='big')list=[...list].sort((a,b)=>big(b)-big(a));
     pg.innerHTML=list.length?list.map(card).join(''):'<div class="pg-empty">沒有符合條件的產品<br><button>清除篩選條件</button></div>';
     [...pg.querySelectorAll('.pc')].forEach(el=>{bindCard(el,DATA.find(p=>p.s===el.dataset.s));const c=el.querySelector('.cmp input');c.checked=cmp.some(x=>x.s===el.dataset.s);io.observe(el)});
