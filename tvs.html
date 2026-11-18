@@ -550,8 +550,12 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   .hero.kb .hero-copy .btn-hero{display:none}
 }
 .hero.kb .hero-copy p .pt{font-weight:400}
+@media (min-width:721px){
+  .hero.kb .hero-label{display:none}   /* 參照國際版：只留指示點 */
+  .hero.kb .hero-ui{bottom:calc(32 / 1920 * 100vw)}
+}
 /* 全部顯示器 Banner 文案（數值可在 kb-demo.html 調整；桌機數值以 1920 寬為基準） */
-:root{--kb-h:580; --kb-title:44; --kb-sub:24; --kb-sub-w:400; --kb-gap:18; --kb-left:9%; --kb-left-l:6.5%; --kb-top:50%;
+:root{--kb-h:400; --kb-title:44; --kb-sub:24; --kb-sub-w:400; --kb-gap:18; --kb-left:9%; --kb-left-l:6.5%; --kb-top:50%;
   --kbm-title-w:100%; --kbm-sub:18px; --kbm-gap:12px; --kbm-btn-gap:14px; --kbm-top:16%;}
 @media (min-width:721px){
   .hero.kb .hero-slide img{aspect-ratio:1920 / var(--kb-h)}
@@ -780,7 +784,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 <section class="hero kb" id="hero">
   <div class="hero-track">
     <div class="hero-slide" data-label="X11L">
-      <picture><source media="(max-width:720px)" srcset="images/hero_x11l_mb.jpg"><img src="images/hero_x11l.jpg" alt="X11L"></picture>
+      <picture><source media="(max-width:720px)" srcset="images/hero_x11l_mb.jpg"><img src="images/kb_x11l_pc.jpg" alt="X11L"></picture>
       <div class="hero-copy"><h2><img class="title-svg" src="images/title_sqd-miniled_pc.svg" alt="TCL SQD-Mini LED TV"></h2>
         <p><span class="pm">X11L</span><span class="ps">｜</span><span class="pt">Mini LED 巔峰之作</span></p><a class="btn btn-hero" href="#">了解更多</a></div>
     </div>
