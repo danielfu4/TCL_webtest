@@ -594,7 +594,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 /* 產品格線（數值皆可在 tvs-demo.html 調整） */
 :root{
   --pc-pad:20px; --pc-img-w:90%; --pc-img-ar:1.33; --pc-tag:11px;
-  --pc-sz-fs:12.5px; --pc-sz-h:25px; --pc-sz-mt:5px; --pc-sz-mb:15px;
+  --pc-sz-fs:13.5px; --pc-sz-h:25px; --pc-sz-mt:3px; --pc-sz-mb:15px;
   --pc-h3:14.5px; --pc-h3-w:500; --pc-h3-lh:1.45;
   --pc-md:13px; --pc-md-w:400; --pc-md-mt:5px;
   --pc-ul-mt:14px; --pc-ul-pt:12px;
@@ -604,7 +604,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   --pf-h:15.5px; --pf-h-w:500; --pf-opt:14px; --pf-opt-py:10px;
   /* 手機 */
   --m-pl-gap:12px; --m-pc-pad:20px; --m-pc-img-w:72%; --m-pc-img-ar:1.6;
-  --m-pc-sz-fs:14px; --m-pc-sz-h:28px; --m-pc-h3:17px; --m-pc-h3-w:600; --m-pc-h3-lh:1.45;
+  --m-pc-sz-fs:13.5px; --m-pc-sz-h:25px; --m-pc-h3:17px; --m-pc-h3-w:600; --m-pc-h3-lh:1.45;
   --m-pc-md:13px; --m-pc-li:14px; --m-pc-li-lh:1.5; --m-pc-li-py:3px; --m-pc-btn-h:42px; --m-pc-btn-fs:15px;
 }
 .pg{flex:1;min-width:0;display:grid;grid-template-columns:repeat(var(--pl-cols),minmax(0,1fr));gap:var(--pl-gap)}
@@ -616,16 +616,23 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .pc-img{aspect-ratio:var(--pc-img-ar);display:grid;place-items:center;overflow:hidden}
 .pc-img img{width:var(--pc-img-w);height:100%;object-fit:contain;transition:transform .5s var(--ease)}
 .pc:hover .pc-img img{transform:scale(var(--pc-zoom))}
-.pc-sz{display:flex;align-items:center;gap:4px;margin:var(--pc-sz-mt) 0 var(--pc-sz-mb)}
-.pc-sz .arr{width:22px;height:var(--pc-sz-h);display:grid;place-items:center;color:#111;flex:none}
-.pc-sz .arr:disabled{color:#ccc}
+.pc-sz{display:flex;align-items:center;gap:2px;margin:var(--pc-sz-mt) 0 var(--pc-sz-mb)}
+:root{--sz-w:43px; --sz-gap:4px; --sz-fade:12%; --sz-ring-r:21px; --sz-ring-bw:1px; --sz-glow:0px; --sz-glow-op:.35; --sz-off-op:.85; --sz-on-w:500; --sz-slide:.45s; --sz-in:.35s; --sz-in-delay:.15s; --sz-in-scale:.9;}
+.pc-sz .arr{width:24px;height:var(--pc-sz-h);display:grid;place-items:center;color:#111;flex:none;transition:color .2s}
+.pc-sz .arr:disabled{color:#ccc;cursor:default}
 .pc-sz .arr svg{width:7px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5}
-.pc-sz .rail{flex:1;overflow:hidden;-webkit-mask:linear-gradient(90deg,#000 85%,transparent);mask:linear-gradient(90deg,#000 85%,transparent)}
-.pc-sz .rail.end{-webkit-mask:none;mask:none}
-.pc-sz .rail div{display:flex;gap:4px;transition:transform .35s var(--ease)}
-.pc-sz button.s{flex:none;min-width:calc(var(--pc-sz-h) + 6px);height:var(--pc-sz-h);padding:0 6px;border-radius:999px;border:1px solid transparent;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-sz-fs);transition:.2s}
-.pc-sz button.s:hover{border-color:var(--gray-300)}
-.pc-sz button.s.on{color:#e64c3d;border-color:#e64c3d}
+.pc-sz .rail{flex:1;min-width:0;overflow:hidden;padding:calc(var(--sz-glow) + 2px) 0;margin:calc(-1 * (var(--sz-glow) + 2px)) 0;
+  -webkit-mask:linear-gradient(90deg,transparent,#000 var(--sz-fade),#000 calc(100% - var(--sz-fade)),transparent);
+  mask:linear-gradient(90deg,transparent,#000 var(--sz-fade),#000 calc(100% - var(--sz-fade)),transparent);touch-action:pan-y}
+.pc-sz .rail > div{display:flex;gap:var(--sz-gap);width:max-content;transition:transform var(--sz-slide) cubic-bezier(.3,.7,.2,1)}
+.pc-sz .rail.no-tr > div{transition:none}
+.pc-sz button.s{flex:none;position:relative;width:var(--sz-w);height:var(--pc-sz-h);border:0;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-sz-fs);color:#111;opacity:var(--sz-off-op);transition:color var(--sz-in) var(--ease),opacity var(--sz-in) var(--ease)}
+.pc-sz button.s::after{content:"";position:absolute;inset:0;border-radius:var(--sz-ring-r);border:var(--sz-ring-bw) solid #e64c3d;
+  box-shadow:0 0 var(--sz-glow) rgba(230,76,61,var(--sz-glow-op)),inset 0 0 calc(var(--sz-glow) * .5) rgba(230,76,61,calc(var(--sz-glow-op) * .6));
+  opacity:0;transform:scale(var(--sz-in-scale));transition:opacity .15s,transform .15s;pointer-events:none}
+.pc-sz button.s:hover{opacity:1}
+.pc-sz button.s.on{color:#e64c3d;opacity:1;font-weight:var(--sz-on-w);transition-delay:var(--sz-in-delay)}
+.pc-sz button.s.on::after{opacity:1;transform:none;transition:opacity var(--sz-in) var(--ease) var(--sz-in-delay),transform var(--sz-in) var(--ease) var(--sz-in-delay)}
 .pc h3{font-size:var(--pc-h3);font-weight:var(--pc-h3-w);line-height:var(--pc-h3-lh);word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
 .pc h3 .en{white-space:nowrap;font-family:"Gotham","Noto Sans TC",sans-serif}
 .pc .md{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-md);font-weight:var(--pc-md-w);color:var(--gray-500);margin-top:var(--pc-md-mt)}
@@ -965,22 +972,29 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
     const sz=sizesFor(p);
     return `<article class="pc" style="--k:${k%6}" data-s="${p.s}">${p.new?'<span class="tag">NEW</span>':''}
       <a class="pc-img" href="#"><img src="${IMG+p.img}" alt="TCL ${p.s}" loading="lazy"></a>
-      <div class="pc-sz"><button class="arr l" aria-label="較大尺寸" disabled><svg viewBox="0 0 7 12"><path d="M6 1 1 6l5 5"/></svg></button><div class="rail${sz.length<=4?' end':''}"><div>`+
+      <div class="pc-sz"><button class="arr l" aria-label="較大尺寸"><svg viewBox="0 0 7 12"><path d="M6 1 1 6l5 5"/></svg></button><div class="rail no-tr"><div>`+
       sz.map((x,i)=>`<button class="s${i?'':' on'}" data-i="${i}">${x[0]}</button>`).join('')+
-      `</div></div><button class="arr r" aria-label="較小尺寸"${sz.length<=4?' disabled':''}><svg viewBox="0 0 7 12"><path d="m1 1 5 5-5 5"/></svg></button></div>
+      `</div></div><button class="arr r" aria-label="較小尺寸"><svg viewBox="0 0 7 12"><path d="m1 1 5 5-5 5"/></svg></button></div>
       <h3>${en(p.t)}</h3><div class="md">${sz[0][0]}${p.s.replace(' ','')}</div>
       <ul>${p.f.map(f=>`<li>${f}</li>`).join('')}</ul>
       <div class="act"><a class="more" href="#">了解更多</a></div>
       <label class="cmp"><input type="checkbox">加入比較</label></article>`;
   }
   function bindCard(el,p){
-    const sz=sizesFor(p),rail=el.querySelector('.rail'),row=rail.firstElementChild,bs=[...row.children],L=el.querySelector('.arr.l'),R=el.querySelector('.arr.r');let off=0;
-    const shift=()=>{const max=Math.max(0,row.scrollWidth-rail.clientWidth);off=Math.max(0,Math.min(off,max));row.style.transform=`translateX(${-off}px)`;L.disabled=off<=0;R.disabled=off>=max-1;rail.classList.toggle('end',off>=max-1)};
-    L.onclick=()=>{off-=rail.clientWidth*.6;shift()};R.onclick=()=>{off+=rail.clientWidth*.6;shift()};
-    bs.forEach(b=>b.onclick=()=>{const x=sz[+b.dataset.i];bs.forEach(o=>o.classList.toggle('on',o===b));
-      el.querySelector('.md').textContent=x[0]+p.s.replace(' ','')});
+    const sz=sizesFor(p),rail=el.querySelector('.rail'),row=rail.firstElementChild,bs=[...row.children],L=el.querySelector('.arr.l'),R=el.querySelector('.arr.r');let cur=0;
+    /* 選取的尺寸永遠置中，左右淡出 */
+    const center=()=>{const b=bs[cur];row.style.transform=`translateX(${rail.clientWidth/2-(b.offsetLeft+b.offsetWidth/2)}px)`};
+    const pick=i=>{i=Math.max(0,Math.min(bs.length-1,i));if(i===cur&&bs[i].classList.contains('on'))return;cur=i;
+      bs.forEach((o,k)=>o.classList.toggle('on',k===i));L.disabled=i===0;R.disabled=i===bs.length-1;center();
+      el.querySelector('.md').textContent=sz[i][0]+p.s.replace(' ','')};
+    bs.forEach((b,i)=>b.onclick=()=>pick(i));
+    L.onclick=()=>pick(cur-1);R.onclick=()=>pick(cur+1);
+    let x0=null;rail.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+    rail.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>24)pick(cur+(dx<0?1:-1))},{passive:true});
+    L.disabled=true;R.disabled=bs.length<2;
+    requestAnimationFrame(()=>{center();requestAnimationFrame(()=>rail.classList.remove('no-tr'))});
+    new ResizeObserver(()=>{rail.classList.add('no-tr');center();requestAnimationFrame(()=>rail.classList.remove('no-tr'))}).observe(rail);
     el.querySelector('.cmp input').onchange=e=>toggleCmp(p,e.target);
-    requestAnimationFrame(shift);
   }
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
 
