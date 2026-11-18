@@ -697,6 +697,12 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .cmp-items div{display:flex;align-items:center;gap:10px;background:#f5f5f5;padding:6px 12px 6px 6px;min-width:0;border-radius:6px}
 .cmp-items img{width:52px;height:40px;object-fit:contain}
 .cmp-items button{font-size:18px;line-height:1;color:var(--gray-500)}
+.cmp-items{position:relative}
+.cmp-items .c-new{opacity:0;transform:translateX(var(--fc-in-x))}
+.cmp-items .c-in{opacity:1;transform:none;transition:opacity var(--fc-in-dur) var(--ease) var(--fc-in-delay),transform var(--fc-in-dur) var(--fc-ease) var(--fc-in-delay)}
+.cmp-items .c-shift{transition:transform var(--fc-shift-dur) var(--fc-ease)}
+.cmp-items .c-leave{position:absolute;margin:0;pointer-events:none;opacity:1;transform:none}
+.cmp-items .c-leave.c-out{opacity:0;transform:translateX(var(--fc-in-x));transition:opacity var(--fc-out-dur) var(--ease),transform var(--fc-out-dur) var(--ease)}
 .cmp-items .nm{display:flex;flex-direction:column;line-height:1.25;min-width:0}
 .cmp-items .nm b{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:14px;font-weight:600;color:#111}
 .cmp-items .nm small{font-size:12px;color:var(--gray-500)}
@@ -1114,11 +1120,29 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   const cmp=[],bar=document.getElementById('cmpBar');
   const cardSize=p=>{const c=pg.querySelector(`.pc[data-s="${CSS.escape(p.s)}"] button.s.on`);return c?+c.textContent:p.sz[0][0]};
   function toggleCmp(p,box){const i=cmp.findIndex(x=>x.p.s===p.s);
-    if(box.checked){if(i>-1)return drawCmp();if(cmp.length>=5){box.checked=false;return bar.querySelector('.tip').animate([{color:'#e64c3d'},{color:''}],900)}cmp.push({p,size:cardSize(p)})}
+    if(box.checked){if(i>-1)return drawCmp();if(cmp.length>=5){box.checked=false;return bar.querySelector('.tip').animate([{color:'#e64c3d'},{color:''}],900)}cmp.unshift({p,size:cardSize(p)})}
     else if(i>-1)cmp.splice(i,1);drawCmp()}
   function drawCmp(){try{sessionStorage.setItem('tclCompare',JSON.stringify(cmp.map(x=>({s:x.p.s,size:x.size}))))}catch(e){}
     bar.classList.toggle('on',cmp.length>0);bar.querySelector('.go').disabled=cmp.length<2;
-    bar.querySelector('.cmp-items').innerHTML=cmp.map(x=>`<div><img src="${imgFor(x.p,x.size)}" alt=""><span class="nm"><b>${x.p.s}</b><small>${x.size} 吋</small></span><button data-s="${x.p.s}" aria-label="移除">×</button></div>`).join('')}
+    /* 與篩選標籤相同的動畫：新加入的放最前面由左淡入，原有的往右讓位，移除時原地淡出 */
+    const box=bar.querySelector('.cmp-items'),br=box.getBoundingClientRect();
+    const cur=[...box.children].filter(e=>!e.classList.contains('c-leave'));
+    const first=new Map(cur.map(e=>[e,e.getBoundingClientRect()]));
+    const outMs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fc-out-dur'))*1000||250;
+    const leaving=[],fresh=[];
+    cur.forEach(e=>{if(cmp.some(x=>x.p.s===e.dataset.s))return;const r=first.get(e);
+      e.style.left=(r.left-br.left)+'px';e.style.top=(r.top-br.top)+'px';e.classList.remove('c-in','c-shift');e.style.transform='';e.classList.add('c-leave');leaving.push(e);setTimeout(()=>e.remove(),outMs+80)});
+    cmp.forEach(x=>{let e=box.querySelector(`[data-s="${CSS.escape(x.p.s)}"]:not(.c-leave)`);
+      const html=`<img src="${imgFor(x.p,x.size)}" alt=""><span class="nm"><b>${x.p.s}</b><small>${x.size} 吋</small></span><button data-s="${x.p.s}" aria-label="移除">×</button>`;
+      if(!e){e=document.createElement('div');e.dataset.s=x.p.s;e.className='c-new';e.innerHTML=html;fresh.push(e)}
+      else if(e.dataset.sz!=String(x.size)){e.querySelector('img').src=imgFor(x.p,x.size);e.querySelector('small').textContent=x.size+' 吋'}
+      e.dataset.sz=x.size;box.appendChild(e)});
+    first.forEach((r,e)=>{if(!e.isConnected||e.classList.contains('c-leave'))return;const n=e.getBoundingClientRect(),dx=r.left-n.left,dy=r.top-n.top;
+      if(!dx&&!dy)return;e.classList.remove('c-shift');e.style.transition='none';e.style.transform=`translate(${dx}px,${dy}px)`});
+    void box.offsetWidth;leaving.forEach(e=>e.classList.add('c-out'));
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      first.forEach((r,e)=>{if(e.isConnected&&!e.classList.contains('c-leave')&&e.style.transform){e.style.transition='';e.classList.add('c-shift');e.style.transform=''}});
+      fresh.forEach(e=>{e.classList.add('c-in');e.classList.remove('c-new')})}))}
   bar.querySelector('.cmp-items').onclick=e=>{const s=e.target.dataset.s;if(!s)return;const i=cmp.findIndex(x=>x.p.s===s);if(i>-1)cmp.splice(i,1);drawCmp();const b=pg.querySelector(`.pc[data-s="${CSS.escape(s)}"] .cmp input`);if(b)b.checked=false};
   /* 開始比較：帶各自選的尺寸到比較頁 */
   bar.querySelector('.go').onclick=()=>{location.href='compare.html?m='+cmp.map(x=>encodeURIComponent(x.p.s)+'-'+x.size).join(',')};
