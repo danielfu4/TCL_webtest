@@ -1059,7 +1059,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   function card(p,k){
     const sz=sizesFor(p);
     return `<article class="pc" style="--k:${k%6}" data-s="${p.s}">${p.new?'<span class="tag">NEW</span>':''}
-      <a class="pc-img" href="#"><img src="${imgFor(p,sz[0][0])}" alt="TCL ${p.s}" loading="lazy"></a>
+      <a class="pc-img" href="#"><img src="${imgFor(p,sz[0][0])}" alt="TCL ${p.s}" ${k<6?'fetchpriority="high"':'loading="lazy"'} decoding="async" width="600" height="372"></a>
       <div class="pc-sz"><button class="arr l" aria-label="較大尺寸"><svg viewBox="0 0 7 12"><path d="M6 1 1 6l5 5"/></svg></button><div class="rail no-tr"><div>`+
       sz.map((x,i)=>`<button class="s${i?'':' on'}" data-i="${i}">${x[0]}</button>`).join('')+
       `</div></div><button class="arr r" aria-label="較小尺寸"><svg viewBox="0 0 7 12"><path d="m1 1 5 5-5 5"/></svg></button></div>
@@ -1189,6 +1189,9 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   /* 篩選列 sticky 位置跟著 header 高度 */
   const setH=()=>document.documentElement.style.setProperty('--hd-h',document.querySelector('.header').offsetHeight+'px');setH();addEventListener('resize',setH);
   render();drawCmp();
+  /* 預先載入全部產品圖（含各尺寸專屬圖），之後切換篩選、排序、尺寸都直接從快取顯示 */
+  const pre=()=>{const seen=new Set();DATA.forEach(p=>[p.sz[0][0],...Object.keys(p.imz||{}).map(Number)].forEach(z=>{const u=imgFor(p,z);if(seen.has(u))return;seen.add(u);const i=new Image();i.decoding='async';i.src=u}))};
+  'requestIdleCallback' in window?requestIdleCallback(pre,{timeout:1500}):setTimeout(pre,800);
 })();
 
 </script>
