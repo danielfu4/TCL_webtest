@@ -775,13 +775,19 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .cp.more-l .lab-cell{box-shadow:calc(var(--cp-gap) * -1) 0 0 #fff,var(--cp-gap) 0 0 #fff,calc(var(--cp-gap) + 8px) 0 12px -10px rgba(0,0,0,.12)}
 #cpSpecs{width:max-content;min-width:100%}
 .cp.hs .cp-grp > button{width:var(--cp-vis);left:0;z-index:21;background:#fff}
-/* 一般捲軸：固定放在商品列下方（往下捲時跟著商品列固定在上方），macOS 也一定看得到 */
-.cp-sb{display:none;position:relative;height:var(--cp-sb-h,6px);margin:0 0 12px calc(var(--cp-label) + var(--cp-gap));border-radius:999px;background:var(--gray-100);cursor:pointer}
-.cp.hs .cp-sb{display:block}
-.cp-sb i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:#bdbdbd;cursor:grab;touch-action:none;transition:background .2s}
-.cp-sb:hover i,.cp-sb.drag i{background:#111}
-.cp-sb.drag i{cursor:grabbing}
-.cp-prods.mini .cp-sb{margin-bottom:8px}
+/* 底部固定拉把（只在比較表出現在畫面時顯示） */
+.cp-hbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);box-shadow:0 -6px 20px rgba(0,0,0,.06);transform:translateY(110%);transition:transform .4s var(--ease)}
+.cp-hbar.on{transform:none}
+.cp-hbar .wrap{display:flex;align-items:center;gap:14px;height:var(--cp-hbar-h,60px)}
+.cp-hbar button{width:34px;height:34px;border-radius:50%;border:1px solid var(--gray-300);display:grid;place-items:center;flex:none;transition:.2s}
+.cp-hbar button:hover:not(:disabled){border-color:#111}
+.cp-hbar button:disabled{opacity:.35;cursor:default}
+.cp-hbar svg{width:7px;height:12px;stroke:#111;fill:none;stroke-width:1.6}
+.cp-hbar .trk{flex:1;height:var(--cp-trk-h,6px);border-radius:999px;background:var(--gray-100);position:relative;cursor:pointer}
+.cp-hbar .trk i{position:absolute;left:0;top:50%;height:calc(var(--cp-trk-h,6px) + 4px);margin-top:calc((var(--cp-trk-h,6px) + 4px) / -2);border-radius:999px;background:#111;cursor:grab;touch-action:none;transition:height .2s}
+.cp-hbar.drag .trk i{cursor:grabbing}
+.cp-hbar .trk:hover i{height:calc(var(--cp-trk-h,6px) + 8px);margin-top:calc((var(--cp-trk-h,6px) + 8px) / -2)}
+.cp-hbar .pos{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:13px;color:var(--gray-700);min-width:72px;text-align:right;font-variant-numeric:tabular-nums}
 /* 右側白色漸層：提示右邊還有產品 */
 .cp > .wrap{position:relative}
 .cp > .wrap::after{content:"";position:absolute;right:24px;top:var(--cp-fade-top,0);bottom:60px;width:var(--cp-fade-w,120px);background:linear-gradient(90deg,rgba(255,255,255,0),#fff 85%);pointer-events:none;z-index:20;opacity:0;transition:opacity .3s}
@@ -848,7 +854,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   #cpSpecs{width:auto}
   .lab-cell{position:static;box-shadow:none!important;background:none}
   .cp > .wrap::after{display:none}
-  .cp-sb{display:none!important}
+  .cp-hbar{display:none}
   .cp-label-top{display:none}
   .cp-prods{top:var(--cpm-top,0px);transition:top .35s var(--ease);margin:0 -24px;padding:0 24px;box-shadow:0 6px 12px -10px rgba(0,0,0,.15)}
   .cp-prods .cp-grid{padding:8px 0 14px}
@@ -944,7 +950,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
     <div><h1>產品比較</h1><p>最多可同時比較 5 項產品，可直接在下方切換尺寸</p></div>
     <label class="cp-diff"><input type="checkbox" id="cpDiff">只顯示差異</label>
   </div>
-  <div class="cp-prods" id="cpProds"><div class="cp-x" id="cpPx"></div><div class="cp-sb" id="cpSb"><i></i></div></div>
+  <div class="cp-prods" id="cpProds"><div class="cp-x" id="cpPx"></div></div>
   <div class="cp-x" id="cpSx"><div id="cpSpecs"></div></div>
   <p class="cp-note">※ 規格資料取自 TCL 台灣官方網站各商品頁，實際規格以商品頁及產品包裝為準。</p>
 </div></section>
@@ -1155,19 +1161,29 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
     const w=sx2.clientWidth,colw=Math.floor((w-lab-gap*VIS)/VIS);colStep=colw+gap;
     cp.style.setProperty('--cp-n',n);cp.style.setProperty('--cp-colw',colw+'px');cp.style.setProperty('--cp-vis',w+'px');
     cp.classList.toggle('hs',n>VIS);requestAnimationFrame(updBar)}
-  const sb=document.getElementById('cpSb'),th=sb.querySelector('i');
+  const hbar=document.createElement('div');hbar.className='cp-hbar';
+  hbar.innerHTML='<div class="wrap"><button class="l" aria-label="往左一欄"><svg viewBox="0 0 8 14"><path d="M7 1 1 7l6 6"/></svg></button><div class="trk"><i></i></div><button class="r" aria-label="往右一欄"><svg viewBox="0 0 8 14"><path d="m1 1 6 6-6 6"/></svg></button><span class="pos"></span></div>';
+  document.body.appendChild(hbar);
+  const trk=hbar.querySelector('.trk'),thumb=trk.querySelector('i');
   function updBar(){
     const max=sx2.scrollWidth-sx2.clientWidth,on=!mob()&&max>2;
-    if(on){const tw=sb.clientWidth,w=Math.max(48,tw*sx2.clientWidth/sx2.scrollWidth);th.style.width=w+'px';th.style.transform=`translateX(${(tw-w)*sx2.scrollLeft/max}px)`}
-    cp.classList.toggle('more-r',on&&sx2.scrollLeft<max-2);cp.classList.toggle('more-l',on&&sx2.scrollLeft>2);
-    /* 漸層從商品列頂端開始 */
-    cp.style.setProperty('--cp-fade-top',prods.offsetTop+'px')}
+    const r=sx2.getBoundingClientRect(),inView=r.top<innerHeight-80&&r.bottom>140;
+    hbar.classList.toggle('on',on&&inView);cp.classList.toggle('more-r',on&&sx2.scrollLeft<max-2);cp.classList.toggle('more-l',on&&sx2.scrollLeft>2);
+    cp.style.setProperty('--cp-fade-top',prods.offsetTop+'px');
+    if(!on)return;
+    const tw=trk.clientWidth,th=Math.max(40,tw*sx2.clientWidth/sx2.scrollWidth);thumb.style.width=th+'px';thumb.style.transform=`translateX(${(tw-th)*sx2.scrollLeft/max}px)`;
+    const first=Math.round(sx2.scrollLeft/colStep),prodN=items.length;
+    hbar.querySelector('.pos').textContent=`${Math.min(first+1,prodN)}–${Math.min(first+VIS,prodN)} / ${prodN} 台`;
+    hbar.querySelector('.l').disabled=sx2.scrollLeft<2;hbar.querySelector('.r').disabled=sx2.scrollLeft>max-2}
   let sync=false;[[sx2,px2],[px2,sx2]].forEach(([a,b])=>a.addEventListener('scroll',()=>{if(sync){sync=false;return}sync=true;b.scrollLeft=a.scrollLeft;updBar()},{passive:true}));
-  /* 拖曳捲軸、點軌道跳轉 */
-  th.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();th.setPointerCapture(e.pointerId);const x0=e.clientX,s0=sx2.scrollLeft,max=sx2.scrollWidth-sx2.clientWidth,tw=sb.clientWidth-th.offsetWidth;sb.classList.add('drag');
-    const mv=ev=>{sx2.scrollLeft=s0+(ev.clientX-x0)/tw*max};const up=()=>{sb.classList.remove('drag');th.removeEventListener('pointermove',mv);th.removeEventListener('pointerup',up)};
-    th.addEventListener('pointermove',mv);th.addEventListener('pointerup',up)});
-  sb.addEventListener('pointerdown',e=>{if(e.target===th)return;const r=sb.getBoundingClientRect(),max=sx2.scrollWidth-sx2.clientWidth;sx2.scrollTo({left:(e.clientX-r.left)/r.width*max,behavior:'smooth'})});
+  const go=d=>{const t=Math.round(sx2.scrollLeft/colStep)+d;sx2.scrollTo({left:t*colStep,behavior:'smooth'})};
+  hbar.querySelector('.l').onclick=()=>go(-1);hbar.querySelector('.r').onclick=()=>go(1);
+  /* 拖曳拉把、點軌道跳轉 */
+  thumb.addEventListener('pointerdown',e=>{e.preventDefault();thumb.setPointerCapture(e.pointerId);const x0=e.clientX,s0=sx2.scrollLeft,max=sx2.scrollWidth-sx2.clientWidth,tw=trk.clientWidth-thumb.offsetWidth;hbar.classList.add('drag');
+    const mv=ev=>{sx2.scrollLeft=s0+(ev.clientX-x0)/tw*max};const up=()=>{hbar.classList.remove('drag');thumb.removeEventListener('pointermove',mv);thumb.removeEventListener('pointerup',up)};
+    thumb.addEventListener('pointermove',mv);thumb.addEventListener('pointerup',up)});
+  trk.addEventListener('pointerdown',e=>{if(e.target===thumb)return;const r=trk.getBoundingClientRect(),max=sx2.scrollWidth-sx2.clientWidth;sx2.scrollTo({left:(e.clientX-r.left)/r.width*max,behavior:'smooth'})});
+  addEventListener('scroll',updBar,{passive:true});
   addEventListener('resize',layout);
   save();redraw();
 })();
