@@ -755,7 +755,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 <style id="cmp-css">
 /* ================= 產品比較（數值可在 compare-demo.html 調整） ================= */
 :root{--cp-label:152px; --cp-col-min:240px; --cp-gap:21px; --cp-img-h:124px; --cp-name:18px; --cp-title:14px; --cp-row-py:20px; --cp-row-fs:15px; --cp-lab-fs:16px; --cp-grp-fs:26px; --cp-sticky-img:71px;
-  --m-cp-img-h:160px; --m-cp-name:16px; --m-cp-tt:12.5px; --m-cp-row-fs:14px; --m-cp-lab-fs:12.5px; --m-cp-row-py:22px; --m-cp-lab-gap:6px; --m-cp-grp-fs:16.5px;
+  --m-cp-img-h:160px; --m-cp-name:16px; --m-cp-tt:12.5px; --m-cp-row-fs:14px; --m-cp-lab-fs:12.5px; --m-cp-row-py:22px; --m-cp-lab-gap:6px; --m-cp-grp-fs:22px; --m-cp-sel-fs:17px; --m-cp-sel-h:50px; --m-cp-col-gap:20px; --m-cp-v-pad:12px;
   --m-cp-pill-h:35px; --m-cp-pill-fs:13.5px; --m-cp-mini-h:47px; --m-cp-cta-h:44px; --m-cp-cta-fs:14.5px;}
 .cp{background:#fff;padding:0 0 110px;overflow-anchor:none}
 html:has(.cp){overflow-anchor:none}
@@ -853,7 +853,7 @@ html:has(.cp){overflow-anchor:none}
 .cp-note{font-size:12px;color:var(--gray-500);margin-top:24px}
 
 /* ---------- 手機：固定兩欄並排、3 台時用膠囊切換、底部固定「了解更多」 ---------- */
-.cpm-pills,.cpm-mini,.cpm-size,.cpm-cta{display:none}
+.cpm-pills,.cpm-mini,.cpm-size,.cpm-cta,.cpm-sel{display:none}
 @media (max-width:720px){
   .cp-head{padding:24px 0 12px;flex-direction:row;align-items:center;gap:12px}
   .cp-head h1{font-size:24px}.cp-head p{display:none}
@@ -905,8 +905,24 @@ html:has(.cp){overflow-anchor:none}
   .cpm-cta b{font-family:"Gotham","Noto Sans TC",sans-serif;font-weight:600;margin-left:2px}
   body.cpm-cta-on .footer{padding-bottom:calc(var(--m-cp-cta-h) + 32px)}
   body.cpm-cta-on .demo-tag{bottom:calc(var(--m-cp-cta-h) + 30px)}
+  /* ---------- 手機（Apple 式）：上方固定兩個型號選單 ---------- */
+  .cpm-sel{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:var(--m-cp-col-gap);position:sticky;top:var(--cpm-top,0px);z-index:30;background:#fff;margin:0 -24px;padding:8px 24px 0;transition:top .35s var(--ease)}
+  .cpm-pick select{width:100%;height:var(--m-cp-sel-h);border:0;border-bottom:1px solid var(--gray-300);border-radius:0;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 8'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%23111' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 4px center/13px;appearance:none;font:inherit;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--m-cp-sel-fs);font-weight:600;color:#111;padding:0 26px 0 0;text-overflow:ellipsis}
+  .cp-prods{position:static;margin:0;padding:0;box-shadow:none;border-bottom:1px solid var(--gray-100)}
+  .cp-prods .cp-grid{column-gap:var(--m-cp-col-gap)!important;padding:18px 0 20px}
+  .cp-prod{padding:0}
+  .cp-prod + .cp-prod,.cp-prod + .cp-add,.cp-add + .cp-prod{border-left:0}
+  .cpm-empty{display:grid;place-items:center;min-height:calc(var(--m-cp-img-h) + 90px);color:var(--gray-500);font-size:13px;border:1px dashed var(--gray-300);border-radius:8px}
+  /* 分類主標放大、規格小標靠左 */
+  .cp-grp > button{font-size:var(--m-cp-grp-fs)!important}
+  .cp-row{column-gap:var(--m-cp-col-gap)!important}
+  .cp-row .lab{text-align:left}
+  .cp-row .v{text-align:left;padding:0}
+  .cp-row .v + .v{border-left:0}
+  .cp-row .v.best::after{display:inline-block;margin:0 0 0 6px}
 }
 </style>
+<script>if(!/[?&]m=/.test(location.search))history.replaceState(null,"",location.pathname+(location.search?location.search+"&":"?")+"m=X11L-98,C8L-85,C7L-75")</script>
 <style id="tune">
 .tp{position:fixed;right:16px;top:16px;z-index:5000;width:360px;max-height:calc(100vh - 32px);overflow:auto;background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.2);font:13px/1.4 "Gotham","Noto Sans TC",sans-serif;color:#111}
 .tp header{position:sticky;top:0;background:#111;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:1}
@@ -938,7 +954,6 @@ body:not(.tune-m) .tframe,body:not(.tune-m) .tback{display:none}
 body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{display:none!important}
 .demo-tag{display:none}
 </style>
-<script>if(!/[?&]m=/.test(location.search))history.replaceState(null,"",location.pathname+(location.search?location.search+"&":"?")+"m=X11L-98,C8L-85,C7L-75")</script>
 </head>
 <body>
 
@@ -991,6 +1006,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
     <div><h1>產品比較</h1><p>最多可同時比較 5 項產品，可直接在下方切換尺寸</p></div>
     <label class="cp-diff"><input type="checkbox" id="cpDiff">只顯示差異</label>
   </div>
+  <div class="cpm-sel" id="cpmSel"></div>
   <div class="cp-prods" id="cpProds"><div class="cp-x" id="cpPx"></div></div>
   <div class="cp-sxw"><div class="cp-x" id="cpSx"><div id="cpSpecs"></div></div></div>
   <p class="cp-note">※ 規格資料取自 TCL 台灣官方網站各商品頁，實際規格以商品頁及產品包裝為準。</p>
@@ -1105,9 +1121,9 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   const openGroups=new Set(wasMob?['pic']:GROUPS.map(g=>g.k));
   const save=()=>{const q=new URLSearchParams(location.search);q.delete('m');if(items.length)q.set('m',items.map(x=>x.s+'-'+x.size).join(','));const t=q.toString().replace(/%2C/g,',').replace(/\+/g,'%20');history.replaceState(null,'',location.pathname+(t?'?'+t:''));
     try{sessionStorage.setItem('tclCompare',JSON.stringify(items))}catch(e){}};
-  const fixPair=()=>{pair=pair.filter(i=>i<items.length);for(let i=0;i<items.length&&pair.length<2;i++)if(!pair.includes(i))pair.push(i);pair.sort((a,b)=>a-b)};
+  const fixPair=()=>{pair=pair.filter(i=>i!=null&&i<items.length);for(let i=0;i<items.length&&pair.length<2;i++)if(!pair.includes(i))pair.push(i)};
   /* 目前要顯示的欄位：電腦 3 欄（含空欄），手機 2 欄 */
-  const view=()=>mob()?(adding?[pair[0],null]:(fixPair(),[0,1].map(k=>pair[k]!=null?pair[k]:null))):[...items.keys(),...(items.length<MAX?[null]:[])];
+  const view=()=>mob()?(fixPair(),[0,1].map(k=>pair[k]!=null?pair[k]:null)):[...items.keys(),...(items.length<MAX?[null]:[])];
   const val=(x,key)=>{const o=SPEC[x.s];return o&&o[key]!=null?o[key]:null};
   const num=(v,mode)=>{if(!v)return null;const ns=(v.replace(/,/g,'').match(/\d+(\.\d+)?/g)||[]).map(Number);if(!ns.length)return null;return mode==='max'?Math.max(...ns):ns[0]};
   const nm=x=>x.size+x.s.replace(' ','');
@@ -1119,7 +1135,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
       `</div></div><button class="arr r" aria-label="較小尺寸"${i>=p.sz.length-1?' disabled':''}><svg viewBox="0 0 7 12"><path d="m1 1 5 5-5 5"/></svg></button></div>`}
   function setSize(el,x,size){const p=find(x.s);x.size=size;save();
     const im=el.querySelector('.im img'),u=imgFor(p,size);if(!im.src.endsWith(u)){im.style.opacity=0;setTimeout(()=>{im.src=u;im.onload=()=>im.style.opacity=1},180)}
-    el.querySelector('.nm').textContent=nm(x);drawMini();drawCta();drawSpecs();layout()}
+    el.querySelector('.nm').textContent=nm(x);drawCta();drawSpecs();layout()}
   function bindSize(el,x){
     if(mob()){el.querySelector('.cpm-size select').onchange=e=>setSize(el,x,+e.target.value);return}
     const p=find(x.s),rail=el.querySelector('.rail'),row=rail.firstElementChild,bs=[...row.children],L=el.querySelector('.arr.l'),R=el.querySelector('.arr.r');
@@ -1136,29 +1152,30 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
     const m=mob();cp.classList.toggle('is-mob',m);
     if(!items.length){prods.hidden=true;specs.innerHTML='<div class="cp-empty">目前沒有要比較的產品<br><a href="tvs.html">前往全部顯示器挑選</a></div>';cp.querySelector('.cp-head .cp-diff').style.visibility='hidden';drawCta();return}
     prods.hidden=false;cp.querySelector('.cp-head .cp-diff').style.visibility='';
-    const cells=view().map(k=>{if(k==null)return addCell();const x=items[k],p=find(x.s);
-      return `<div class="cp-prod" data-k="${k}"><button class="x" aria-label="移除">×</button><div class="im"><img src="${imgFor(p,x.size)}" alt="TCL ${p.s}"></div>
+    const cells=view().map(k=>{if(k==null)return m?'<div class="cpm-empty">請從上方選擇型號</div>':addCell();const x=items[k],p=find(x.s);
+      return `<div class="cp-prod" data-k="${k}">${m?'':'<button class="x" aria-label="移除">×</button>'}<div class="im"><img src="${imgFor(p,x.size)}" alt="TCL ${p.s}"></div>
         <div class="nm">${nm(x)}</div><div class="tt">${p.t}</div>${sizeUI(x)}${m?'':'<a class="more" href="#">了解更多</a>'}</div>`});
-    /* 手機：3 台時用膠囊選擇要並排的 2 台；不到 3 台時可再加入 */
-    const pills=m&&items.length>=2?`<div class="cpm-pills">${items.map((x,i)=>`<button data-i="${i}" class="${pair.includes(i)&&!(adding&&i!==pair[0])?'on':''}">${x.s}</button>`).join('')}${items.length<MAX?`<button class="add${adding?' on':''}">＋ 加入</button>`:''}</div>`:'';
-    px.innerHTML=pills+`<div class="cp-grid">${m?'':`<div class="cp-label-top lab-cell">${items.length} 項產品比較中</div>`}${cells.join('')}</div>`+
-      (m?'<div class="cpm-mini"><span class="a"></span><label class="cp-diff"><input type="checkbox" class="cpDiffM">差異</label><span class="b"></span></div>':'');
+    px.innerHTML=`<div class="cp-grid">${m?'':`<div class="cp-label-top lab-cell">${items.length} 項產品比較中</div>`}${cells.join('')}</div>`;
+    /* 手機：參考 Apple，只比較兩台，上方固定兩個型號下拉選單 */
+    const ms=document.getElementById('cpmSel');
+    if(m){const v=view();
+      ms.innerHTML=[0,1].map(c=>{const cur=v[c]!=null?items[v[c]].s:'';
+        return `<label class="cpm-pick"><select data-c="${c}" aria-label="第 ${c+1} 台型號">${cur?'':'<option value="">選擇型號</option>'}${DATA.map(p=>`<option value="${p.s}"${p.s===cur?' selected':''}>${p.s}</option>`).join('')}</select></label>`}).join('');
+      ms.querySelectorAll('select').forEach(sl=>sl.onchange=()=>{const c=+sl.dataset.c,val=sl.value,o=1-c;if(!val)return;
+        const j=items.findIndex(x=>x.s===val);
+        if(j>=0){if(pair[o]===j)pair[o]=pair[c];pair[c]=j}          /* 已在比較清單中：直接切過去（選到另一欄的型號就左右互換） */
+        else if(pair[c]!=null&&items[pair[c]]){const p=find(val);items[pair[c]]={s:p.s,size:p.sz[0][0]}}   /* 換掉這一欄的型號 */
+        else{const p=find(val);items.push({s:p.s,size:p.sz[0][0]});pair[c]=items.length-1}
+        save();redraw()})}
+    else ms.innerHTML='';
     px.querySelectorAll('.cp-prod').forEach(el=>{const k=+el.dataset.k;bindSize(el,items[k]);
-      el.querySelector('.x').onclick=()=>{items.splice(k,1);pair=pair.filter(i=>i!==k).map(i=>i>k?i-1:i);save();redraw()}});
+      const xb=el.querySelector('.x');if(xb)xb.onclick=()=>{items.splice(k,1);pair=pair.filter(i=>i!==k).map(i=>i>k?i-1:i);save();redraw()}});
     px.querySelectorAll('.cp-add').forEach(a=>a.addEventListener('click',e=>{if(e.target.tagName==='SELECT'||e.target.tagName==='OPTION')return;const sl=a.querySelector('select');
       if(prods.classList.contains('mini')){a.classList.toggle('pick');if(!a.classList.contains('pick'))return}
       requestAnimationFrame(()=>{sl.focus();try{sl.showPicker()}catch(err){}})}));
-    px.querySelectorAll('.cp-add select').forEach(sl=>sl.onchange=()=>{if(!sl.value)return;const p=find(sl.value);items.push({s:p.s,size:p.sz[0][0]});
-      if(mob())pair=[pair[0],items.length-1];adding=false;save();redraw()});
-    px.querySelectorAll('.cpm-pills button[data-i]').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(pair.includes(i))return;
-      adding=false;pair=[pair[1],i].sort((a,c)=>a-c);   /* 換掉較早選的那一台 */
-      redraw()});
-    const ad=px.querySelector('.cpm-pills .add');if(ad)ad.onclick=()=>{adding=!adding;redraw()};
-    const dm=px.querySelector('.cpDiffM');if(dm){dm.checked=cp.classList.contains('diff-only');dm.onchange=()=>setDiff(dm.checked)}
-    drawMini();drawCta();
+    px.querySelectorAll('.cp-add select').forEach(sl=>sl.onchange=()=>{if(!sl.value)return;const p=find(sl.value);items.push({s:p.s,size:p.sz[0][0]});save();redraw()});
+    drawCta();
   }
-  function drawMini(){const mm=px.querySelector('.cpm-mini');if(!mm)return;const v=view();
-    mm.querySelector('.a').textContent=v[0]!=null?nm(items[v[0]]):'';mm.querySelector('.b').textContent=v[1]!=null?nm(items[v[1]]):''}
   /* 手機底部：兩顆「了解更多」 */
   const cta=document.createElement('div');cta.className='cpm-cta';document.body.appendChild(cta);
   function drawCta(){const v=mob()&&items.length?view().filter(k=>k!=null):[];cta.classList.toggle('on',v.length>0);document.body.classList.toggle('cpm-cta-on',v.length>0);
@@ -1184,7 +1201,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
         if(mob())setTimeout(()=>scrollTo({top:g.getBoundingClientRect().top+scrollY-prods.offsetHeight-8,behavior:'smooth'}),60)}
       else openGroups.delete(g.dataset.k)});
   }
-  function setDiff(on){cp.classList.toggle('diff-only',on);document.getElementById('cpDiff').checked=on;const dm=px.querySelector('.cpDiffM');if(dm)dm.checked=on}
+  function setDiff(on){cp.classList.toggle('diff-only',on);document.getElementById('cpDiff').checked=on}
   document.getElementById('cpDiff').onchange=e=>setDiff(e.target.checked);
   function redraw(){drawProds();drawSpecs();layout()}
   window.__cpRedraw=redraw;
@@ -1197,7 +1214,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
     if(!prods.classList.contains('mini')){fullH=prods.offsetHeight;spacer.style.height='0px'}
     else spacer.style.height=Math.max(0,fullH-prods.offsetHeight)+'px'};   /* 縮小後用空白補回原本高度，下方內容不會跳 */
   new ResizeObserver(comp).observe(prods);
-  function setMini(){const want=head.getBoundingClientRect().bottom<(mob()?0:document.querySelector('.header').offsetHeight)-60;
+  function setMini(){const want=!mob()&&head.getBoundingClientRect().bottom<document.querySelector('.header').offsetHeight-60;
     if(want===prods.classList.contains('mini'))return;
     if(want)fullH=prods.offsetHeight;
     prods.classList.toggle('mini',want);comp();
@@ -1254,7 +1271,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   if(inFrame){document.body.classList.add('inframe');
     let done=false;const go=()=>{if(done||!innerHeight)return;done=true;0};
     addEventListener('message',e=>{const d=e.data||{};if(d.vars)Object.entries(d.vars).forEach(([k,v])=>root.style.setProperty(k,v));setTimeout(go,80)});return;}
-  const G={d:[["欄位", [["--cp-label", "規格名稱欄寬", 120, 320, 2, "px"], ["--cp-gap", "欄距", 0, 48, 1, "px"]]], ["商品列", [["--cp-img-h", "產品圖高度", 80, 240, 1, "px"], ["--cp-name", "型號字級", 12, 28, 0.5, "px"], ["--cp-title", "副標字級", 10, 20, 0.5, "px"], ["--cp-sticky-img", "縮小後圖高", 30, 100, 1, "px"]]], ["規格表", [["--cp-grp-fs", "分組標題字級", 12, 28, 0.5, "px"], ["--cp-lab-fs", "規格名稱字級", 10, 20, 0.5, "px"], ["--cp-row-fs", "規格內容字級", 10, 20, 0.5, "px"], ["--cp-row-py", "每列上下間距", 4, 32, 1, "px"]]]],m:[["商品列", [["--m-cp-img-h", "產品圖高度", 50, 160, 1, "px"], ["--m-cp-name", "型號字級", 12, 24, 0.5, "px"], ["--m-cp-tt", "副標字級", 10, 18, 0.5, "px"], ["--m-cp-pill-h", "切換膠囊高度", 24, 48, 1, "px"], ["--m-cp-pill-fs", "切換膠囊字級", 10, 18, 0.5, "px"], ["--m-cp-mini-h", "捲動後細列高度", 32, 72, 1, "px"]]], ["規格表", [["--m-cp-grp-fs", "分組標題字級", 12, 24, 0.5, "px"], ["--m-cp-lab-fs", "規格名稱字級", 10, 18, 0.5, "px"], ["--m-cp-row-fs", "規格內容字級", 10, 20, 0.5, "px"], ["--m-cp-row-py", "每列上下間距", 4, 30, 1, "px"], ["--m-cp-lab-gap", "名稱與內容距離", 0, 20, 1, "px"]]], ["底部按鈕", [["--m-cp-cta-h", "按鈕高度", 32, 60, 1, "px"], ["--m-cp-cta-fs", "按鈕字級", 11, 18, 0.5, "px"]]]]};
+  const G={d:[["欄位", [["--cp-label", "規格名稱欄寬", 120, 320, 2, "px"], ["--cp-gap", "欄距", 0, 48, 1, "px"]]], ["商品列", [["--cp-img-h", "產品圖高度", 80, 240, 1, "px"], ["--cp-name", "型號字級", 12, 28, 0.5, "px"], ["--cp-title", "副標字級", 10, 20, 0.5, "px"], ["--cp-sticky-img", "縮小後圖高", 30, 100, 1, "px"]]], ["規格表", [["--cp-grp-fs", "分組標題字級", 12, 32, 0.5, "px"], ["--cp-lab-fs", "規格名稱字級", 10, 20, 0.5, "px"], ["--cp-row-fs", "規格內容字級", 10, 20, 0.5, "px"], ["--cp-row-py", "每列上下間距", 4, 32, 1, "px"]]]],m:[["上方型號選單（固定在頂部）", [["--m-cp-sel-fs", "型號字級", 12, 24, 0.5, "px"], ["--m-cp-sel-h", "選單高度", 32, 72, 1, "px"], ["--m-cp-col-gap", "兩欄間距", 0, 48, 1, "px"]]], ["電視資訊", [["--m-cp-img-h", "產品圖高度", 50, 200, 1, "px"], ["--m-cp-name", "型號字級", 12, 24, 0.5, "px"], ["--m-cp-tt", "副標字級", 10, 18, 0.5, "px"]]], ["規格表", [["--m-cp-grp-fs", "分類主標字級", 12, 34, 0.5, "px"], ["--m-cp-lab-fs", "規格小標字級", 10, 18, 0.5, "px"], ["--m-cp-row-fs", "規格內容字級", 10, 20, 0.5, "px"], ["--m-cp-row-py", "每列上下間距", 4, 36, 1, "px"], ["--m-cp-lab-gap", "小標與內容距離", 0, 20, 1, "px"]]], ["底部按鈕", [["--m-cp-cta-h", "按鈕高度", 32, 60, 1, "px"], ["--m-cp-cta-fs", "按鈕字級", 11, 18, 0.5, "px"]]]]};
   const DEF={};Object.values(G).flat().forEach(([,cs])=>cs.forEach(c=>DEF[c[0]]=parseFloat(getComputedStyle(root).getPropertyValue(c[0]))));
   const val={...DEF};let mode='m';
   const tb=document.getElementById('tb'),fr=document.getElementById('tframe');
@@ -1266,7 +1283,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
     tb.innerHTML='<div class="tmode"><button data-m="d" class="'+(mode==='d'?'on':'')+'">桌機版</button><button data-m="m" class="'+(mode==='m'?'on':'')+'">手機版</button></div>'+
       G[mode].map(([g,cs])=>'<div class="tg"><h5>'+g+'</h5>'+cs.map(([k,l,mn,mx,st,u])=>`<div class="tc"><label>${l}</label><input type="range" data-k="${k}" data-u="${u}" min="${mn}" max="${mx}" step="${st}" value="${val[k]}"><output>${val[k]}${u}</output></div>`).join('')+'</div>').join('')+
       `<div class="tbtns"><button id="treset">還原預設</button><button class="p" id="tcopy">複製目前數值</button></div>
-       <p class="thint">・手機預覽可以直接操作：點上方膠囊切換、捲動看縮小後的細列。<br>・切到「桌機版」直接看背後的頁面。<br>・「複製目前數值」會一次複製桌機＋手機兩組。</p>`;
+       <p class="thint">・手機預覽可以直接操作：用上方兩個選單換型號、往下捲看固定效果。<br>・切到「桌機版」直接看背後的頁面。<br>・「複製目前數值」會一次複製桌機＋手機兩組。</p>`;
     tb.querySelectorAll('.tmode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;build();if(mode==='m')push()});
     tb.querySelectorAll('input').forEach(r=>r.addEventListener('input',()=>{val[r.dataset.k]=+r.value;r.nextElementSibling.textContent=r.value+r.dataset.u;
       if(mode==='d')apply(r.dataset.k,r.dataset.u);else push()}));
