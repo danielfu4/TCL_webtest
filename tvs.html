@@ -652,7 +652,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .pc{background:#fff;border-radius:var(--pc-radius);padding:var(--pc-pad);display:flex;flex-direction:column;position:relative;
   opacity:0;transform:translateY(var(--pc-in-y));transition:opacity var(--pc-in-dur) var(--ease),transform var(--pc-in-dur) var(--ease);transition-delay:calc(var(--k,0) * var(--pc-stagger))}
 .pc.in{opacity:1;transform:none}
-.pc .tag{position:absolute;left:var(--pc-pad);top:var(--pc-pad);z-index:1;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-tag);font-weight:600;letter-spacing:.04em;color:#e64c3d}
+.pc .tag{position:absolute;left:var(--pc-pad);top:var(--pc-pad);z-index:1;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-tag);font-weight:500;letter-spacing:.04em;color:#e64c3d}
 .pc-img{aspect-ratio:var(--pc-img-ar);display:grid;place-items:center;overflow:hidden}
 .pc-img img{width:var(--pc-img-w);height:100%;object-fit:contain;transition:transform .5s var(--ease),opacity .25s}
 .pc:hover .pc-img img{transform:scale(var(--pc-zoom))}
@@ -1027,7 +1027,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 
   function card(p,k){
     const sz=sizesFor(p);
-    return `<article class="pc" style="--k:${k%6}" data-s="${p.s}">${p.new?'<span class="tag">NEW</span>':''}
+    return `<article class="pc" style="--k:${k%6}" data-s="${p.s}">${p.new?'<span class="tag">全新</span>':''}
       <a class="pc-img" href="#"><img src="${imgFor(p,sz[0][0])}" alt="TCL ${p.s}" ${k<6?'fetchpriority="high"':'loading="lazy"'} decoding="async" width="600" height="372"></a>
       <div class="pc-sz"><button class="arr l" aria-label="較大尺寸"><svg viewBox="0 0 7 12"><path d="M6 1 1 6l5 5"/></svg></button><div class="rail no-tr"><div>`+
       sz.map((x,i)=>`<button class="s${i?'':' on'}" data-i="${i}">${x[0]}</button>`).join('')+
