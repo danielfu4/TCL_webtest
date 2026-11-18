@@ -1071,7 +1071,9 @@ html:has(.cp){overflow-anchor:none}
           m.style.transition=`clip-path ${sw()}ms var(--ease)`;m.style.clipPath='inset(0 0 0 0)';
           clearTimeout(swT);swT=setTimeout(()=>clearInline(m),sw()+50);
         }else li.classList.add('active');
-        bg.style.height=newH+'px';bg.classList.add('on');dim.classList.add('on');
+        if(!wasOpen){bg.style.transition='none';bg.style.height=newH+'px';void bg.offsetWidth;bg.style.transition=''}   /* 第一次打開：高度直接定位，只跑由上往下展開，與面板同步 */
+        else bg.style.height=newH+'px';
+        bg.classList.add('on');dim.classList.add('on');
       }else{dim.classList.remove('on');bg.classList.remove('on');li.classList.add('active')}
     });
   });
