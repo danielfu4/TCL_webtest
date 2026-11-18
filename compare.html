@@ -757,7 +757,8 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 :root{--cp-label:152px; --cp-col-min:240px; --cp-gap:21px; --cp-img-h:124px; --cp-name:18px; --cp-title:14px; --cp-row-py:20px; --cp-row-fs:15px; --cp-lab-fs:16px; --cp-grp-fs:26px; --cp-sticky-img:71px;
   --m-cp-img-h:160px; --m-cp-name:16px; --m-cp-tt:12.5px; --m-cp-row-fs:14px; --m-cp-lab-fs:12.5px; --m-cp-row-py:22px; --m-cp-lab-gap:6px; --m-cp-grp-fs:16.5px;
   --m-cp-pill-h:35px; --m-cp-pill-fs:13.5px; --m-cp-mini-h:47px; --m-cp-cta-h:44px; --m-cp-cta-fs:14.5px;}
-.cp{background:#fff;padding:0 0 110px}
+.cp{background:#fff;padding:0 0 110px;overflow-anchor:none}
+html:has(.cp){overflow-anchor:none}
 .cp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:40px 0 24px}
 .cp-head h1{font-size:32px;font-weight:600}
 .cp-head p{font-size:14px;color:var(--gray-500);margin-top:6px}
@@ -774,7 +775,8 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .lab-cell{position:sticky;left:0;z-index:3;background:#fff;box-shadow:calc(var(--cp-gap) * -1) 0 0 #fff,var(--cp-gap) 0 0 #fff}
 .cp.more-l .lab-cell{box-shadow:calc(var(--cp-gap) * -1) 0 0 #fff,var(--cp-gap) 0 0 #fff,calc(var(--cp-gap) + 8px) 0 12px -10px rgba(0,0,0,.12)}
 #cpSpecs{width:max-content;min-width:100%}
-.cp.hs .cp-grp > button{width:var(--cp-vis);left:0;z-index:21;background:#fff}
+.cp.hs .cp-grp > button{width:var(--cp-vis);left:0}
+.cp-grp > button i{z-index:22}
 /* 底部固定拉把（只在比較表出現在畫面時顯示） */
 .cp-hbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);box-shadow:0 -6px 20px rgba(0,0,0,.06);transform:translateY(110%);transition:transform .4s var(--ease)}
 .cp-hbar.on{transform:none}
@@ -789,17 +791,17 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .cp-hbar .trk:hover i{height:calc(var(--cp-trk-h,6px) + 8px);margin-top:calc((var(--cp-trk-h,6px) + 8px) / -2)}
 .cp-hbar .pos{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:13px;color:var(--gray-700);min-width:72px;text-align:right;font-variant-numeric:tabular-nums}
 /* 右側白色漸層：提示右邊還有產品 */
-.cp > .wrap{position:relative}
-.cp > .wrap::after{content:"";position:absolute;right:24px;top:var(--cp-fade-top,0);bottom:60px;width:var(--cp-fade-w,120px);background:linear-gradient(90deg,rgba(255,255,255,0),#fff 85%);pointer-events:none;z-index:20;opacity:0;transition:opacity .3s}
-.cp.more-r > .wrap::after{opacity:1}
+.cp-sxw{position:relative}
+.cp-prods::after,.cp-sxw::after{content:"";position:absolute;right:0;top:0;bottom:0;width:var(--cp-fade-w,120px);background:linear-gradient(90deg,rgba(255,255,255,0),#fff 85%);pointer-events:none;z-index:20;opacity:0;transition:opacity .3s}
+.cp.more-r .cp-prods::after,.cp.more-r .cp-sxw::after{opacity:1}
 
 /* 商品列（捲動時固定在上方並縮小） */
-.cp-prods{position:sticky;top:var(--hd-h,64px);z-index:15;background:#fff;border-bottom:1px solid var(--gray-100)}
-.cp-prods .cp-grid{padding:16px 0 20px;transition:padding .35s var(--ease)}
+.cp-prods{position:sticky;top:var(--hd-h,64px);z-index:25;background:#fff;border-bottom:1px solid var(--gray-100)}
+.cp-prods .cp-grid{padding:16px 0 20px}
 .cp-prod{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
 .cp-prod .x{position:absolute;right:0;top:0;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--gray-500);font-size:20px;line-height:1;transition:.2s;z-index:2}
 .cp-prod .x:hover{background:var(--gray-100);color:#111}
-.cp-prod .im{height:var(--cp-img-h);width:100%;display:flex;align-items:center;justify-content:center;transition:height .35s var(--ease)}
+.cp-prod .im{height:var(--cp-img-h);width:100%;display:flex;align-items:center;justify-content:center}
 .cp-prod .im img{max-height:100%;max-width:88%;object-fit:contain;transition:opacity .25s}
 .cp-prod .nm{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--cp-name);font-weight:600;margin-top:10px}
 .cp-prod .tt{font-size:var(--cp-title);color:var(--gray-700);margin-top:4px;min-height:1.5em;word-break:keep-all;text-wrap:balance}
@@ -818,7 +820,14 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .cp-prods.mini .cp-label-top{color:transparent}
 .cp-prods.mini .cp-prod .nm{margin-top:4px;font-size:15px}
 .cp-prods.mini .cp-add{min-height:calc(var(--cp-sticky-img) + 30px)}
+.cp-prods.mini .cp-add{flex-direction:row;gap:8px;font-size:13px}
+.cp-prods.mini .cp-add b{width:34px;height:34px;font-size:20px}
 .cp-prods.mini .cp-add select{display:none}
+/* 縮小時點 ＋ 叫出型號選單 */
+.cp-add{position:relative;cursor:pointer}
+.cp-prods.mini .cp-add.pick span{display:none}
+.cp-prods.mini .cp-add.pick select{display:block;width:auto;max-width:70%}
+.cp-x#cpPx{overflow-y:hidden}
 
 /* 規格表 */
 .cp-grp{border-bottom:1px solid var(--gray-100)}
@@ -853,7 +862,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   .cp-x{overflow:visible}
   #cpSpecs{width:auto}
   .lab-cell{position:static;box-shadow:none!important;background:none}
-  .cp > .wrap::after{display:none}
+  .cp-prods::after,.cp-sxw::after{display:none}
   .cp-hbar{display:none}
   .cp-label-top{display:none}
   .cp-prods{top:var(--cpm-top,0px);transition:top .35s var(--ease);margin:0 -24px;padding:0 24px;box-shadow:0 6px 12px -10px rgba(0,0,0,.15)}
@@ -951,7 +960,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
     <label class="cp-diff"><input type="checkbox" id="cpDiff">只顯示差異</label>
   </div>
   <div class="cp-prods" id="cpProds"><div class="cp-x" id="cpPx"></div></div>
-  <div class="cp-x" id="cpSx"><div id="cpSpecs"></div></div>
+  <div class="cp-sxw"><div class="cp-x" id="cpSx"><div id="cpSpecs"></div></div></div>
   <p class="cp-note">※ 規格資料取自 TCL 台灣官方網站各商品頁，實際規格以商品頁及產品包裝為準。</p>
 </div></section>
 
@@ -1090,7 +1099,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
     new ResizeObserver(()=>{rail.classList.add('no-tr');center();requestAnimationFrame(()=>rail.classList.remove('no-tr'))}).observe(rail)}
 
   const addCell=()=>{const opts=DATA.filter(p=>!items.some(i=>i.s===p.s)).map(p=>`<option value="${p.s}">${p.s}｜${p.tech}</option>`).join('');
-    return `<div class="cp-add"><b>＋</b>加入產品<select aria-label="選擇產品"><option value="">選擇型號</option>${opts}</select></div>`};
+    return `<div class="cp-add"><b>＋</b><span>加入產品</span><select aria-label="選擇產品"><option value="">選擇型號</option>${opts}</select></div>`};
   function drawProds(){
     const m=mob();cp.classList.toggle('is-mob',m);
     if(!items.length){prods.hidden=true;specs.innerHTML='<div class="cp-empty">目前沒有要比較的產品<br><a href="tvs.html">前往全部顯示器挑選</a></div>';cp.querySelector('.cp-head .cp-diff').style.visibility='hidden';drawCta();return}
@@ -1104,6 +1113,9 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
       (m?'<div class="cpm-mini"><span class="a"></span><label class="cp-diff"><input type="checkbox" class="cpDiffM">差異</label><span class="b"></span></div>':'');
     px.querySelectorAll('.cp-prod').forEach(el=>{const k=+el.dataset.k;bindSize(el,items[k]);
       el.querySelector('.x').onclick=()=>{items.splice(k,1);pair=pair.filter(i=>i!==k).map(i=>i>k?i-1:i);save();redraw()}});
+    px.querySelectorAll('.cp-add').forEach(a=>a.addEventListener('click',e=>{if(e.target.tagName==='SELECT'||e.target.tagName==='OPTION')return;const sl=a.querySelector('select');
+      if(prods.classList.contains('mini')){a.classList.toggle('pick');if(!a.classList.contains('pick'))return}
+      requestAnimationFrame(()=>{sl.focus();try{sl.showPicker()}catch(err){}})}));
     px.querySelectorAll('.cp-add select').forEach(sl=>sl.onchange=()=>{if(!sl.value)return;const p=find(sl.value);items.push({s:p.s,size:p.sz[0][0]});
       if(mob())pair=[pair[0],items.length-1];adding=false;save();redraw()});
     px.querySelectorAll('.cpm-pills button[data-i]').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(pair.includes(i))return;
@@ -1148,7 +1160,17 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   const setH=()=>document.documentElement.style.setProperty('--hd-h',document.querySelector('.header').offsetHeight+'px');setH();
   addEventListener('resize',()=>{setH();if(mob()!==wasMob){wasMob=mob();redraw()}});
   const head=cp.querySelector('.cp-head');
-  addEventListener('scroll',()=>prods.classList.toggle('mini',head.getBoundingClientRect().bottom<(mob()?0:document.querySelector('.header').offsetHeight)-60),{passive:true});
+  let fullH=0;const spacer=document.createElement('div');spacer.setAttribute('aria-hidden','true');prods.after(spacer);
+  const comp=()=>{if(mob()){spacer.style.height='0px';return}
+    if(!prods.classList.contains('mini')){fullH=prods.offsetHeight;spacer.style.height='0px'}
+    else spacer.style.height=Math.max(0,fullH-prods.offsetHeight)+'px'};   /* 縮小後用空白補回原本高度，下方內容不會跳 */
+  new ResizeObserver(comp).observe(prods);
+  function setMini(){const want=head.getBoundingClientRect().bottom<(mob()?0:document.querySelector('.header').offsetHeight)-60;
+    if(want===prods.classList.contains('mini'))return;
+    if(want)fullH=prods.offsetHeight;
+    prods.classList.toggle('mini',want);comp();
+    if(!want)px.querySelectorAll('.cp-add.pick').forEach(a=>a.classList.remove('pick'))}
+  addEventListener('scroll',setMini,{passive:true});
   /* 手機 header 顯示時，比較列往下讓位 */
   const hd=document.querySelector('.header');const syncTop=()=>document.documentElement.style.setProperty('--cpm-top',mob()&&!hd.classList.contains('hd-hide')&&scrollY>0?hd.offsetHeight+'px':'0px');
   new MutationObserver(syncTop).observe(hd,{attributes:true,attributeFilter:['class']});addEventListener('scroll',syncTop,{passive:true});
@@ -1169,7 +1191,6 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
     const max=sx2.scrollWidth-sx2.clientWidth,on=!mob()&&max>2;
     const r=sx2.getBoundingClientRect(),inView=r.top<innerHeight-80&&r.bottom>140;
     hbar.classList.toggle('on',on&&inView);cp.classList.toggle('more-r',on&&sx2.scrollLeft<max-2);cp.classList.toggle('more-l',on&&sx2.scrollLeft>2);
-    cp.style.setProperty('--cp-fade-top',prods.offsetTop+'px');
     if(!on)return;
     const tw=trk.clientWidth,th=Math.max(40,tw*sx2.clientWidth/sx2.scrollWidth);thumb.style.width=th+'px';thumb.style.transform=`translateX(${(tw-th)*sx2.scrollLeft/max}px)`;
     const first=Math.round(sx2.scrollLeft/colStep),prodN=items.length;
