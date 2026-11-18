@@ -755,7 +755,8 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 <style id="cmp-css">
 /* ================= 產品比較（數值可在 compare-demo.html 調整） ================= */
 :root{--cp-label:220px; --cp-col-min:240px; --cp-gap:16px; --cp-img-h:150px; --cp-name:18px; --cp-title:14px; --cp-row-py:14px; --cp-row-fs:14px; --cp-lab-fs:14px; --cp-grp-fs:18px; --cp-sticky-img:56px;
-  --m-cp-col:46vw; --m-cp-img-h:96px; --m-cp-name:16px; --m-cp-row-fs:13.5px;}
+  --m-cp-img-h:92px; --m-cp-name:16px; --m-cp-tt:12.5px; --m-cp-row-fs:14px; --m-cp-lab-fs:12.5px; --m-cp-row-py:14px; --m-cp-lab-gap:6px; --m-cp-grp-fs:16px;
+  --m-cp-pill-h:34px; --m-cp-pill-fs:13.5px; --m-cp-mini-h:46px; --m-cp-cta-h:44px; --m-cp-cta-fs:14px;}
 .cp{background:#fff;padding:0 0 96px}
 .cp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:40px 0 24px}
 .cp-head h1{font-size:32px;font-weight:600}
@@ -819,24 +820,54 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .cp-empty a{display:inline-block;margin-top:16px;height:42px;line-height:42px;padding:0 28px;border-radius:21px;background:#111;color:#fff}
 .cp-note{font-size:12px;color:var(--gray-500);margin-top:24px}
 
-/* 手機：規格名稱放在每列上方，兩欄並排可左右滑 */
+/* ---------- 手機：固定兩欄並排、3 台時用膠囊切換、底部固定「了解更多」 ---------- */
+.cpm-pills,.cpm-mini,.cpm-size,.cpm-cta{display:none}
 @media (max-width:720px){
-  .cp-head{padding:28px 0 16px;flex-direction:column;align-items:flex-start;gap:14px}
-  .cp-head h1{font-size:24px}
-  .cp-grid{grid-template-columns:repeat(3,var(--m-cp-col));column-gap:12px}
+  .cp-head{padding:24px 0 12px;flex-direction:row;align-items:center;gap:12px}
+  .cp-head h1{font-size:24px}.cp-head p{display:none}
+  .cp-head .cp-diff{font-size:13px}
+  .cp-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:0}
   .cp-label-top{display:none}
-  .cp-prods{top:0}
-  .cp-x{overflow-x:auto;overscroll-behavior-x:contain}
-  .cp-prods{margin:0 -24px;padding:0 24px}
+  .cp-prods{top:var(--cpm-top,0px);transition:top .35s var(--ease);margin:0 -24px;padding:0 24px;box-shadow:0 6px 12px -10px rgba(0,0,0,.15)}
+  .cp-prods .cp-grid{padding:8px 0 14px}
+  .cpm-pills{display:flex;gap:8px;padding:12px 0 4px;overflow-x:auto;scrollbar-width:none}
+  .cpm-pills button{flex:none;height:var(--m-cp-pill-h);padding:0 16px;border-radius:999px;border:1px solid var(--gray-300);font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--m-cp-pill-fs);transition:.2s}
+  .cpm-pills button.on{background:#111;border-color:#111;color:#fff}
+  .cpm-pills .add{border-style:dashed;color:var(--gray-700)}
+  .cpm-pills .add.on{border-style:solid;border-color:#111;color:#111;background:#fff}
+  .cp-prod{padding:0 8px}
+  .cp-prod + .cp-prod,.cp-prod + .cp-add,.cp-add + .cp-prod{border-left:1px solid var(--gray-100)}
+  .cp-prod .x{right:4px}
   .cp-prod .im{height:var(--m-cp-img-h)}
-  .cp-prod .nm{font-size:var(--m-cp-name)}
-  .cp-prod .tt{font-size:12.5px}
-  .cp-prod .more{height:34px;padding:0 18px;font-size:13px}
-  .cp-add{min-height:calc(var(--m-cp-img-h) + 100px)}
-  .cp-row{row-gap:6px}
-  .cp-row .lab{grid-column:1 / -1;position:sticky;left:0;width:calc(100vw - 48px);font-size:12.5px}
-  .cp-row .v{font-size:var(--m-cp-row-fs)}
-  .cp-grp > button{width:calc(100vw - 48px);font-size:16px;padding:18px 0}
+  .cp-prod .nm{font-size:var(--m-cp-name);margin-top:8px}
+  .cp-prod .tt{font-size:var(--m-cp-tt);min-height:2.9em;line-height:1.45}
+  .cpm-size{display:block;margin-top:8px}
+  .cpm-size select{font:inherit;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:14px;border:1px solid var(--gray-300);border-radius:999px;padding:6px 30px 6px 14px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23111' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 12px center/9px;appearance:none}
+  .cp-add{min-height:calc(var(--m-cp-img-h) + 110px);margin:0 8px;font-size:13px}
+  .cp-add select{max-width:100%;font-size:13px}
+  /* 往下捲：只留型號＋差異開關的細列 */
+  .cpm-mini{display:none;align-items:center;justify-content:space-between;gap:8px;height:var(--m-cp-mini-h);font-family:"Gotham","Noto Sans TC",sans-serif;font-size:14px;font-weight:600}
+  .cpm-mini span{flex:1;text-align:center}
+  .cpm-mini .cp-diff{flex:none;font-size:12px;font-weight:500;gap:6px}
+  .cpm-mini .cp-diff input{width:34px;height:20px}.cpm-mini .cp-diff input::after{width:14px;height:14px}.cpm-mini .cp-diff input:checked::after{transform:translateX(14px)}
+  .cp-prods.mini .cpm-pills,.cp-prods.mini .cp-grid{display:none}
+  .cp-prods.mini .cpm-mini{display:flex}
+  /* 規格：名稱置中當小標，兩個數值左右各半 */
+  .cp-row{padding:var(--m-cp-row-py) 0;row-gap:var(--m-cp-lab-gap)}
+  .cp-row .lab{grid-column:1 / -1;text-align:center;font-size:var(--m-cp-lab-fs)}
+  .cp-row .v{font-size:var(--m-cp-row-fs);padding:0 10px}
+  .cp-row .v + .v{border-left:1px solid var(--gray-100)}
+  .cp-row .v.best::after{display:block;width:max-content;margin:4px auto 0}
+  .cp-grp > button{font-size:var(--m-cp-grp-fs);padding:18px 0}
+  .cp-note{margin-bottom:12px}
+  /* 底部固定按鈕 */
+  .cpm-cta{display:flex;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;padding:10px 16px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.08);transform:translateY(110%);transition:transform .4s var(--ease)}
+  .cpm-cta.on{transform:none}
+  .cpm-cta a{flex:1;height:var(--m-cp-cta-h);border-radius:calc(var(--m-cp-cta-h) / 2);background:#111;color:#fff;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;font-size:var(--m-cp-cta-fs);font-weight:500}
+  .cpm-cta a + a{background:#fff;color:#111;border:1px solid #111}
+  .cpm-cta b{font-family:"Gotham","Noto Sans TC",sans-serif;font-weight:600;margin-left:2px}
+  body.cpm-cta-on .footer{padding-bottom:calc(var(--m-cp-cta-h) + 32px)}
+  body.cpm-cta-on .demo-tag{bottom:calc(var(--m-cp-cta-h) + 30px)}
 }
 </style>
 </head>
@@ -995,69 +1026,105 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   const DATA=[{"s": "X11L", "t": "Mini LED 巔峰之作", "tech": "SQD-Mini LED", "img": "b_2604101118130000001.webp", "sz": [[98, "207"], [85, "208"], [75, "209"]], "im": "x11l.webp"}, {"s": "RM9L", "t": "RGB-Mini LED 新標竿", "tech": "RGB-Mini LED", "img": "b_2604271607480000001.webp", "sz": [[85, "210"]], "im": "rm9l.webp"}, {"s": "C8L", "t": "全新之選 SQD-Mini LED 顯示器", "tech": "SQD-Mini LED", "img": "b_26051217273500000001.webp", "sz": [[98, "211"], [85, "212"], [75, "213"], [65, "214"], [55, "220"]], "im": "c8l.webp", "imz": {"98": "c8l_98.webp"}}, {"s": "C7L", "t": "輕奢之選 SQD-Mini LED 顯示器", "tech": "SQD-Mini LED", "img": "b_26050615294700000001.webp", "sz": [[98, "215"], [85, "216"], [75, "217"], [65, "218"], [55, "219"]], "im": "c7l.webp", "imz": {"98": "c7l_98.webp"}}, {"s": "Q7D Pro", "t": "匠心之選", "tech": "SQD-Mini LED", "img": "b_2605251104410000001.webp", "sz": [[85, "221"], [75, "222"], [65, "223"], [55, "224"]], "im": "q7d-pro.webp"}, {"s": "Q7D", "t": "RGB-Mini LED 色彩新境", "tech": "RGB-Mini LED", "img": "b_26071611205400000001.webp", "sz": [[75, "257"], [65, "258"]], "im": "q7d.webp"}, {"s": "A400 Pro", "t": "美學與性能極致演繹", "tech": "QD-Mini LED", "img": "b_26052011010100000001.webp", "sz": [[85, "262"], [75, "225"], [65, "226"], [55, "227"]], "im": "a400-pro.webp"}, {"s": "A400M", "t": "智慧升級 締造極致畫質", "tech": "QD-Mini LED", "img": "b_26060417214900000001.webp", "sz": [[98, "233"], [85, "234"], [75, "235"], [65, "236"], [55, "237"]], "im": "a400m.webp"}, {"s": "A400", "t": "藝術融入生活", "tech": "QLED", "img": "b_26060316373200000001.webp", "sz": [[98, "228"], [85, "229"], [75, "230"], [65, "231"], [55, "232"]], "im": "a400.webp"}, {"s": "T8D", "t": "高階 QLED 量子畫質", "tech": "QLED", "img": "b_26070217544200000001.jpg", "sz": [[85, "252"], [75, "253"], [65, "254"], [55, "255"]], "im": "t8d.webp"}, {"s": "T6D", "t": "高階 QLED 全尺寸選擇", "tech": "QLED", "img": "b_26070217340200000001.jpg", "sz": [[75, "247"], [65, "248"], [55, "249"], [50, "250"], [43, "251"]], "im": "t6d.webp"}, {"s": "P7L", "t": "高階 QLED 量子智能", "tech": "QLED", "img": "b_26061512144700000001.webp", "sz": [[85, "238"], [75, "239"], [65, "240"], [55, "241"], [50, "242"], [43, "243"]], "im": "p7l.webp"}, {"s": "P6L", "t": "4K 智慧連網", "tech": "4K HDR", "img": "b_26061710442700000001.jpg", "sz": [[75, "244"], [65, "245"], [55, "246"]], "im": "p6l.webp"}, {"s": "V6D", "t": "4K Google TV 輕鬆入門", "tech": "4K HDR", "img": "b_26071616031700000001.jpg", "sz": [[75, "259"], [65, "260"], [55, "261"]], "im": "v6d.webp"}, {"s": "C7K", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "img": "b_25080516165000000001.webp", "sz": [[115, "201"], [98, "152"], [85, "153"], [75, "154"], [65, "155"], [55, "156"]], "im": "c7k.webp", "imz": {"98": "c7k_98.webp"}}, {"s": "X11K", "t": "頂級 QD-Mini LED 旗艦", "tech": "QD-Mini LED", "img": "b_2506020947430000001.webp", "sz": [[85, "163"]], "im": "x11k.webp"}, {"s": "C8K", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "img": "b_25051918254500000001.webp", "sz": [[98, "157"], [85, "158"], [75, "159"], [65, "160"]], "im": "c8k.webp", "imz": {"98": "c8k_98.webp"}}, {"s": "C6K", "t": "QD-Mini LED 高 CP 值", "tech": "QD-Mini LED", "img": "b_2505151719100000001.webp", "sz": [[98, "143"], [85, "148"], [75, "149"], [65, "150"], [55, "151"]], "im": "c6k.webp", "imz": {"98": "c6k_98.webp"}}, {"s": "C855", "t": "頂級 QD-Mini LED 視覺傑作", "tech": "QD-Mini LED", "img": "b_2410011510220000001.jpg", "sz": [[85, "108"], [75, "109"], [65, "110"]], "im": "c855.webp", "imz": {"85": "c855_85.webp"}}, {"s": "C755", "t": "QD-Mini LED 視覺傑作", "tech": "QD-Mini LED", "img": "b_24062111590500000001.webp", "sz": [[85, "97"], [75, "98"], [65, "99"], [55, "100"]], "im": "c755.webp"}, {"s": "C765", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "img": "b_2506271142240000001.jpg", "sz": [[98, "122"], [85, "118"], [75, "119"], [65, "120"], [55, "121"]], "im": "c765.webp", "imz": {"98": "c765_98.webp"}}, {"s": "Q7C", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "img": "b_25061717011800000001.jpg", "sz": [[85, "174"], [75, "178"], [65, "179"], [55, "180"]], "im": "q7c.webp"}, {"s": "Q6C", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "img": "b_25061719471700000001.jpg", "sz": [[85, "181"], [75, "182"], [65, "183"], [55, "184"]], "im": "q6c.webp"}, {"s": "P8K", "t": "QLED 量子智能", "tech": "QLED", "img": "b_2505121717500000001.jpg", "sz": [[98, "142"], [85, "144"], [75, "145"], [65, "146"], [55, "147"]], "im": "p8k.webp"}, {"s": "T8C", "t": "QLED 量子智能", "tech": "QLED", "img": "b_25061909235500000001.jpg", "sz": [[85, "185"], [75, "188"], [65, "189"], [55, "190"]], "im": "t8c.webp"}, {"s": "T6C", "t": "QLED 量子智能", "tech": "QLED", "img": "b_25061909303200000001.jpg", "sz": [[85, "186"], [75, "191"], [65, "192"], [55, "193"], [50, "194"], [43, "195"]], "im": "t6c.webp"}, {"s": "P7K", "t": "QLED 量子智能", "tech": "QLED", "img": "b_25060617513400000001.webp", "sz": [[85, "165"], [75, "166"], [65, "167"], [55, "168"], [50, "169"], [43, "170"]], "im": "p7k.webp"}, {"s": "P6K", "t": "4K 智慧連網", "tech": "4K HDR", "img": "b_25060618040500000001.webp", "sz": [[75, "171"], [65, "172"], [55, "173"]], "im": "p6k.webp"}, {"s": "V6C", "t": "4K 智慧連網", "tech": "4K HDR", "img": "b_25061909401400000001.jpg", "sz": [[75, "187"], [65, "196"], [55, "197"], [50, "198"], [43, "199"]], "im": "v6c.webp"}, {"s": "S5K", "t": "QLED 小尺寸首選", "tech": "QLED", "img": "b_25121609494000000001.webp", "sz": [[50, "204"], [40, "164"]], "im": "s5k.webp"}], SPEC={"X11L":{"year":"2026","panel":"WHVA 2.0 Ultra","res":"4K UHD","hz":"144Hz (VRR 48 / 288Hz / DLG 288Hz)","nits":"10000 nits (Peak)","gamut":"100% BT.2020","ch":"B&O Audio System","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"✓","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","bt":"BT5.4","wifi":"WiFi6","hdmi":"HDMI 2.1*4","dv":"Dolby Vision IQ","hdr10p":"✓","hlg":"✓"},"RM9L":{"year":"2026","panel":"WHVA 2.0 Ultra","res":"4K UHD","hz":"144Hz (288 VRR Game Accelerator)","nits":"4000 nits (Peak)","gamut":"100% BT.2020","ch":"B&O Audio System","atmos":"✓","dts":"DTS Virtual X","abrand":"Audio by Bang & Olufsen","gm":"✓","fs":"✓","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","bt":"BT5.4","wifi":"WiFi6","hdmi":"HDMI 2.1*4","dv":"Dolby Vision IQ","hdr10p":"✓","hlg":"✓"},"C8L":{"year":"2026","panel":"CSOT WHVA 2.0 Panel","res":"4K UHD","hz":"144Hz(VRR 48-288Hz / DLG 288Hz )","nits":"6000nits(peak)","gamut":"100% BT2020","dv":"Dolby Vision IQ","hdr10p":"✓","hlg":"✓","ch":"2.2 Channel","atmos":"✓","dts":"✓","gm":"✓","fs":"Premium Pro","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","bt":"BT5.4","wifi":"WiFi6","hdmi":"HDMI2.1 * 4","cec":"✓"},"C7L":{"year":"2026","panel":"HVA 2.0 Pro Panel","res":"4K UHD","hz":"144Hz(VRR 48-288Hz / DLG 288Hz )","nits":"3000nits(peak)","gamut":"100% BT2020","dv":"Dolby Vision IQ","hdr10p":"✓","hlg":"✓","ch":"2.2 Channel","atmos":"✓","dts":"✓","gm":"✓","fs":"Premium Pro","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI1.4 & HDMI2.0 & HDMI2.1, HDCP1.4 & HDCP2.2","cec":"✓"},"Q7D Pro":{"year":"2026","panel":"HVA 2.0 Pro","res":"4K UHD","hz":"144Hz(VRR 48-288Hz / DLG 288Hz )","nits":"2000nits(peak)","gamut":"100% BT.2020","dv":"Dolby Vision IQ","hdr10p":"✓","hlg":"✓","ch":"2.1 聲道","power":"2*10W+20W","dts":"✓","gm":"✓","fs":"✓","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI1.4 & HDMI2.0 & HDMI2.1, HDCP1.4 & HDCP2.2","cec":"✓"},"Q7D":{"year":"2026","panel":"HVA Pro","res":"4K UHD","hz":"144Hz (288 VRR Game Accelerator)","nits":"2000 nits (Peak)","gamut":"100% BT.2020","atmos":"✓","dts":"DTS Virtual X","abrand":"ONKYO Hi-Fi System","gm":"✓","fs":"✓","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI 2.1*4","dv":"Dolby Vision IQ","hdr10p":"✓","hlg":"✓"},"A400 Pro":{"year":"2026","panel":"HVA Panel","res":"4K UHD","hz":"144Hz(VRR 48-288Hz / DLG 288Hz )","nits":"400nit (typ)","gamut":"93% DCI-P3","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.0 Channel","power":"2*10W","dts":"✓","gm":"✓","fs":"✓","os":"Google TV","voice":"—","ga":"✓","imax":"—","cast":"✓","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI2.1","cec":"✓"},"A400M":{"year":"2026","panel":"HVA Panel","res":"4K UHD","hz":"144Hz(VRR 48-288Hz / DLG 288Hz )","nits":"550nit (typ)","gamut":"93% DCI-P3","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.0 Channel","power":"10W*2","dts":"✓","gm":"✓","fs":"✓","os":"Google TV","voice":"✓","ga":"✓","imax":"—","cast":"✓","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI2.1","cec":"✓"},"A400":{"year":"2026","panel":"DLED","res":"4K UHD","hz":"MEMC(120Hz),48-288Hz VRR,DLG 288Hz","nits":"450nit (typ)","gamut":"93% DCI-P3","contrast":"6000:1","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.0 Channel","power":"10W*2","dts":"DTS:X, DTS Virtual X","gm":"✓","fs":"✓","os":"Google TV","voice":"✓","ga":"✓","imax":"—","cast":"✓","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI2.1","cec":"✓"},"T8D":{"year":"2026","panel":"HVA面板","res":"4K UHD","hz":"4K 144Hz","nits":"450 nits (typ)","gamut":"93% DCI-P3","contrast":"6000:1","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.1 Channel","power":"10W*2+20W","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"Freesync","os":"Google TV","voice":"✓","ga":"✓","imax":"—","cast":"✓","mem":"3G+32GB","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI2.1","cec":"✓"},"T6D":{"year":"2026","panel":"HVA Panel","res":"4K UHD","hz":"60Hz","nits":"350 nits (typ)","gamut":"93% DCI-P3","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.0 Channel","power":"2*15W","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"—","os":"Google TV","voice":"✓","ga":"✓","imax":"—","cast":"✓","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI2.1","cec":"✓"},"P7L":{"year":"2026","panel":"HVA Panel","res":"4K UHD","hz":"60Hz","nits":"450 nits (typ)","gamut":"93% DCI-P3","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.1 Channel","power":"2*10W+20W","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"—","os":"Google TV","voice":"✓","ga":"✓","imax":"—","cast":"✓","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI2.1","cec":"✓"},"P6L":{"year":"2026","panel":"HVA面板","res":"4K UHD","hz":"60Hz","nits":"330 nits (typ)","contrast":"6000:1","hlg":"✓","ch":"2.0 Channel","power":"15W*2","gm":"✓","os":"Google TV","voice":"✓","ga":"✓","imax":"—","cast":"✓","mem":"2G+16GB","bt":"BT5.4","wifi":"WiFi5","cec":"✓"},"V6D":{"year":"2026","panel":"DLED","res":"4K UHD","hz":"60Hz","nits":"330 nits (typ)","contrast":"6000:1","hlg":"✓","ch":"2.0 Channel","power":"15W*2","gm":"✓","os":"Google TV","voice":"—","ga":"✓","imax":"—","cast":"✓","mem":"2G+16GB","bt":"BT5.4","wifi":"WiFi5","cec":"✓"},"C7K":{"year":"2025","panel":"VA","res":"4K UHD","hz":"MEMC 120Hz,144Hz, VRR (48-288Hz)","nits":"HDR 3000nits","gamut":"97% DCI-P3","contrast":"6000:1","dv":"Dolby Vision IQ","hdr10p":"✓","hlg":"✓","ch":"B&O Audio System","atmos":"✓","dts":"—","gm":"✓","fs":"Premium Pro","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","mem":"3G+64GB","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI 2.1*4","cec":"✓"},"X11K":{"year":"2025","panel":"VA","res":"4K UHD","hz":"144Hz NRR(VRR 48 / 288Hz)","nits":"6500(Peak)","gamut":"97% DCI-P3","contrast":"5600:1","dv":"Dolby Vision IQ","hdr10p":"✓（含 HDR10+ Adaptive）","hlg":"✓","ch":"B&O Audio System","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"✓","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","mem":"3G+64GB","bt":"BT5.4","wifi":"WiFi6","cec":"✓（認證）"},"C8K":{"year":"2025","panel":"VA","res":"4K UHD","hz":"MEMC120, 144Hz(VRR 48 / 288Hz / DLG 288Hz)","nits":"5000(Peak)","gamut":"97% DCI-P3","contrast":"6000:1","dv":"Dolby Vision IQ, Dolby Vision,HDR 10+,HDR10,HLG","hdr10p":"✓","hlg":"✓","ch":"B&O Audio System","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"✓","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","mem":"3G+64GB","bt":"BT5.4","wifi":"WiFi6","hdmi":"HDMI2.1*4"},"C6K":{"year":"2025","panel":"VA","res":"4K UHD","hz":"MEMC 120HZ; 144Hz, VRR (48HZ / 288Hz);DLG 240Hz","nits":"HDR 1000 nits","gamut":"93% DCI-P3","contrast":"5000:1","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.1 聲道","power":"10W*2+20W","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"Premium Pro","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","mem":"3G+64GB","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI 2.1*4","cec":"✓"},"C855":{"year":"2024","panel":"VA","res":"4K UHD","hz":"144Hz VRR","nits":"3500 nits (peak) 650 nits (typ);","gamut":"97% DCI-P3","contrast":"5600:1","dv":"Dolby Vision IQ","hdr10p":"✓（含 HDR10+ Adaptive）","hlg":"✓","ch":"2.2.2","power":"60W (2*10W主聲道+2*10W重低音+2*10W天空聲道)","atmos":"✓","dts":"DTS-HD+DTS Virtual X","gm":"✓","fs":"AMD FreeSync Premium Pro","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","bt":"BT5.2","wifi":"WIFI 6","cec":"✓"},"C755":{"year":"2023","res":"4K UHD","hz":"144Hz VRR +240Hz DLG","nits":"550 nits (typ);1500 nits (peak)","gamut":"94% DCI-P3","contrast":"5000:1","dv":"Dolby Vision IQ","hdr10p":"✓","hlg":"✓","power":"15W*2","atmos":"✓","dts":"DTS-HD+DTS Virtual X","gm":"✓","fs":"AMD FreeSync Premium Pro","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","bt":"BT5.0","wifi":"2.4G / 5G，802.1b / g / n / ac / ax(WiFi5)","cec":"✓"},"C765":{"year":"2024","panel":"VA","res":"4K UHD","hz":"144Hz VRR +240Hz DLG","nits":"2400 nits (peak)","gamut":"97% DCI-P3","contrast":"5000:1","dv":"Dolby Vision IQ","hdr10p":"✓","hlg":"✓","ch":"2.1 Channel","power":"15W*2+20W","atmos":"✓","dts":"DTS-HD+DTS Virtual X","gm":"✓","fs":"AMD FreeSync Premium Pro","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","bt":"BT5.0","wifi":"2.4GHz / 5GHz 802.11 a / b / g / n / ac(WIFI5)","hdmi":"HDMI1.4 & HDMI2.0&HDMI2.1, HDCP1.4 & HDCP2.2","cec":"✓"},"Q7C":{"year":"2025","panel":"VA","res":"4K UHD","hz":"MEMC 120Hz,144Hz, VRR (48-288Hz)","nits":"HDR 3000nits","gamut":"97% DCI-P3","contrast":"5000:1","dv":"Dolby Vision IQ","hdr10p":"✓","hlg":"✓","ch":"B&O Audio System","atmos":"✓","dts":"—","gm":"✓","fs":"Premium Pro","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","mem":"3G+64GB","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI1.4 & HDMI2.0 & HDMI2.1, HDCP1.4 & HDCP2.2","cec":"✓"},"Q6C":{"year":"2025","panel":"VA","res":"4K UHD","hz":"MEMC 120HZ; 144Hz, VRR (48HZ / 288Hz);DLG 240Hz","nits":"1000 nits (typ)","gamut":"93% DCI-P3","contrast":"5000:1","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.1 聲道","power":"10W*2+20W","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"Premium Pro","os":"Google TV","voice":"✓","ga":"✓","imax":"✓","cast":"✓","mem":"3G+32GB","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI1.4 & HDMI2.0 & HDMI2.1, HDCP1.4 & HDCP2.2","cec":"✓"},"P8K":{"year":"2025","panel":"DLED","res":"4K UHD","hz":"144Hz NRR / 288Hz VRR","nits":"450 nits (typ)","gamut":"93% DCI-P3","contrast":"6000:1","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.1 聲道","power":"10W*2+20W","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"Premium","os":"Google TV","voice":"✓","ga":"✓","imax":"—","cast":"✓","mem":"3G+64GB","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI 2.1*4","cec":"✓"},"T8C":{"year":"2025","panel":"DLED","res":"4K UHD","hz":"144Hz NRR(VRR 48-288Hz / DLG 288Hz)","nits":"450 nits (typ)","gamut":"93% DCI-P3","contrast":"6000:1","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.1 聲道","power":"10W*2+20W","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"FreeSync","os":"Google TV","voice":"✓","ga":"✓","imax":"—","cast":"✓","mem":"3G+32GB","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI2.1","cec":"✓"},"T6C":{"year":"2025","panel":"DLED","res":"4K UHD","hz":"60Hz(VRR 120Hz / DLG 120Hz)","nits":"450 nits (typ)","gamut":"93% DCI-P3","contrast":"6000:1","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.1 Channel","power":"10W*2+20W","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"—","os":"Google TV","voice":"✓","ga":"✓","imax":"—","cast":"✓","mem":"2G+16GB","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI2.1","cec":"✓"},"P7K":{"year":"2025","panel":"DLED","res":"4K UHD","hz":"60Hz(VRR 120Hz / DLG 120Hz)","nits":"450 nits (typ)","gamut":"93% DCI-P3","contrast":"5000:1","dv":"✓","hdr10p":"✓","hlg":"✓","ch":"2.1 Channel","power":"10W*2+20W","atmos":"✓","dts":"DTS Virtual X","gm":"✓","fs":"—","os":"Google TV","voice":"✓","ga":"✓","imax":"—","cast":"✓","mem":"2G+16GB","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI2.1*3","cec":"✓"},"P6K":{"year":"2025","panel":"DLED","res":"4K UHD","hz":"60Hz","nits":"330 nits (typ)","contrast":"6000:1","hlg":"✓","ch":"2.0 Channel","power":"15W*2","gm":"✓","os":"Google TV","voice":"遙控器","ga":"✓","imax":"—","cast":"✓","mem":"2G+16GB","bt":"BT5.2","wifi":"WiFi5","hdmi":"HDMI 2.1*1& 2.0*1&1.4*1","cec":"✓"},"V6C":{"year":"2025","panel":"DLED","res":"4K UHD","hz":"60Hz(VRR 120 / DLG 120)","nits":"330 nits (typ)","contrast":"6000:1","hlg":"✓","ch":"2.0 Channel","power":"15W*2","gm":"✓","os":"Google TV","voice":"遙控器","ga":"✓","imax":"—","cast":"✓","mem":"2G+16GB","bt":"BT5.4","wifi":"WiFi5","hdmi":"HDMI1.4 & HDMI2.0 & HDMI2.1, HDCP1.4 & HDCP2.2","cec":"✓"},"S5K":{"year":"2025","panel":"VA","res":"FHD","hz":"60Hz","nits":"250 nits (typ)","contrast":"5000:1","hlg":"✓","ch":"2.0 Channel","power":"9.5W*2","dts":"—","fs":"—","os":"Google TV","voice":"—","imax":"—","cast":"✓","mem":"1G+8GB","bt":"BT5.0","wifi":"WiFi4","hdmi":"HDMI1.4b*2","cec":"✓"}}, GROUPS=[{"k": "pic", "h": "畫質", "f": [["__tech", "顯示技術", null, false], ["panel", "面板", null, false], ["res", "解析度", null, false], ["hz", "刷新率", "max", false], ["nits", "峰值亮度", "max", false], ["gamut", "色域", null, false], ["contrast", "對比度", null, false], ["dv", "Dolby Vision", null, false], ["hdr10p", "HDR10+", null, false], ["hlg", "HLG", null, false]]}, {"k": "snd", "h": "音效", "f": [["ch", "聲道", null, false], ["power", "輸出功率", "max", false], ["abrand", "音響品牌", null, false], ["atmos", "Dolby Atmos", null, false], ["dts", "DTS 音效", null, false]]}, {"k": "game", "h": "遊戲", "f": [["gm", "Game Master", null, false], ["fs", "AMD FreeSync", null, false], ["earc", "HDMI 2.1 eARC / ARC", null, false]]}, {"k": "smart", "h": "智慧功能", "f": [["os", "作業系統", null, false], ["voice", "語音控制", null, false], ["ga", "Google 助理", null, false], ["imax", "IMAX Enhanced", null, false], ["cast", "Miracast 無線投影", null, false], ["mem", "記憶體", null, false]]}, {"k": "conn", "h": "連接", "f": [["hdmi", "HDMI 版本", null, false], ["cec", "HDMI CEC", null, false], ["bt", "藍牙", null, false], ["wifi", "Wi-Fi", null, false]]}, {"k": "basic", "h": "基本資訊", "f": [["year", "推出年份", null, false]]}], IMG='https://www.tcl-shop.com.tw/upload/products/';
   const imgFor=(p,size)=>p.im?'images/tv/'+((p.imz&&p.imz[size])||p.im):IMG+p.img;
   const find=s=>DATA.find(p=>p.s===s);
-  const cp=document.getElementById('cp'),px=document.getElementById('cpPx'),sx=document.getElementById('cpSx'),specs=document.getElementById('cpSpecs'),prods=document.getElementById('cpProds');
+  const mob=()=>innerWidth<=720;
+  const cp=document.getElementById('cp'),px=document.getElementById('cpPx'),specs=document.getElementById('cpSpecs'),prods=document.getElementById('cpProds');
   /* 網址格式：compare.html?m=X11L-98,C8L-85 */
   let items=(new URLSearchParams(location.search).get('m')||'').split(',').filter(Boolean).map(t=>{const i=t.lastIndexOf('-');return {s:decodeURIComponent(t.slice(0,i)),size:+t.slice(i+1)}}).filter(x=>find(x.s)).slice(0,3);
   items.forEach(x=>{const p=find(x.s);if(!p.sz.some(z=>z[0]===x.size))x.size=p.sz[0][0]});
-  const openGroups=new Set(GROUPS.map(g=>g.k));
-  const save=()=>{const q=items.map(x=>encodeURIComponent(x.s)+'-'+x.size).join(',');history.replaceState(null,'',location.pathname+(q?'?m='+q:''));
+  let pair=[0,1],adding=false;             /* 手機：目前並排的兩台（items 的索引） */
+  let wasMob=mob();
+  const openGroups=new Set(wasMob?['pic']:GROUPS.map(g=>g.k));
+  const save=()=>{const q=new URLSearchParams(location.search);q.delete('m');if(items.length)q.set('m',items.map(x=>x.s+'-'+x.size).join(','));const t=q.toString().replace(/%2C/g,',').replace(/\+/g,'%20');history.replaceState(null,'',location.pathname+(t?'?'+t:''));
     try{sessionStorage.setItem('tclCompare',JSON.stringify(items))}catch(e){}};
-  const idOf=x=>{const p=find(x.s);return (p.sz.find(z=>z[0]===x.size)||p.sz[0])[1]};
-  /* 取規格：該尺寸沒有資料時，非尺寸欄位改用同系列其他尺寸的資料 */
-  function val(x,key){const o=SPEC[x.s];return o&&o[key]!=null?o[key]:null}
+  const fixPair=()=>{pair=pair.filter(i=>i<items.length);for(let i=0;i<items.length&&pair.length<2;i++)if(!pair.includes(i))pair.push(i);pair.sort((a,b)=>a-b)};
+  /* 目前要顯示的欄位：電腦 3 欄（含空欄），手機 2 欄 */
+  const view=()=>mob()?(adding?[pair[0],null]:(fixPair(),[0,1].map(k=>pair[k]!=null?pair[k]:null))):[0,1,2].map(k=>k<items.length?k:null);
+  const val=(x,key)=>{const o=SPEC[x.s];return o&&o[key]!=null?o[key]:null};
   const num=(v,mode)=>{if(!v)return null;const ns=(v.replace(/,/g,'').match(/\d+(\.\d+)?/g)||[]).map(Number);if(!ns.length)return null;return mode==='max'?Math.max(...ns):ns[0]};
+  const nm=x=>x.size+x.s.replace(' ','');
 
-  function sizeUI(x,k){const p=find(x.s);const i=p.sz.findIndex(z=>z[0]===x.size);
+  function sizeUI(x){const p=find(x.s);const i=p.sz.findIndex(z=>z[0]===x.size);
+    if(mob())return `<label class="cpm-size"><select aria-label="尺寸">${p.sz.map(z=>`<option value="${z[0]}"${z[0]===x.size?' selected':''}>${z[0]} 吋</option>`).join('')}</select></label>`;
     return `<div class="pc-sz"><button class="arr l" aria-label="較大尺寸"${i<=0?' disabled':''}><svg viewBox="0 0 7 12"><path d="M6 1 1 6l5 5"/></svg></button><div class="rail no-tr"><div>`+
       p.sz.map((z,j)=>`<button class="s${j===i?' on':''}" data-j="${j}">${z[0]}</button>`).join('')+
       `</div></div><button class="arr r" aria-label="較小尺寸"${i>=p.sz.length-1?' disabled':''}><svg viewBox="0 0 7 12"><path d="m1 1 5 5-5 5"/></svg></button></div>`}
-  function bindSize(el,x){const p=find(x.s),rail=el.querySelector('.rail'),row=rail.firstElementChild,bs=[...row.children],L=el.querySelector('.arr.l'),R=el.querySelector('.arr.r');
+  function setSize(el,x,size){const p=find(x.s);x.size=size;save();
+    const im=el.querySelector('.im img'),u=imgFor(p,size);if(!im.src.endsWith(u)){im.style.opacity=0;setTimeout(()=>{im.src=u;im.onload=()=>im.style.opacity=1},180)}
+    el.querySelector('.nm').textContent=nm(x);drawMini();drawCta();drawSpecs()}
+  function bindSize(el,x){
+    if(mob()){el.querySelector('.cpm-size select').onchange=e=>setSize(el,x,+e.target.value);return}
+    const p=find(x.s),rail=el.querySelector('.rail'),row=rail.firstElementChild,bs=[...row.children],L=el.querySelector('.arr.l'),R=el.querySelector('.arr.r');
     let cur=p.sz.findIndex(z=>z[0]===x.size);
     const center=()=>{const b=bs[cur];row.style.transform=`translateX(${rail.clientWidth/2-(b.offsetLeft+b.offsetWidth/2)}px)`};
-    const pick=i=>{i=Math.max(0,Math.min(bs.length-1,i));if(i===cur)return;cur=i;bs.forEach((o,k)=>o.classList.toggle('on',k===i));L.disabled=i===0;R.disabled=i===bs.length-1;center();
-      x.size=p.sz[i][0];save();const im=el.querySelector('.im img'),u=imgFor(p,x.size);if(!im.src.endsWith(u)){im.style.opacity=0;setTimeout(()=>{im.src=u;im.onload=()=>im.style.opacity=1},180)}
-      el.querySelector('.nm').textContent=x.size+p.s.replace(' ','');drawSpecs()};
+    const pick=i=>{i=Math.max(0,Math.min(bs.length-1,i));if(i===cur)return;cur=i;bs.forEach((o,k)=>o.classList.toggle('on',k===i));L.disabled=i===0;R.disabled=i===bs.length-1;center();setSize(el,x,p.sz[i][0])};
     bs.forEach((b,i)=>b.onclick=()=>pick(i));L.onclick=()=>pick(cur-1);R.onclick=()=>pick(cur+1);
     requestAnimationFrame(()=>{center();requestAnimationFrame(()=>rail.classList.remove('no-tr'))});
     new ResizeObserver(()=>{rail.classList.add('no-tr');center();requestAnimationFrame(()=>rail.classList.remove('no-tr'))}).observe(rail)}
 
+  const addCell=()=>{const opts=DATA.filter(p=>!items.some(i=>i.s===p.s)).map(p=>`<option value="${p.s}">${p.s}｜${p.tech}</option>`).join('');
+    return `<div class="cp-add"><b>＋</b>加入產品<select aria-label="選擇產品"><option value="">選擇型號</option>${opts}</select></div>`};
   function drawProds(){
-    if(!items.length){prods.hidden=true;specs.innerHTML='<div class="cp-empty">目前沒有要比較的產品<br><a href="tvs.html">前往全部顯示器挑選</a></div>';cp.querySelector('.cp-diff').style.visibility='hidden';return}
-    prods.hidden=false;cp.querySelector('.cp-diff').style.visibility='';
-    const cells=[0,1,2].map(k=>{const x=items[k];
-      if(!x){const opts=DATA.filter(p=>!items.some(i=>i.s===p.s)).map(p=>`<option value="${p.s}">${p.s}｜${p.tech}</option>`).join('');
-        return `<div class="cp-add" data-k="${k}"><b>＋</b>加入產品<select aria-label="選擇產品"><option value="">選擇型號</option>${opts}</select></div>`}
-      const p=find(x.s);
+    const m=mob();cp.classList.toggle('is-mob',m);
+    if(!items.length){prods.hidden=true;specs.innerHTML='<div class="cp-empty">目前沒有要比較的產品<br><a href="tvs.html">前往全部顯示器挑選</a></div>';cp.querySelector('.cp-head .cp-diff').style.visibility='hidden';drawCta();return}
+    prods.hidden=false;cp.querySelector('.cp-head .cp-diff').style.visibility='';
+    const cells=view().map(k=>{if(k==null)return addCell();const x=items[k],p=find(x.s);
       return `<div class="cp-prod" data-k="${k}"><button class="x" aria-label="移除">×</button><div class="im"><img src="${imgFor(p,x.size)}" alt="TCL ${p.s}"></div>
-        <div class="nm">${x.size}${p.s.replace(' ','')}</div><div class="tt">${p.t}</div>${sizeUI(x,k)}<a class="more" href="#">了解更多</a></div>`});
-    px.innerHTML=`<div class="cp-grid"><div class="cp-label-top lab-cell">${items.length} 項產品比較中</div>${cells.join('')}</div>`;
+        <div class="nm">${nm(x)}</div><div class="tt">${p.t}</div>${sizeUI(x)}${m?'':'<a class="more" href="#">了解更多</a>'}</div>`});
+    /* 手機：3 台時用膠囊選擇要並排的 2 台；不到 3 台時可再加入 */
+    const pills=m&&items.length>=2?`<div class="cpm-pills">${items.map((x,i)=>`<button data-i="${i}" class="${pair.includes(i)&&!(adding&&i!==pair[0])?'on':''}">${x.s}</button>`).join('')}${items.length<3?`<button class="add${adding?' on':''}">＋ 加入</button>`:''}</div>`:'';
+    px.innerHTML=pills+`<div class="cp-grid">${m?'':`<div class="cp-label-top lab-cell">${items.length} 項產品比較中</div>`}${cells.join('')}</div>`+
+      (m?'<div class="cpm-mini"><span class="a"></span><label class="cp-diff"><input type="checkbox" class="cpDiffM">差異</label><span class="b"></span></div>':'');
     px.querySelectorAll('.cp-prod').forEach(el=>{const k=+el.dataset.k;bindSize(el,items[k]);
-      el.querySelector('.x').onclick=()=>{items.splice(k,1);save();drawProds();drawSpecs()}});
-    px.querySelectorAll('.cp-add select').forEach(sl=>sl.onchange=()=>{if(!sl.value)return;const p=find(sl.value);items.push({s:p.s,size:p.sz[0][0]});save();drawProds();drawSpecs()});
+      el.querySelector('.x').onclick=()=>{items.splice(k,1);pair=pair.filter(i=>i!==k).map(i=>i>k?i-1:i);save();redraw()}});
+    px.querySelectorAll('.cp-add select').forEach(sl=>sl.onchange=()=>{if(!sl.value)return;const p=find(sl.value);items.push({s:p.s,size:p.sz[0][0]});
+      if(mob())pair=[pair[0],items.length-1];adding=false;save();redraw()});
+    px.querySelectorAll('.cpm-pills button[data-i]').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(pair.includes(i))return;
+      adding=false;pair=[pair[1],i].sort((a,c)=>a-c);   /* 換掉較早選的那一台 */
+      redraw()});
+    const ad=px.querySelector('.cpm-pills .add');if(ad)ad.onclick=()=>{adding=!adding;redraw()};
+    const dm=px.querySelector('.cpDiffM');if(dm){dm.checked=cp.classList.contains('diff-only');dm.onchange=()=>setDiff(dm.checked)}
+    drawMini();drawCta();
   }
+  function drawMini(){const mm=px.querySelector('.cpm-mini');if(!mm)return;const v=view();
+    mm.querySelector('.a').textContent=v[0]!=null?nm(items[v[0]]):'';mm.querySelector('.b').textContent=v[1]!=null?nm(items[v[1]]):''}
+  /* 手機底部：兩顆「了解更多」 */
+  const cta=document.createElement('div');cta.className='cpm-cta';document.body.appendChild(cta);
+  function drawCta(){const v=mob()&&items.length?view().filter(k=>k!=null):[];cta.classList.toggle('on',v.length>0);document.body.classList.toggle('cpm-cta-on',v.length>0);
+    cta.innerHTML=v.map(k=>`<a href="#">了解更多 <b>${items[k].s}</b></a>`).join('')}
+
   function drawSpecs(){
     if(!items.length)return;
+    const v=view(),shown=v.filter(k=>k!=null);
     specs.innerHTML=GROUPS.map(g=>{
       let allSame=true;
-      const rows=g.f.map(([key,label,best,perSize])=>{
-        const vs=items.map(x=>key==='__tech'?find(x.s).tech:val(x,key,perSize));
-        if(vs.every(v=>v==null))return '';
-        const same=items.length>1&&vs.every(v=>v===vs[0]);if(!same)allSame=false;
-        let bi=-1;if(best&&items.length>1){const ns=vs.map(v=>num(v,best));const m=Math.max(...ns.filter(n=>n!=null));if(isFinite(m)&&ns.filter(n=>n===m).length<ns.filter(n=>n!=null).length)bi=m;
-          return `<div class="cp-row cp-grid${same?' same':''}"><div class="lab lab-cell">${label}</div>`+vs.map((v,i)=>`<div class="v${v==null?' na':''}${bi!==-1&&ns[i]===bi?' best':''}">${v??'—'}</div>`).join('')+cells(items.length)+'</div>'}
-        return `<div class="cp-row cp-grid${same?' same':''}"><div class="lab lab-cell">${label}</div>`+vs.map(v=>`<div class="v${v==null?' na':''}">${v??'—'}</div>`).join('')+cells(items.length)+'</div>'}).join('');
+      const rows=g.f.map(([key,label,best])=>{
+        const vs=v.map(k=>k==null?undefined:(key==='__tech'?find(items[k].s).tech:val(items[k],key)));
+        const real=vs.filter(x=>x!==undefined);
+        if(real.every(x=>x==null))return '';
+        const same=real.length>1&&real.every(x=>x===real[0]);if(!same)allSame=false;
+        let bi=null,ns=[];
+        if(best&&real.length>1){ns=vs.map(x=>x==null?null:num(x,best));const ok=ns.filter(n=>n!=null);const m=Math.max(...ok);if(isFinite(m)&&ok.filter(n=>n===m).length<ok.length)bi=m}
+        return `<div class="cp-row cp-grid${same?' same':''}"><div class="lab lab-cell">${label}</div>`+vs.map((x,i)=>x===undefined?'<div></div>':`<div class="v${x==null?' na':''}${bi!=null&&ns[i]===bi?' best':''}">${x??'—'}</div>`).join('')+'</div>'}).join('');
       if(!rows)return '';
-      return `<div class="cp-grp${openGroups.has(g.k)?' open':''}${allSame&&items.length>1?' all-same':''}" data-k="${g.k}"><button>${g.h}<i></i></button><div class="cp-rows"><div>${rows}</div></div></div>`}).join('');
-    specs.querySelectorAll('.cp-grp > button').forEach(b=>b.onclick=()=>{const g=b.parentElement;g.classList.toggle('open');g.classList.contains('open')?openGroups.add(g.dataset.k):openGroups.delete(g.dataset.k)});
+      return `<div class="cp-grp${openGroups.has(g.k)?' open':''}${allSame&&shown.length>1?' all-same':''}" data-k="${g.k}"><button>${g.h}<i></i></button><div class="cp-rows"><div>${rows}</div></div></div>`}).join('');
+    specs.querySelectorAll('.cp-grp > button').forEach(b=>b.onclick=()=>{const g=b.parentElement;g.classList.toggle('open');
+      if(g.classList.contains('open')){openGroups.add(g.dataset.k);
+        if(mob())setTimeout(()=>scrollTo({top:g.getBoundingClientRect().top+scrollY-prods.offsetHeight-8,behavior:'smooth'}),60)}
+      else openGroups.delete(g.dataset.k)});
   }
-  const cells=n=>'<div></div>'.repeat(3-n);
-  document.getElementById('cpDiff').onchange=e=>cp.classList.toggle('diff-only',e.target.checked);
-  /* 手機：商品列與規格表左右同步捲動 */
-  let lock=false;[[px,sx],[sx,px]].forEach(([a,b])=>a.addEventListener('scroll',()=>{if(lock)return;lock=true;b.scrollLeft=a.scrollLeft;requestAnimationFrame(()=>lock=false)},{passive:true}));
+  function setDiff(on){cp.classList.toggle('diff-only',on);document.getElementById('cpDiff').checked=on;const dm=px.querySelector('.cpDiffM');if(dm)dm.checked=on}
+  document.getElementById('cpDiff').onchange=e=>setDiff(e.target.checked);
+  function redraw(){drawProds();drawSpecs()}
+  window.__cpRedraw=redraw;
   /* 往下捲時商品列縮小 */
-  const setH=()=>document.documentElement.style.setProperty('--hd-h',document.querySelector('.header').offsetHeight+'px');setH();addEventListener('resize',setH);
-  const head=cp.querySelector('.cp-head');addEventListener('scroll',()=>prods.classList.toggle('mini',head.getBoundingClientRect().bottom<(innerWidth<=720?0:document.querySelector('.header').offsetHeight)-60),{passive:true});
-  save();drawProds();drawSpecs();
+  const setH=()=>document.documentElement.style.setProperty('--hd-h',document.querySelector('.header').offsetHeight+'px');setH();
+  addEventListener('resize',()=>{setH();if(mob()!==wasMob){wasMob=mob();redraw()}});
+  const head=cp.querySelector('.cp-head');
+  addEventListener('scroll',()=>prods.classList.toggle('mini',head.getBoundingClientRect().bottom<(mob()?0:document.querySelector('.header').offsetHeight)-60),{passive:true});
+  /* 手機 header 顯示時，比較列往下讓位 */
+  const hd=document.querySelector('.header');const syncTop=()=>document.documentElement.style.setProperty('--cpm-top',mob()&&!hd.classList.contains('hd-hide')&&scrollY>0?hd.offsetHeight+'px':'0px');
+  new MutationObserver(syncTop).observe(hd,{attributes:true,attributeFilter:['class']});addEventListener('scroll',syncTop,{passive:true});
+  save();redraw();
 })();
 
 </script>
