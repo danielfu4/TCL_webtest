@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW" class="dr-fade">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>【測試頁】篩選動畫｜TCL 台灣官方網站</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:"Gotham";src:url(fonts/Gotham-Light.woff2) format("woff2");font-weight:300 400;font-style:normal;font-display:swap}  /* 缺 Book，暫以 Light 代替 400 */
+@font-face{font-family:"Gotham";src:url(fonts/Gotham-Medium.woff2) format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Gotham";src:url(fonts/Gotham-Bold.woff2) format("woff2");font-weight:600 700;font-style:normal;font-display:swap}
+/* ============================================================
+   TCL Taiwan — Homepage demo (layout modeled on tcl.com/global)
+   字體：TCLSans-Unity 未授權，暫以 Gotham + Noto Sans TC 替代
+   ============================================================ */
+:root{
+  --black:#111111; --white:#ffffff; --red:#E64C3D; --pink:#F00075;
+  --gray-50:#f7f7f7; --gray-100:#efefef; --gray-300:#d6d6d6; --gray-500:#8a8a8a; --gray-700:#4a4a4a;
+  --header-h:64px; --max:1200px;
+  --font:"Gotham","Noto Sans TC",-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--black);background:#fff;-webkit-font-smoothing:antialiased;line-height:1.5}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+/* ---------- Demo tag ---------- */
+.demo-tag{position:fixed;left:16px;bottom:16px;z-index:200;background:var(--black);color:#fff;font-size:12px;letter-spacing:.08em;padding:6px 12px;border-radius:999px;opacity:.85}
+
+/* ---------- Header（參照 TCL Global） ---------- */
+:root{
+  /* 下拉選單定案數值（2026-11-17 第二版） */
+  --ease:cubic-bezier(.4,0,.2,1);
+  --panel-dur:.6s; --close-delay:.15s;
+  --slide:16px; --c-dur:.75s; --c-op:.95s; --c-delay:.15s;
+  --l-x:-24px; --l-y:0px; --l-dur:.5s; --l-delay:.25s; --l-stagger:.03s;
+  --dim-op:.7; --dim-dur:.75s; --dim-delay:.2s;
+  --link-dur:.7s; --zoom:1.13; --zoom-dur:.6s; --thumb-w:143px;
+  /* 新品上市定案數值（2026-11-17） */
+  --na-in-x:0px; --na-in-y:40px; --na-in-dur:.6s; --na-in-delay:0s; --na-in-stagger:.08s; --na-in-scale:1;
+  --na-tx-x:0px; --na-tx-y:16px; --na-tx-dur:.8s; --na-tx-delay:.25s;
+  --na-zoom:1.1; --na-zoom-dur:.3s; --na-inset:6%;
+  --na-pop-op:.7; --na-pop-dur:.25s; --na-pop-delay:.1s;
+  --na-pt-x:0px; --na-pt-y:6px; --na-pt-dur:.35s; --na-pt-delay:.15s; --na-pb-delay:.3s;
+  --na-line-dur:.4s; --na-radius:10px;
+}
+.header{position:sticky;top:0;z-index:2000;background:#fff}
+.hd-bar{height:var(--header-h);max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;gap:8px}
+.logo{display:flex;align-items:center;margin-right:22px}
+.logo img{height:24px;width:auto;display:block}
+.nav{display:flex;height:100%;list-style:none}
+.nav-right{margin-left:auto}
+.nav > li{display:flex;align-items:center;height:100%;position:static}
+.nav-link{display:flex;align-items:center;height:100%;padding:0 12.5px;font-size:15px;font-weight:400;color:var(--black);transition:color var(--link-dur) var(--ease)}
+.nav > li.active > .nav-link,.nav-link:hover{color:var(--red)}
+.tools{display:flex;gap:8px;align-items:center;margin-left:8px}  /* 頂部選單列定案：文字 15px、選項間距 25px、LOGO 右側 22px、圖示間距 8px */
+.tools a{display:flex;align-items:center;gap:6px;font-size:13px}
+.tools svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6}
+.cart-count{font-size:11px;background:var(--black);color:#fff;border-radius:999px;min-width:18px;height:18px;display:inline-grid;place-items:center;padding:0 5px}
+.burger{display:none}
+
+/* 下拉面板：白底由上往下展開，標題/縮圖下滑淡入，連結由左往右逐行滑入 */
+.mega{position:absolute;left:0;right:0;top:var(--header-h);background:#fff;visibility:hidden;clip-path:inset(0 0 100% 0);
+  transition:clip-path var(--panel-dur) var(--ease) var(--close-delay),visibility 0s calc(var(--close-delay) + var(--panel-dur))}
+.nav > li.active .mega{visibility:visible;z-index:2;clip-path:inset(0 0 0 0);transition:clip-path var(--panel-dur) var(--ease)}
+/* 選單之間切換時，前一個面板立即收起，不跑收起動畫，避免蓋住新面板 */
+.nav > li.no-tr .mega,.nav > li.no-tr .mega *{transition:none!important}
+.mm-inner{max-width:1180px;margin:0 auto;padding:4px 40px 24px}
+.mm-row{display:grid;grid-template-columns:repeat(3,1fr)}
+.mm-row + .mm-row{border-top:1px solid #e6e6e6}
+.mm-col{display:grid;grid-template-columns:var(--thumb-w) 1fr;gap:34px;padding:24px 20px 28px 0}
+.mm-col + .mm-col{border-left:1px solid #ececec;padding-left:20px}
+.mm-col.noimg{grid-template-columns:1fr}
+.mm-thumb,.mm-title{opacity:0;transform:translateY(calc(var(--slide) * -1));transition:transform var(--c-dur) var(--ease) var(--c-delay),opacity var(--c-op) var(--ease) var(--c-delay)}
+.mm-thumb{overflow:hidden;align-self:start;margin-top:38px}
+.mm-thumb img{width:116px;aspect-ratio:4/3;object-fit:cover;transition:transform var(--zoom-dur) var(--ease)}
+.mm-thumb.cut{overflow:visible}
+.mm-thumb.cut img{width:var(--thumb-w);aspect-ratio:auto;height:auto;object-fit:contain}
+.mm-thumb.cut img[src*="menu_32x3b"],.mm-thumb.cut img[src*="menu_q85h"]{width:auto;height:calc(var(--thumb-w) * .6);margin:0 auto}  /* 高度與 RM9L 縮圖（400×240）對齊，上下不超出 */
+.mm-col:hover .mm-thumb img{transform:scale(var(--zoom))}
+.mm-title{font-size:14px;font-weight:500;color:#8a8a8a;letter-spacing:.04em;margin:10px 0 18px}  /* 分類標題：12px 再放大 15%、細一級、灰階 */
+.mm-list{list-style:none;display:grid;gap:12px}
+.mm-list li{opacity:0;transform:translate(var(--l-x),var(--l-y));
+  transition:transform var(--l-dur) var(--ease) calc(var(--l-delay) + var(--l-stagger) * var(--i,0)),opacity var(--l-dur) var(--ease) calc(var(--l-delay) + var(--l-stagger) * var(--i,0))}
+.mm-list a{font-size:15px;color:#333;transition:color .2s var(--ease)}
+.mm-list a:hover{color:var(--red)}
+.nav > li.active .mm-thumb,.nav > li.active .mm-title,.nav > li.active .mm-list li{opacity:1;transform:none}
+.nav > li:not(.active) .mm-thumb,.nav > li:not(.active) .mm-title,.nav > li:not(.active) .mm-list li{transition:none}
+/* 背景遮罩 */
+.hd-dim{position:fixed;inset:0;z-index:1999;background:#000;opacity:0;visibility:hidden;pointer-events:none;transition:opacity var(--dim-dur) var(--ease),visibility 0s var(--dim-dur)}
+.hd-dim.on{opacity:var(--dim-op);visibility:visible;transition:opacity var(--dim-dur) var(--ease) var(--dim-delay)}
+
+/* ---------- Hero ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 22px;border-radius:999px;font-size:13px;font-weight:600;letter-spacing:.02em;transition:.2s;white-space:nowrap}
+.btn-dark{background:var(--black);color:#fff}.btn-dark:hover{background:#333}
+.btn-light{background:#fff;color:var(--black)}.btn-light:hover{background:var(--gray-100)}
+.btn-line{border:1px solid var(--black);color:var(--black)}.btn-line:hover{background:var(--black);color:#fff}
+.hero{position:relative;overflow:hidden;background:#0b0b0b}
+.hero-track{display:flex;transition:transform .8s cubic-bezier(.65,.05,.36,1)}
+.hero-slide{flex:0 0 100%;position:relative;color:#fff}
+.hero-slide img{width:100%;aspect-ratio:2400/1012;object-fit:cover}
+.hero-copy{position:absolute;left:9%;top:50%;transform:translateY(-50%);max-width:34%}
+.hero-slide .hero-copy .title-svg{height:clamp(22px,2.35vw,56px);width:auto;max-width:none;aspect-ratio:auto;object-fit:contain;display:block}
+.hero-copy h2{font-family:"Gotham","Noto Sans TC",sans-serif;font-weight:600;font-size:clamp(24px,2.35vw,56px);line-height:1.1;letter-spacing:-.005em;white-space:nowrap}
+.hero-copy p{font-size:clamp(14px,1.25vw,26px);font-weight:400;line-height:1.5;margin-top:clamp(12px,1.6vw,30px)}
+.hero-copy .btn-hero{margin-top:clamp(18px,2.6vw,50px)}
+.btn-hero{height:clamp(36px,2.6vw,46px);padding:0 clamp(20px,1.6vw,28px);background:#fff;color:var(--black);font-size:clamp(13px,.95vw,16px)}
+.btn-hero:hover{background:var(--gray-100)}
+/* 進站時 banner 文字淡入：標題 → 副標 → 按鈕 依序由下往上 */
+.hero-copy > *{opacity:0;transform:translateY(20px)}
+/* 每次換張：先出現圖，文字再依序淡入；離開的那張文字快速淡出 */
+.hero-copy > *{transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.hero.ready .hero-slide.is-on .hero-copy > *{opacity:1;transform:none;transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.hero.ready .hero-slide.is-on .hero-copy > :nth-child(1){transition-delay:.7s}
+.hero.ready .hero-slide.is-on .hero-copy > :nth-child(2){transition-delay:.9s}
+.hero.ready .hero-slide.is-on .hero-copy > :nth-child(3){transition-delay:1.1s}
+/* 過場：淡入淡出＋微縮放（新圖由 105% 縮回 100%），電腦版與手機版相同 */
+@media all{
+  .hero-track{display:grid;transform:none!important;transition:none}
+  .hero-slide{grid-area:1/1;opacity:0;transform:scale(1.05);z-index:0;pointer-events:none;
+    transition:opacity 1s var(--ease),transform 1.4s var(--ease)}
+  .hero-slide.is-on{opacity:1;transform:none;z-index:1;pointer-events:auto}
+  .hero{overflow:hidden}
+}
+@media (prefers-reduced-motion:reduce){.hero-copy > *{opacity:1;transform:none;transition:none!important}.hero-slide{transition:none!important}}
+.hero-slide.dark{color:var(--black)}
+.hero-slide.dark .btn-hero{background:var(--black);color:#fff}
+.hero-slide.dark .btn-hero:hover{background:#333}
+/* A400 Pro：電視靠左，文字往左移 */
+.hero-slide.left-copy .hero-copy{left:6.5%}
+/* 品牌 slide：圖上已有文字，只放按鈕在文字下方 */
+.brand-slide .hero-copy{left:34.6%;top:auto;bottom:19%;transform:translateX(-50%);max-width:none}
+.brand-slide .hero-copy .btn-hero{margin-top:0}
+/* 箭頭 */
+.hero-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:52px;display:grid;place-items:center;border:1px solid transparent;border-radius:4px;transition:.25s;z-index:3;color:#fff}
+.hero-arrow svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6}
+.hero-arrow:hover{border-color:currentColor;background:rgba(0,0,0,.12)}
+.hero-arrow.prev{left:0}.hero-arrow.next{right:12px}
+.hero.on-dark .hero-arrow,.hero.on-dark .hero-label{color:var(--black)}
+/* 指示器 */
+.hero-ui{position:absolute;left:50%;bottom:clamp(16px,2.4vw,44px);transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:clamp(10px,1vw,16px);z-index:3}
+.hero-label{color:#fff;font-size:clamp(14px,1.15vw,20px);font-weight:500;letter-spacing:.01em;transition:color .4s}
+/* 指示器比例（參照國際版）：圓點 10、間距 20、進度條 120、暫停鍵 56×28 */
+.hero-dots{display:flex;align-items:center;gap:clamp(12px,1.2vw,20px)}
+.hero-dots button{width:clamp(7px,.6vw,10px);height:clamp(7px,.6vw,10px);border-radius:999px;background:#fff;position:relative;overflow:hidden;flex:none;transition:width .45s var(--ease),background .3s}
+.hero.on-dark .hero-dots button{background:#111}
+.hero-dots button.on{width:clamp(56px,6.2vw,120px);background:rgba(255,255,255,.35)}
+.hero.on-dark .hero-dots button.on{background:rgba(0,0,0,.2)}
+.hero-dots button.on i{position:absolute;inset:0;background:#fff;transform-origin:left;animation:fill var(--dur,6s) linear forwards}
+.hero.on-dark .hero-dots button.on i{background:#111}
+.hero.paused .hero-dots button.on i{animation-play-state:paused}
+@keyframes fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* 暫停 / 繼續鍵 */
+.hero-dots .hero-pause{width:auto;height:clamp(22px,1.55vw,30px);padding:0 clamp(8px,.6vw,11px);margin-left:clamp(4px,.4vw,8px);border-radius:4px;
+  background:rgba(255,255,255,.25);color:#fff;display:inline-flex;align-items:center;gap:clamp(4px,.35vw,6px);transition:background .2s}
+.hero-dots .hero-pause:hover{background:rgba(255,255,255,.4)}
+.hero.on-dark .hero-dots .hero-pause{background:rgba(0,0,0,.12);color:#111}
+.hero.on-dark .hero-dots .hero-pause:hover{background:rgba(0,0,0,.2)}
+.hero-pause svg{height:clamp(8px,.6vw,11px);width:auto;fill:currentColor;opacity:.4;transition:opacity .2s}
+.hero-pause svg.cur{opacity:1}
+.hero-pause .sl{width:1.5px;height:clamp(10px,.75vw,14px);background:currentColor;opacity:.4;transform:skewX(-18deg)}
+
+/* ---------- Section title ---------- */
+.sec{padding:96px 0}
+.sec-title{text-align:center;font-size:30px;font-weight:600;letter-spacing:.06em;margin-bottom:24px}
+.tabs{display:flex;justify-content:center;gap:28px;flex-wrap:wrap}
+.tabs button{position:relative;font-size:14px;font-weight:500;padding:4px 0 2px;opacity:.75;transition:opacity .2s}
+.tabs button:hover{opacity:1}
+.tabs button.on{opacity:1}
+/* 底線動畫：與新品上市相同（由中間往兩側展開，0.4s） */
+.tabs button::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;background:currentColor;transform:scaleX(0);transition:transform var(--na-line-dur) var(--ease)}
+.tabs button.on::after{transform:scaleX(1)}
+.tabs button:focus,.na-tabs button:focus{outline:none}
+.tabs button:focus-visible,.na-tabs button:focus-visible{outline:none}
+
+/* ---------- New arrivals（版面參照 TCL Global，動畫為 2026-11-17 定案值） ---------- */
+.na-wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.na-title{text-align:center;font-size:34px;line-height:40px;font-weight:500;margin-bottom:40px;letter-spacing:.02em}
+.na-tabs{list-style:none;display:flex;justify-content:center;gap:40px;margin-bottom:40px}
+.na-tabs button{position:relative;font-size:16px;font-weight:500;line-height:24px;padding-bottom:2px}
+.na-tabs .line{position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--black);transform:scaleX(0);transition:transform var(--na-line-dur) var(--ease)}
+.na-tabs button.on .line{transform:scaleX(1)}
+.na-panel{display:none;justify-content:space-between;gap:32px}
+.na-panel.on{display:flex}
+.na-panel.n3,.na-panel.n2{justify-content:center}
+.na-col.lg{flex:0 0 48%}
+.na-col.xs{flex:0 0 calc(26% - 32px);display:flex;flex-direction:column;gap:16px}
+/* 卡片進場：由下往上 */
+.na-card{position:relative;border-radius:var(--na-radius);overflow:hidden;background:#fff;aspect-ratio:1/1;
+  opacity:0;transform:translate(var(--na-in-x),var(--na-in-y)) scale(var(--na-in-scale))}
+.na-panel.play .na-card{opacity:1;transform:none;
+  transition:opacity var(--na-in-dur) var(--ease) calc(var(--na-in-delay) + var(--na-in-stagger) * var(--i,0)),transform var(--na-in-dur) var(--ease) calc(var(--na-in-delay) + var(--na-in-stagger) * var(--i,0))}
+.na-link{position:absolute;inset:0;display:flex;flex-direction:column}
+.na-bg{position:absolute;inset:0;overflow:hidden}
+/* 商品圖電視位於 21–80%，往上移讓下方文字不壓到腳架 */
+.na-card.lg .na-bg{top:-5%;bottom:5%}
+.na-card.xs .na-bg{top:-10%;bottom:10%}
+/* 左右留白 6%：放大 1.1 倍後電視約 97% 寬，不會出框 */
+.na-bg img{width:100%;height:100%;object-fit:contain;padding:0 var(--na-inset);transition:transform var(--na-zoom-dur) var(--ease)}
+.na-card:hover .na-bg img{transform:scale(var(--na-zoom))}
+/* 型號＋說明文字進場：比卡片晚 0.25s */
+.na-text{position:relative;margin-top:auto;text-align:center;padding:0 24px 28px;opacity:0;transform:translate(var(--na-tx-x),var(--na-tx-y))}
+.na-panel.play .na-text{opacity:1;transform:none;
+  transition:opacity var(--na-tx-dur) var(--ease) calc(var(--na-in-delay) + var(--na-tx-delay) + var(--na-in-stagger) * var(--i,0)),transform var(--na-tx-dur) var(--ease) calc(var(--na-in-delay) + var(--na-tx-delay) + var(--na-in-stagger) * var(--i,0))}
+.na-card.lg .na-text h3{font-size:24px;line-height:28px;font-weight:500}
+.na-card.lg .na-text p{font-size:18px;line-height:22px;margin-top:8px}
+.na-card.xs .na-text{padding:0 16px 16px}
+.na-card.xs .na-text h3{font-size:16px;line-height:20px;font-weight:600}
+.na-text .en{font-weight:500}  /* 英文技術名稱加粗一級：Light → Medium */
+.na-card.xs .na-text p{font-size:12px;line-height:14px;margin-top:6px;color:#333}
+/* hover 遮罩 */
+.na-pop{position:absolute;inset:0;border-radius:var(--na-radius);background:rgba(0,0,0,var(--na-pop-op));display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;visibility:hidden;
+  transition:opacity var(--na-pop-dur) var(--ease),visibility 0s var(--na-pop-dur)}
+.na-card:hover .na-pop{opacity:1;visibility:visible;transition:opacity var(--na-pop-dur) var(--ease) var(--na-pop-delay),visibility 0s var(--na-pop-delay)}
+.na-pop p,.na-pop .btn-pop{opacity:0;transform:translate(var(--na-pt-x),var(--na-pt-y));transition:opacity .15s,transform .15s}
+.na-card:hover .na-pop p{opacity:1;transform:none;transition:opacity var(--na-pt-dur) var(--ease) var(--na-pt-delay),transform var(--na-pt-dur) var(--ease) var(--na-pt-delay)}
+.na-card:hover .na-pop .btn-pop{opacity:1;transform:none;transition:opacity var(--na-pt-dur) var(--ease) var(--na-pb-delay),transform var(--na-pt-dur) var(--ease) var(--na-pb-delay),background .2s}
+.na-pop p{color:#fff;font-size:18px;font-weight:400}
+.na-card.xs .na-pop p{font-size:16px}
+.btn-pop{margin-top:10px;height:40px;padding:0 24px;border-radius:20px;background:#fff;color:var(--black);font-size:14px;font-weight:500;display:inline-flex;align-items:center}
+.na-card.xs .btn-pop{margin-top:7px;height:36px;padding:0 20px}
+.btn-pop:hover{background:#e9e9e9}
+@media (prefers-reduced-motion:reduce){.na-card,.na-text{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* ---------- Immersive category ---------- */
+.immersive{position:relative;color:#fff;overflow:hidden;aspect-ratio:1920/906;min-height:520px;display:flex;flex-direction:column}  /* 高度永遠跟情境圖同比例，大螢幕不會裁掉上下，電視不會跑到分類按鈕底下 */
+.immersive .bg{position:absolute;inset:0}
+.immersive .bg > img,.immersive .bg picture{position:absolute;inset:0;opacity:0;transform:scale(1.04);transition:opacity .8s,transform 1.6s}
+.immersive .bg > img.on,.immersive .bg picture.on{opacity:1;transform:none}
+.immersive .bg img{width:100%;height:100%;object-fit:cover;object-position:center 60%}
+.immersive .bg > img{position:absolute;inset:0}
+.immersive::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.18) 20%,rgba(0,0,0,0) 34%,rgba(0,0,0,0) 58%,rgba(0,0,0,.58) 100%)}
+.immersive.light{color:var(--black)}
+.immersive.light::before{background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 30%,rgba(0,0,0,0) 65%,rgba(0,0,0,.22) 100%)}
+.immersive .top,.immersive .bottom{position:relative;z-index:2;text-align:center}
+.immersive .top{padding-top:clamp(20px,2.4vw,64px)}
+.immersive .top .sec-title{font-size:clamp(22px,1.6vw,40px)}
+.immersive .tabs button{font-size:clamp(13px,.72vw,18px)}
+.immersive .tabs{gap:clamp(18px,1.6vw,40px)}
+.immersive .top .sec-title{margin-bottom:clamp(8px,.8vw,20px)}
+.immersive .bottom{margin-top:auto;padding:0 24px clamp(28px,3vw,56px)}
+.immersive .bottom h3{font-size:clamp(22px,2.1vw,38px);font-weight:500;letter-spacing:.01em;line-height:1.2}
+.immersive .bottom p{font-size:clamp(13px,1vw,17px);margin:6px 0 clamp(12px,1.2vw,20px);opacity:.92}
+.immersive.light .bottom{color:#fff}
+.imm-copy{transition:opacity .4s}
+
+/* ---------- Brand / Olympic ---------- */
+.brand{text-align:center}
+.brand h2{font-family:"Gotham",sans-serif;font-weight:700;font-size:clamp(40px,7.2vw,96px);letter-spacing:.03em;line-height:1}
+.brand .sub{font-size:18px;font-weight:500;margin:40px 0 32px}
+.brand .media{max-width:900px;margin:0 auto;border-radius:4px;overflow:hidden;position:relative}
+.brand .media img{width:100%;aspect-ratio:16/9;object-fit:cover}
+
+/* ---------- News ---------- */
+.news{padding-top:24px}
+.news-viewport{overflow:hidden}
+.news-track{display:flex;gap:16px;transition:transform .6s cubic-bezier(.65,.05,.36,1)}
+.news-card{flex:0 0 calc((100% - 32px)/3)}
+.news-card .pic{overflow:hidden}
+.news-card img{width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform .5s}
+.news-card:hover img{transform:scale(1.04)}
+.news-card h3{font-size:15px;font-weight:600;line-height:1.5;margin:14px 4px 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:45px}
+.news-card time{display:block;font-size:12px;color:var(--gray-500);margin:0 4px}
+.news-card .tag{display:block;font-size:12px;color:var(--gray-700);margin:10px 4px 0}
+.news-nav{display:flex;justify-content:center;gap:14px;margin-top:36px}
+.news-nav button{width:34px;height:34px;border-radius:50%;border:1px solid var(--black);display:grid;place-items:center;transition:.2s}
+.news-nav button:disabled{opacity:.25;cursor:default}
+.news-nav button:not(:disabled):hover{background:var(--black);color:#fff}
+.news-nav svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ---------- Footer ---------- */
+.footer{background:var(--gray-50);border-top:1px solid var(--gray-100);padding:56px 0 28px;font-size:13px;margin-top:96px}
+.f-grid{display:grid;grid-template-columns:repeat(4,1fr) 1.2fr;gap:0}
+.f-col{padding:0 24px 32px;border-left:1px solid var(--gray-100)}
+.f-col:first-child{border-left:0;padding-left:0}
+.f-col h4{font-size:14px;font-weight:600;margin-bottom:16px}
+.f-col h4 + ul + h4{margin-top:32px}
+.f-col ul{list-style:none;display:grid;gap:10px;color:var(--gray-700)}
+.f-col ul a:hover{color:var(--black);text-decoration:underline}
+.social{display:flex;gap:12px;margin-bottom:24px}
+.social a{width:30px;height:30px;border-radius:50%;background:var(--gray-300);display:grid;place-items:center;transition:.2s}
+.social a:hover{background:var(--black)}
+.social svg{width:15px;height:15px;fill:#fff}
+.f-cs{color:var(--gray-700);line-height:1.8}
+.f-cs strong{display:block;color:var(--black);font-size:20px;letter-spacing:.02em}
+.f-bottom{border-top:1px solid var(--gray-100);margin-top:16px;padding-top:24px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.f-bottom img{height:18px;width:auto}
+.f-links{display:flex;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--gray-700)}
+.f-copy{font-size:12px;color:var(--gray-500)}
+.f-lang{display:flex;align-items:center;gap:6px;font-size:12px}
+.f-lang svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.5}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1024px){
+  .na-panel.on{flex-wrap:wrap;gap:16px}
+  .na-col.lg{flex:0 0 100%}
+  .na-col.xs{flex:0 0 calc(50% - 8px)}
+
+  .nav{display:none}
+  .burger{display:grid;place-items:center;width:32px;height:32px}
+  .hd-bar{padding:0 20px}
+  .tools{margin-left:auto}
+  .tools .lbl{display:none}
+  .f-grid{grid-template-columns:repeat(2,1fr)}
+  .f-col{border-left:0;padding-left:0}
+}
+@media (max-width:720px){
+  /* 手機版 banner（參照國際版）：直式 750×1334 圖，文案置中放在上方留白區 */
+  .hero-slide img{aspect-ratio:750/1334;object-fit:cover;object-position:center}
+  .hero-slide picture{display:block}
+  .hero-copy,.hero-slide.left-copy .hero-copy{left:24px;right:24px;top:10.5%;transform:none;max-width:none;text-align:center;display:flex;flex-direction:column;align-items:center}
+  .hero-copy h2{white-space:normal;font-size:28px;line-height:1.2}
+  .hero-slide .hero-copy .title-svg{height:auto;width:82%;max-width:320px;margin:0 auto}
+  .hero-copy p{font-size:15px;line-height:1.5;margin-top:12px}
+  .hero-copy .btn-hero{margin-top:22px;height:38px;padding:0 22px;font-size:14px}
+  .hero-slide.mb-shade::after{content:"";position:absolute;inset:0 0 auto 0;height:42%;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,0));pointer-events:none}
+  .hero-slide.mb-shade .hero-copy{z-index:1}
+  .hero-ui{bottom:22px}
+  .brand-slide .hero-copy{left:24px;right:24px;top:36%;bottom:auto;transform:none}  /* 按鈕放在「奧林匹克全球合作夥伴」下方 */
+  .hero-arrow{display:none}
+  .sec{padding:64px 0}
+  .sec-title{font-size:24px}
+  .na-title{font-size:26px;margin-bottom:24px}
+  .na-tabs{gap:24px;margin-bottom:24px;justify-content:flex-start;overflow-x:auto;white-space:nowrap;padding-bottom:6px;scrollbar-width:none}
+  .na-panel.on{flex-wrap:wrap;gap:12px}
+  .na-col.lg{flex:0 0 100%}
+  .na-col.xs{flex:0 0 calc(50% - 6px);gap:12px}
+  .na-card.lg .na-text h3{font-size:20px}.na-card.lg .na-text p{font-size:14px}
+  /* 手機：圖片與文字上下分開，避免文字壓到電視 */
+  .na-card{aspect-ratio:auto}
+  .na-link{position:relative}
+  .na-card .na-bg,.na-card.lg .na-bg,.na-card.xs .na-bg{position:relative;inset:auto;aspect-ratio:5/4}
+  .na-text,.na-card.xs .na-text{margin-top:0;padding:4px 10px 14px}
+  .na-card.xs .na-text h3{font-size:14px}.na-card.xs .na-text p{font-size:11px;line-height:14px}
+  .news-card{flex:0 0 85%}
+  .immersive{min-height:auto;aspect-ratio:750/1530}
+  /* 分類收納：單行左右滑（參照國際版手機版），左右邊緣淡出提示可滑動 */
+  .immersive .tabs{flex-wrap:nowrap;justify-content:flex-start;gap:18px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    padding:0 20px 8px;scroll-padding:0 20px;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 32px),transparent 100%);
+            mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 32px),transparent 100%)}
+  .immersive .tabs::-webkit-scrollbar{display:none}
+  .immersive .tabs button{flex:none;white-space:nowrap}
+  .tabs{gap:18px}
+}
+
+/* ---------- 手機選單（漢堡選單） ---------- */
+:root{
+  /* 文字：2026-11-17 測試頁定案值；動畫：參照 Apple 官網手機選單（cubic-bezier(.4,0,.6,1)、0.24–0.32s、延遲 80ms、逐項 20ms） */
+  --dr-ease:cubic-bezier(.4,0,.6,1);
+  --dr-dur:.32s; --dr-pad:24px;
+  --dr-l1-fs:21px; --dr-l1-w:600; --dr-l1-py:22px; --dr-div:1.1;
+  --dr-h5-fs:14px; --dr-l2-fs:15px; --dr-l2-lh:1.5; --dr-l2-gap:12px; --dr-indent:0px; --dr-sec-gap:24px;
+  --dr-acc-dur:.32s; --dr-stagger:.02s; --dr-delay:.08s; --dr-dist:4px; --dr-sub-stagger:.02s; --dr-item-dur:.24s;
+}
+.drawer{position:fixed;inset:var(--header-h) 0 0 0;background:#fff;z-index:99;overflow:auto;overscroll-behavior:contain;visibility:hidden;
+  transform:translateX(100%);transition:transform var(--dr-dur) var(--dr-ease),opacity var(--dr-dur) var(--dr-ease),clip-path var(--dr-dur) var(--dr-ease),visibility 0s var(--dr-dur)}
+.drawer.open{visibility:visible;transform:none;transition:transform var(--dr-dur) var(--dr-ease),opacity var(--dr-dur) var(--dr-ease),clip-path var(--dr-dur) var(--dr-ease)}
+html.dr-down .drawer{transform:none;clip-path:inset(0 0 100% 0)}
+html.dr-down .drawer.open{clip-path:inset(0 0 0 0)}
+html.dr-fade .drawer{transform:none;opacity:0}
+html.dr-fade .drawer.open{opacity:1}
+.dr-inner{padding:8px var(--dr-pad) 40px}
+/* 第一層 */
+.dr-l1{border-bottom:1px solid rgba(0,0,0,calc(.08 * var(--dr-div)));opacity:0;transform:translateY(var(--dr-dist))}
+.drawer.open .dr-l1,.drawer.open .dr-foot{opacity:1;transform:none;transition:opacity var(--dr-item-dur) var(--dr-ease) calc(var(--dr-delay) + var(--dr-stagger) * var(--i)),transform var(--dr-item-dur) var(--dr-ease) calc(var(--dr-delay) + var(--dr-stagger) * var(--i))}
+.dr-head{width:100%;display:flex;align-items:center;justify-content:space-between;padding:var(--dr-l1-py) 0;font-size:var(--dr-l1-fs);font-weight:var(--dr-l1-w);text-align:left;color:var(--black)}
+/* 展開圖示：＋ → － */
+.dr-ico{position:relative;width:14px;height:14px;flex:none}
+.dr-ico::before,.dr-ico::after{content:"";position:absolute;left:0;right:0;top:50%;height:1.6px;margin-top:-.8px;background:currentColor;transition:transform var(--dr-acc-dur) var(--dr-ease)}
+.dr-ico::after{transform:rotate(90deg)}
+.dr-l1.open .dr-ico::after{transform:rotate(0)}
+html.ico-chev .dr-ico::before{width:8px;height:8px;left:3px;top:1px;margin:0;background:none;border-right:1.6px solid;border-bottom:1.6px solid;transform:rotate(45deg)}
+html.ico-chev .dr-ico::after{display:none}
+html.ico-chev .dr-l1.open .dr-ico::before{transform:translateY(4px) rotate(225deg)}
+.dr-arr{width:8px;height:8px;border-right:1.6px solid;border-top:1.6px solid;transform:rotate(45deg);margin-right:3px}
+/* 第二層：展開動畫 */
+.dr-acc{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--dr-acc-dur) var(--dr-ease)}
+.dr-l1.open .dr-acc{grid-template-rows:1fr}
+.dr-acc-in{overflow:hidden;padding-left:var(--dr-indent)}
+.dr-sec{padding-bottom:var(--dr-sec-gap)}
+.dr-sec:first-child{padding-top:2px}
+.dr-sec h5{opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s;font-size:var(--dr-h5-fs);font-weight:500;color:#8a8a8a;letter-spacing:.04em;margin-bottom:10px}
+.dr-sec ul{list-style:none;display:grid;gap:var(--dr-l2-gap) 16px}
+html.dr-2col .dr-sec ul{grid-template-columns:1fr 1fr}
+.dr-sec a{font-size:var(--dr-l2-fs);line-height:var(--dr-l2-lh);color:#333}
+.dr-sec li{opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s}
+.dr-l1.open .dr-sec h5{opacity:1;transform:none;transition:opacity var(--dr-item-dur) var(--dr-ease) .16s,transform var(--dr-item-dur) var(--dr-ease) .16s}
+.dr-l1.open .dr-sec li{opacity:1;transform:none;transition:opacity var(--dr-item-dur) var(--dr-ease) calc(.16s + var(--dr-sub-stagger) * var(--j,0)),transform var(--dr-item-dur) var(--dr-ease) calc(.16s + var(--dr-sub-stagger) * var(--j,0))}
+/* 底部 */
+.dr-foot{display:flex;justify-content:space-between;align-items:center;padding-top:24px;font-size:13px;color:#8a8a8a;opacity:0;transform:translateY(var(--dr-dist))}
+.dr-foot a{color:var(--black);font-weight:500}
+/* 漢堡 → X */
+.burger{position:relative}
+.burger i{position:absolute;left:5px;right:5px;height:1.8px;background:currentColor;border-radius:2px;transition:transform var(--dr-dur) var(--dr-ease),opacity .2s,top var(--dr-dur) var(--dr-ease)}
+.burger i:nth-child(1){top:9px}.burger i:nth-child(2){top:15px}.burger i:nth-child(3){top:21px}
+.burger.on i:nth-child(1){top:15px;transform:rotate(45deg)}
+.burger.on i:nth-child(2){opacity:0}
+.burger.on i:nth-child(3){top:15px;transform:rotate(-45deg)}
+html.dr-lock,html.dr-lock body{overflow:hidden}
+
+/* ================= Banner 文案與按鈕：2026-11-17 測試頁定案值 =================
+   電腦版以 1920 寬為基準（px），隨螢幕等比例縮放；手機版為固定 px */
+@media (min-width:721px){
+  .hero-slide .hero-copy .title-svg{height:calc(44 / 1920 * 100vw)}
+  .hero-copy p{font-size:calc(24 / 1920 * 100vw);margin-top:calc(18 / 1920 * 100vw)}
+  .hero-copy .btn-hero{margin-top:calc(19 / 1920 * 100vw)}
+  .btn-hero{height:calc(37 / 1920 * 100vw);padding:0 calc(28 / 1920 * 100vw);font-size:calc(16 / 1920 * 100vw);font-weight:600}
+  .hero-copy{left:9%}
+  .hero-slide.left-copy .hero-copy{left:6.5%}
+}
+@media (max-width:720px){
+  .hero-slide .hero-copy .title-svg{width:100%;max-width:none}
+  .hero-copy p{font-size:18px;margin-top:12px}
+  .hero-copy .btn-hero{margin-top:14px;height:33px;padding:0 23px;font-size:14.5px;font-weight:600}
+  .hero-copy,.hero-slide.left-copy .hero-copy{top:16%}
+}
+
+/* ================= 手機版「顯示器」區塊：2026-11-17 測試頁定案值（第二版） ================= */
+@media (max-width:720px){
+  .immersive .top{padding-top:52px}
+  .immersive .top .sec-title{font-size:33px}
+  .immersive .tabs button{font-size:16.5px}
+  .immersive .tabs{gap:24px}
+  .immersive .bottom{padding-bottom:61px}
+  .immersive .bottom h3{font-size:24px}
+  .immersive .bottom p{font-size:15.5px;margin:6px 0 14px}
+  .immersive .bottom .btn{height:34px;padding:0 23px;font-size:14px}
+}
+
+/* 32X3B：文字標題（無 SVG）＋ 左下角 B&O 標示 */
+.hero-credit{opacity:0;transition:opacity .3s}
+.hero.ready .hero-slide.is-on .hero-credit{opacity:1;transition:opacity .9s var(--ease) 1.2s}
+.hero-copy .hero-txt-title{font-weight:500;line-height:1.1;letter-spacing:-.005em;white-space:nowrap}
+.hero-copy .hero-txt-title sup{font-size:.5em;vertical-align:.9em;margin-left:.04em}
+.hero-credit{position:absolute;left:9.2%;bottom:18.9%;z-index:2;line-height:0}  /* 電腦版定案：寬 214、左 9.2%、底 18.9% */
+.hero-credit picture{display:block}
+.hero-credit img{display:block;width:calc(214 / 1920 * 100vw);height:auto!important;aspect-ratio:auto!important;object-fit:contain!important}
+.hero-credit span{font-size:calc(15 / 1920 * 100vw)}
+.hero-credit b{font-size:calc(17 / 1920 * 100vw);font-weight:500;letter-spacing:.12em}
+@media (min-width:721px){.hero-copy .hero-txt-title{font-size:calc(44 / 1920 * 100vw)}}
+@media (max-width:720px){
+  .hero-copy .hero-txt-title{font-size:min(23px,5.9vw);white-space:nowrap}
+  .hero-slide[data-label="32X3B"] .hero-copy{top:9%}
+  .hero-slide[data-label="32X3B"] .hero-copy p{font-size:14px!important;margin-top:8px!important}
+  .hero-credit{left:50%;bottom:104px;transform:translateX(-50%)}  /* 手機版：置中版 LOGO */
+  .hero-credit img{width:120px}
+  .hero-slide[data-label="32X3B"] .hero-copy .btn-hero{margin-top:12px!important}
+}
+
+/* 新品上市：顯示器以外的分類加灰色方塊（參照國際版 #F5F5F5），白底商品圖用 multiply 融入灰底 */
+.na-panel.gray .na-card{background:#f5f5f5}
+.na-panel.gray .na-bg img{mix-blend-mode:multiply}
+/* 灰底分類：文案往上靠近顯示器（大卡上移 36px、小卡上移 16px） */
+.na-panel.gray .na-card.lg .na-text{padding-bottom:64px}
+.na-panel.gray .na-card.xs .na-text{padding-bottom:32px}
+
+/* ---------- 新品上市 手機版：所有產品排成一行，一次顯示一個，左右滑 ---------- */
+:root{--nm-side:36px; --nm-gap:16px; --nm-peek:0px; --nm-pt:72px; --nm-ar:1.65; --nm-tt:24px; --nm-tb:44px; --nm-h3:25px; --nm-p:14px; --nm-radius:10px; --nm-inset:8%;}  /* 2026-11-17 測試頁定案值 */
+.na-xs-wrap{display:contents}
+.na-dots{display:none}
+@media (max-width:720px){
+  .na-panel.on{display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:flex-start;gap:var(--nm-gap);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+    margin:0 -24px;padding:0 var(--nm-side) 4px;scroll-padding:0 var(--nm-side);-webkit-overflow-scrolling:touch}
+  .na-panel.on::-webkit-scrollbar{display:none}
+  .na-col.lg,.na-col.xs,.na-xs-wrap,.na-panel.n2 .na-col.lg{display:contents}
+  .na-panel .na-card{flex:0 0 calc(100% - var(--nm-peek));scroll-snap-align:center;scroll-snap-stop:always;order:var(--i,0);border-radius:var(--nm-radius);aspect-ratio:auto}
+  .na-link{position:relative;padding-top:var(--nm-pt)}
+  .na-card .na-bg,.na-card.lg .na-bg,.na-card.xs .na-bg{position:relative;inset:auto;aspect-ratio:var(--nm-ar)}
+  .na-bg img{object-fit:cover;padding:0 var(--nm-inset)}
+  .na-text,.na-card.xs .na-text,.na-panel.gray .na-card.lg .na-text,.na-panel.gray .na-card.xs .na-text{margin-top:0;padding:var(--nm-tt) 16px var(--nm-tb)}
+  .na-card.xs .na-text h3,.na-card.lg .na-text h3{font-size:var(--nm-h3);line-height:1.3}
+  .na-card.xs .na-text p,.na-card.lg .na-text p{font-size:var(--nm-p);line-height:1.5;margin-top:4px}
+  .na-pop{border-radius:var(--nm-radius)}
+  .na-dots{display:flex;justify-content:center;gap:8px;margin-top:16px}
+  .na-dots i{width:6px;height:6px;border-radius:999px;background:#ccc;transition:width .3s var(--ease),background .3s}
+  .na-dots i.on{width:20px;background:#111}
+  .na-dots[hidden]{display:none}
+}
+
+/* ---------- 新品上市 手機版：標題與分類比照「顯示器」區塊 ---------- */
+@media (max-width:720px){
+  .na-title{font-size:33px;font-weight:600;letter-spacing:.06em;line-height:1.5;margin-bottom:8px}
+  .na-tabs{gap:24px;margin:0 -24px 24px;padding:0 20px 8px;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;scroll-padding:0 20px;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 32px),transparent 100%);
+            mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 32px),transparent 100%)}
+  .na-tabs::-webkit-scrollbar{display:none}
+  .na-tabs li{flex:none}
+  .na-tabs button{font-size:16.5px;line-height:1.5;white-space:nowrap;opacity:.75;transition:opacity .2s}
+  .na-tabs button.on{opacity:1}
+}
+
+/* 手機版：「顯示器」分類也加灰色面板（電腦版維持白底） */
+@media (max-width:720px){
+  .na-panel .na-card{background:#f5f5f5}
+  .na-panel .na-bg img{mix-blend-mode:multiply}
+}
+
+/* 手機版：頂部選單不固定顯示，捲動時出現，停止 1 秒後淡出 */
+@media (max-width:720px){
+  .header{transition:opacity .35s var(--ease),transform .35s var(--ease)}
+  .header.hd-hide{opacity:0;transform:translateY(-100%);pointer-events:none}
+}
+
+/* 手機版分類：選項少（放得下）時置中，放不下時維持可左右滑 */
+@media (max-width:720px){
+  .immersive .tabs button:first-child,.na-tabs li:first-child{margin-left:auto}
+  .immersive .tabs button:last-child,.na-tabs li:last-child{margin-right:auto}
+}
+
+/* ---------- INSPIRE GREATNESS：SVG 標誌＋捲動到才由下往上淡入（同新品上市進場） ---------- */
+.brand h2{line-height:0}
+.brand h2 picture{display:inline-block}
+.brand .inspire{display:block;width:clamp(320px,56vw,960px);height:auto;margin:0 auto}
+@media (max-width:720px){.brand .inspire{width:min(76vw,300px)}}
+.brand .rv{opacity:0;transform:translateY(var(--na-in-y,40px))}
+.brand.play .rv{opacity:1;transform:none;transition:opacity var(--na-in-dur,.6s) var(--ease),transform var(--na-in-dur,.6s) var(--ease)}
+.brand.play .rv:nth-child(2){transition-delay:.15s}
+.brand.play .rv:nth-child(3){transition-delay:.3s}
+@media (prefers-reduced-motion:reduce){.brand .rv{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* ---------- 斷行改善：中文不在詞中間斷行、各行長度平均 ---------- */
+.hero-copy p,.immersive .bottom p,.na-text p{word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
+@media (max-width:720px){
+  /* 手機版 banner 副標：型號一行、標語一行 */
+  .hero-copy p .pm{display:block}
+  .hero-copy p .ps{display:none}
+  .hero-copy p .pt{display:block}
+}
+/* ---------- 手機選單打開時，頂部列固定顯示（修正捲動後打開選單，頂部列消失的問題） ---------- */
+html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;transform:none!important;pointer-events:auto!important}
+</style>
+<style id="tvs-css">
+/* ================= 全部顯示器（參照 TCL Global /tvs） ================= */
+:root{--pl-side:276px; --pl-gap:23px; --pl-cols:3; --pc-radius:0px; --pc-pad:16px; --pc-img-ar:1.22; --pc-zoom:1.05; --pc-in-y:30px; --pc-in-dur:.6s; --pc-stagger:.06s;}
+.crumb{background:#fff;border-bottom:1px solid var(--gray-100)}
+.crumb .wrap{display:flex;align-items:center;gap:8px;height:52px;font-size:13px;color:var(--gray-500)}
+.crumb a{color:var(--gray-500)}.crumb a:hover{color:var(--black)}
+.crumb b{font-weight:500;color:var(--black)}
+.crumb svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:1.6}
+
+/* 關鍵 Banner：沿用首頁 hero，桌機改為較矮的比例 */
+@media (min-width:721px){
+  .hero.kb .hero-slide img{object-position:center}
+  .hero.kb .hero-copy .btn-hero{display:none}
+}
+.hero.kb .hero-copy p .pt{font-weight:400}
+@media (min-width:721px){
+  .hero.kb .hero-label{display:none}   /* 參照國際版：只留指示點 */
+  .hero.kb{--kbd-u:calc(100vw / 1920)}
+  .hero.kb .hero-ui{bottom:calc(var(--kbd-bottom) * var(--kbd-u))}
+  .hero.kb .hero-dots{gap:calc(var(--kbd-gap) * var(--kbd-u))}
+  .hero.kb .hero-dots button{width:calc(var(--kbd-dot) * var(--kbd-u));height:calc(var(--kbd-dot) * var(--kbd-u))}
+  .hero.kb .hero-dots button.on{width:calc(var(--kbd-bar) * var(--kbd-u));background:rgba(255,255,255,var(--kbd-bar-op))}
+  .hero.kb.on-dark .hero-dots button.on{background:rgba(0,0,0,calc(var(--kbd-bar-op) * .6))}
+  .hero.kb .hero-dots .hero-pause{width:auto;height:calc(var(--kbd-pause-h) * var(--kbd-u));padding:0 calc(var(--kbd-pause-px) * var(--kbd-u));margin-left:calc(var(--kbd-pause-gap) * var(--kbd-u));border-radius:calc(var(--kbd-pause-r) * var(--kbd-u))}
+  .hero.kb .hero-pause svg{height:calc(var(--kbd-icon) * var(--kbd-u))}
+  .hero.kb .hero-pause .sl{height:calc(var(--kbd-icon) * 1.3 * var(--kbd-u))}
+}
+/* 全部顯示器 Banner 文案（數值可在 kb-demo.html 調整；桌機數值以 1920 寬為基準） */
+:root{--kb-h:405; --kbd-bottom:14; --kbd-dot:8; --kbd-gap:11; --kbd-bar:120; --kbd-bar-op:.35; --kbd-pause-h:30; --kbd-pause-px:11; --kbd-pause-gap:2; --kbd-pause-r:10.5; --kbd-icon:9.5; --kb-title:29; --kb-sub:24; --kb-sub-w:400; --kb-gap:11; --kb-sub-lh:1.5; --kb-sub-ls:0em; --kb-maxw:63%; --kb-left:20%; --kb-left-l:18.5%; --kb-top:50%;
+  --kbm-title-w:100%; --kbm-sub:18px; --kbm-gap:12px; --kbm-btn-gap:14px; --kbm-top:16%;}
+@media (min-width:721px){
+  .hero.kb .hero-slide > picture img{aspect-ratio:1920 / var(--kb-h)}
+  .hero.kb .hero-slide .hero-copy .title-svg{height:calc(var(--kb-title) / 1920 * 100vw)}
+  .hero.kb .hero-copy p{font-size:calc(var(--kb-sub) / 1920 * 100vw);line-height:var(--kb-sub-lh);letter-spacing:var(--kb-sub-ls);font-weight:var(--kb-sub-w);margin-top:calc(var(--kb-gap) / 1920 * 100vw)}
+  .hero.kb .hero-copy{left:var(--kb-left);top:var(--kb-top);max-width:var(--kb-maxw)}
+  .hero.kb .hero-slide.left-copy .hero-copy{left:var(--kb-left-l);top:var(--kb-top)}
+}
+@media (max-width:720px){
+  .hero.kb .hero-slide .hero-copy .title-svg{width:var(--kbm-title-w)}
+  .hero.kb .hero-copy p{font-size:var(--kbm-sub);margin-top:var(--kbm-gap)}
+  .hero.kb .hero-copy .btn-hero{margin-top:var(--kbm-btn-gap)}
+  .hero.kb .hero-copy,.hero.kb .hero-slide.left-copy .hero-copy{top:var(--kbm-top)}
+}
+
+
+/* 篩選列 */
+.pl{background:#f5f5f5;padding-bottom:72px}
+.pl-bar{background:#fff;position:sticky;top:var(--hd-h,64px);z-index:20;border-bottom:1px solid var(--gray-100)}
+.pl-bar .wrap{display:flex;align-items:center;height:60px;gap:16px}
+.pl-toggle{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:500}
+.pl-toggle svg{width:18px;height:18px;stroke:#e64c3d;fill:none;stroke-width:1.7}
+.pl-count{font-size:15px;color:var(--gray-700);padding-left:16px;border-left:1px solid var(--gray-300)}
+.pl-count b{font-weight:600;color:var(--black)}
+.pl-sort{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray-700)}
+.pl-sort select{font:inherit;color:var(--black);border:1px solid var(--gray-300);border-radius:999px;padding:7px 34px 7px 16px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23111' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 14px center/10px;appearance:none;cursor:pointer}
+/* 篩選標籤列：出現時下方內容往下推、標籤由左往右淡入、舊標籤往右讓位（數值可在 chips-demo.html 調整） */
+:root{--fc-bar-dur:.45s; --fc-bar-x:-24px; --fc-in-dur:.45s; --fc-in-x:-20px; --fc-in-delay:.05s; --fc-shift-dur:.45s; --fc-out-dur:.25s; --fc-gap:8px; --fc-pt:16px; --fc-ease:cubic-bezier(.3,.7,.2,1);}
+.pl-chips-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--fc-bar-dur) var(--fc-ease)}
+.pl-chips-wrap.on{grid-template-rows:1fr}
+.pl-chips-in{min-height:0;overflow-x:visible;overflow-y:clip}
+.pl-chips{position:relative;display:flex;flex-wrap:wrap;gap:var(--fc-gap);padding:var(--fc-pt) 0 0;opacity:0;transform:translateX(var(--fc-bar-x));transition:opacity var(--fc-bar-dur) var(--ease),transform var(--fc-bar-dur) var(--fc-ease)}
+.pl-chips-wrap.on .pl-chips{opacity:1;transform:none}
+.pl-chips button{display:flex;align-items:center;gap:6px;font-size:13px;background:#fff;border:1px solid var(--gray-300);border-radius:999px;padding:6px 12px;white-space:nowrap}
+.pl-chips button::after{content:"";width:9px;height:9px;background:linear-gradient(45deg,transparent 45%,#111 45% 55%,transparent 55%),linear-gradient(-45deg,transparent 45%,#111 45% 55%,transparent 55%)}
+.pl-chips .clear{border:0;background:none;text-decoration:underline;color:var(--gray-700)}
+.pl-chips .clear::after{display:none}
+.pl-chips .c-new{opacity:0;transform:translateX(var(--fc-in-x))}
+.pl-chips .c-in{opacity:1;transform:none;transition:opacity var(--fc-in-dur) var(--ease) var(--fc-in-delay),transform var(--fc-in-dur) var(--fc-ease) var(--fc-in-delay)}
+.pl-chips .c-shift{transition:transform var(--fc-shift-dur) var(--fc-ease)}
+.pl-chips .c-out{position:absolute;margin:0;opacity:0;transform:translateX(var(--fc-in-x));transition:opacity var(--fc-out-dur) var(--ease),transform var(--fc-out-dur) var(--ease);pointer-events:none}
+
+
+.pl-body{display:flex;gap:var(--pl-gap);padding-top:var(--pl-gap);align-items:flex-start}
+/* 側邊篩選 */
+.pf{flex:0 0 var(--pl-side);background:#fff;padding:8px 20px 20px;position:sticky;top:calc(var(--hd-h,64px) + 76px);max-height:calc(100vh - var(--hd-h,64px) - 92px);overflow:auto;transition:margin .45s var(--ease),opacity .3s}
+.pl.collapsed .pf{margin-left:calc(-1 * (var(--pl-side) + var(--pl-gap)));opacity:0;pointer-events:none}
+.pf-g{border-bottom:1px solid var(--gray-100)}
+.pf-g:last-child{border-bottom:0}
+.pf-h{display:flex;justify-content:space-between;align-items:center;width:100%;padding:16px 0;font-size:var(--pf-h);font-weight:var(--pf-h-w)}
+.pf-h i{position:relative;width:12px;height:12px}
+.pf-h i::before,.pf-h i::after{content:"";position:absolute;left:0;top:5.5px;width:12px;height:1.3px;background:#111;transition:transform .3s var(--ease)}
+.pf-h i::after{transform:rotate(90deg)}
+.pf-g.open .pf-h i::after{transform:rotate(0)}
+.pf-list{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s var(--ease)}
+.pf-g.open .pf-list{grid-template-rows:1fr}
+.pf-list > div{overflow:hidden}
+.pf-list ul{padding-bottom:14px}
+.pf label{display:flex;align-items:center;gap:10px;padding:var(--pf-opt-py) 0;font-size:var(--pf-opt);cursor:pointer;color:var(--gray-700)}
+.pf label:hover{color:var(--black)}
+.pf input{appearance:none;width:16px;height:16px;border:1px solid #999;border-radius:2px;flex:none;display:grid;place-items:center;transition:.2s}
+.pf input:checked{background:#111;border-color:#111}
+.pf input:checked::after{content:"";width:8px;height:4px;border:solid #fff;border-width:0 0 1.6px 1.6px;transform:translate(0,-1px) rotate(-45deg)}
+.pf label em{font-style:normal;margin-left:auto;font-size:12px;color:var(--gray-500)}
+.pf-foot{display:none}
+
+/* 產品格線（數值皆可在 tvs-demo.html 調整） */
+:root{
+  --pc-pad:20px; --pc-img-w:90%; --pc-img-ar:1.33; --pc-tag:11px;
+  --pc-sz-fs:13.5px; --pc-sz-h:25px; --pc-sz-mt:3px; --pc-sz-mb:15px;
+  --pc-h3:14.5px; --pc-h3-w:500; --pc-h3-lh:1.45;
+  --pc-md:13px; --pc-md-w:400; --pc-md-mt:5px;
+  --pc-ul-mt:14px; --pc-ul-pt:12px;
+  --pc-li:13px; --pc-li-w:400; --pc-li-lh:1.5; --pc-li-py:3.5px;
+  --pc-btn-mt:7px; --pc-btn-h:41px; --pc-btn-fs:14px; --pc-btn-w:400;
+  --pc-cmp-mt:14px; --pc-cmp-fs:12.5px;
+  --pf-h:15.5px; --pf-h-w:500; --pf-opt:14px; --pf-opt-py:10px;
+  /* 手機 */
+  --m-pl-gap:12px; --m-pc-pad:20px; --m-pc-img-w:72%; --m-pc-img-ar:1.6;
+  --m-pc-sz-fs:13.5px; --m-pc-sz-h:25px; --m-pc-h3:17px; --m-pc-h3-w:600; --m-pc-h3-lh:1.45;
+  --m-pc-md:13px; --m-pc-li:14px; --m-pc-li-lh:1.5; --m-pc-li-py:3px; --m-pc-btn-h:42px; --m-pc-btn-fs:15px;
+}
+.pg{flex:1;min-width:0;display:grid;grid-template-columns:repeat(var(--pl-cols),minmax(0,1fr));gap:var(--pl-gap)}
+.pl.collapsed .pg{--pl-cols:4}
+.pc{background:#fff;border-radius:var(--pc-radius);padding:var(--pc-pad);display:flex;flex-direction:column;position:relative;
+  opacity:0;transform:translateY(var(--pc-in-y));transition:opacity var(--pc-in-dur) var(--ease),transform var(--pc-in-dur) var(--ease);transition-delay:calc(var(--k,0) * var(--pc-stagger))}
+.pc.in{opacity:1;transform:none}
+.pc .tag{position:absolute;left:var(--pc-pad);top:var(--pc-pad);z-index:1;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-tag);font-weight:600;letter-spacing:.04em;color:#e64c3d}
+.pc-img{aspect-ratio:var(--pc-img-ar);display:grid;place-items:center;overflow:hidden}
+.pc-img img{width:var(--pc-img-w);height:100%;object-fit:contain;transition:transform .5s var(--ease),opacity .25s}
+.pc:hover .pc-img img{transform:scale(var(--pc-zoom))}
+.pc-sz{display:flex;align-items:center;gap:2px;margin:var(--pc-sz-mt) 0 var(--pc-sz-mb)}
+:root{--sz-w:43px; --sz-gap:4px; --sz-fade:12%; --sz-ring-r:21px; --sz-ring-bw:1px; --sz-glow:0px; --sz-glow-op:.35; --sz-off-op:.85; --sz-on-w:500; --sz-slide:.45s; --sz-in:.35s; --sz-in-delay:.15s; --sz-in-scale:.9;}
+.pc-sz .arr{width:24px;height:var(--pc-sz-h);display:grid;place-items:center;color:#111;flex:none;transition:color .2s}
+.pc-sz .arr:disabled{color:#ccc;cursor:default}
+.pc-sz .arr svg{width:7px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5}
+.pc-sz .rail{flex:1;min-width:0;overflow:hidden;padding:calc(var(--sz-glow) + 2px) 0;margin:calc(-1 * (var(--sz-glow) + 2px)) 0;
+  -webkit-mask:linear-gradient(90deg,transparent,#000 var(--sz-fade),#000 calc(100% - var(--sz-fade)),transparent);
+  mask:linear-gradient(90deg,transparent,#000 var(--sz-fade),#000 calc(100% - var(--sz-fade)),transparent);touch-action:pan-y}
+.pc-sz .rail > div{display:flex;gap:var(--sz-gap);width:max-content;transition:transform var(--sz-slide) cubic-bezier(.3,.7,.2,1)}
+.pc-sz .rail.no-tr > div{transition:none}
+.pc-sz button.s{flex:none;position:relative;width:var(--sz-w);height:var(--pc-sz-h);border:0;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-sz-fs);color:#111;opacity:var(--sz-off-op);transition:color var(--sz-in) var(--ease),opacity var(--sz-in) var(--ease)}
+.pc-sz button.s::after{content:"";position:absolute;inset:0;border-radius:var(--sz-ring-r);border:var(--sz-ring-bw) solid #e64c3d;
+  box-shadow:0 0 var(--sz-glow) rgba(230,76,61,var(--sz-glow-op)),inset 0 0 calc(var(--sz-glow) * .5) rgba(230,76,61,calc(var(--sz-glow-op) * .6));
+  opacity:0;transform:scale(var(--sz-in-scale));transition:opacity .15s,transform .15s;pointer-events:none}
+.pc-sz button.s:hover{opacity:1}
+.pc-sz button.s.on{color:#e64c3d;opacity:1;font-weight:var(--sz-on-w);transition-delay:var(--sz-in-delay)}
+.pc-sz button.s.on::after{opacity:1;transform:none;transition:opacity var(--sz-in) var(--ease) var(--sz-in-delay),transform var(--sz-in) var(--ease) var(--sz-in-delay)}
+.pc h3{font-size:var(--pc-h3);font-weight:var(--pc-h3-w);line-height:var(--pc-h3-lh);word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
+.pc h3 .en{white-space:nowrap;font-family:"Gotham","Noto Sans TC",sans-serif}
+.pc .md{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-md);font-weight:var(--pc-md-w);color:var(--gray-500);margin-top:var(--pc-md-mt)}
+.pc ul{list-style:none;border-top:1px solid var(--gray-100);margin-top:var(--pc-ul-mt);padding-top:var(--pc-ul-pt);flex:1}
+.pc li{font-size:var(--pc-li);font-weight:var(--pc-li-w);line-height:var(--pc-li-lh);color:var(--gray-700);padding:var(--pc-li-py) 0 var(--pc-li-py) 12px;position:relative}
+.pc li::before{content:"";position:absolute;left:0;top:calc(var(--pc-li-py) + var(--pc-li) * var(--pc-li-lh) / 2);width:4px;height:1px;background:#999}
+.pc .act{margin-top:var(--pc-btn-mt)}
+.pc .act a{height:var(--pc-btn-h);border-radius:calc(var(--pc-btn-h) / 2);display:grid;place-items:center;font-size:var(--pc-btn-fs);font-weight:var(--pc-btn-w);background:#111;color:#fff;transition:background .25s}
+.pc .act a:hover{background:#333}
+.pc .cmp{display:flex;align-items:center;gap:8px;margin-top:var(--pc-cmp-mt);font-size:var(--pc-cmp-fs);color:var(--gray-700);cursor:pointer}
+.pc .cmp input{appearance:none;width:15px;height:15px;border:1px solid #999;border-radius:2px;display:grid;place-items:center}
+.pc .cmp input:checked{background:#111;border-color:#111}
+.pc .cmp input:checked::after{content:"";width:7px;height:3.5px;border:solid #fff;border-width:0 0 1.5px 1.5px;transform:translate(0,-1px) rotate(-45deg)}
+.pg-empty{grid-column:1/-1;background:#fff;padding:72px 24px;text-align:center;color:var(--gray-700)}
+.pg-empty button{margin-top:16px;text-decoration:underline}
+
+/* 比較列 */
+.cmp-bar{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;box-shadow:0 -6px 24px rgba(0,0,0,.08);transform:translateY(100%);transition:transform .45s var(--ease)}
+.cmp-bar.on{transform:none;visibility:visible}
+.cmp-bar .wrap{display:flex;align-items:center;gap:16px;height:84px}
+.cmp-items{display:flex;gap:12px;flex:1;min-width:0}
+.cmp-items div{display:flex;align-items:center;gap:10px;background:#f5f5f5;padding:6px 12px 6px 6px;font-size:13px;font-weight:500;min-width:0}
+.cmp-items img{width:52px;height:40px;object-fit:contain;background:#fff}
+.cmp-items button{font-size:18px;line-height:1;color:var(--gray-500)}
+.cmp-bar .go{height:40px;padding:0 28px;border-radius:20px;background:#111;color:#fff;font-size:14px;font-weight:500}
+.cmp-bar .go:disabled{background:#ccc}
+.cmp-bar .tip{font-size:13px;color:var(--gray-500)}
+
+/* SEO 文案＋FAQ */
+.seo{background:#fff;padding:72px 0 24px}
+.seo h2,.faq h2{font-size:28px;font-weight:600;margin-bottom:20px}
+.seo p{font-size:15px;line-height:1.85;color:var(--gray-700);max-width:980px}
+.seo p+p{margin-top:12px}
+.faq{background:#fff;padding:48px 0 96px}
+.faq details{border-bottom:1px solid var(--gray-100)}
+.faq summary{list-style:none;display:flex;justify-content:space-between;gap:24px;padding:22px 0;font-size:16px;font-weight:500;cursor:pointer}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary i{position:relative;width:14px;height:14px;flex:none;margin-top:5px}
+.faq summary i::before,.faq summary i::after{content:"";position:absolute;left:0;top:6.5px;width:14px;height:1.3px;background:#111;transition:transform .3s var(--ease)}
+.faq summary i::after{transform:rotate(90deg)}
+.faq details[open] summary i::after{transform:rotate(0)}
+.faq details p{font-size:15px;line-height:1.8;color:var(--gray-700);padding:0 40px 24px 0}
+
+@media (max-width:1200px){:root{--pl-cols:2}.pl.collapsed .pg{--pl-cols:3}}
+@media (max-width:1024px){:root{--pl-side:220px}}
+/* ---------- 手機 ---------- */
+@media (max-width:720px){
+  .crumb .wrap{height:44px;font-size:12px}
+  .pl-bar{top:0}
+  .pl-bar .wrap{height:56px;gap:12px}
+  .pl-count{font-size:13px;padding-left:12px}
+  .pl-sort > span{display:none}
+  .pl-sort select{padding:6px 30px 6px 12px;font-size:13px}
+  .pl-body{display:block;padding-top:12px}
+  .pg{--pl-cols:1!important;gap:var(--m-pl-gap)}
+  :root{--pc-pad:var(--m-pc-pad);--pc-img-w:var(--m-pc-img-w);--pc-img-ar:var(--m-pc-img-ar);--pc-sz-fs:var(--m-pc-sz-fs);--pc-sz-h:var(--m-pc-sz-h);
+    --pc-h3:var(--m-pc-h3);--pc-h3-w:var(--m-pc-h3-w);--pc-h3-lh:var(--m-pc-h3-lh);--pc-md:var(--m-pc-md);--pc-li:var(--m-pc-li);--pc-li-lh:var(--m-pc-li-lh);--pc-li-py:var(--m-pc-li-py);
+    --pc-btn-h:var(--m-pc-btn-h);--pc-btn-fs:var(--m-pc-btn-fs)}
+  /* 篩選改為由下往上的面板 */
+  .pf{position:fixed;inset:auto 0 0 0;top:auto;max-height:82vh;height:82vh;z-index:120;margin:0!important;opacity:1!important;padding:8px 24px 96px;border-radius:16px 16px 0 0;
+      transform:translateY(105%);visibility:hidden;transition:transform .42s var(--ease),visibility 0s .42s;pointer-events:auto!important}
+  .pl.sheet .pf,.pl.sheet .pf-foot{transform:none;visibility:visible;transition:transform .42s var(--ease)}
+  .pf::before{content:"篩選";display:block;font-size:18px;font-weight:600;padding:16px 0 8px}
+  .pf-foot{display:flex;gap:10px;position:fixed;left:0;right:0;bottom:0;padding:14px 24px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--gray-100);z-index:121;
+      transform:translateY(105%);visibility:hidden;transition:transform .42s var(--ease),visibility 0s .42s}
+  .pl.sheet .pf-foot{transform:none}
+  .pf-foot button{flex:1;height:44px;border-radius:22px;font-size:15px;font-weight:500;border:1px solid #111}
+  .pf-foot .ok{background:#111;color:#fff}
+  .pf-dim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:119;opacity:0;pointer-events:none;transition:opacity .35s}
+  .pl.sheet .pf-dim{opacity:1;pointer-events:auto}
+  .cmp-bar .wrap{height:auto;padding-top:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom));flex-wrap:wrap}
+  .cmp-items img{display:none}
+  .cmp-bar .tip{display:none}
+  .seo{padding:48px 0 8px}.seo h2,.faq h2{font-size:22px}
+  .seo p,.faq details p{font-size:14px}
+  .faq summary{font-size:15px;padding:18px 0}
+}
+@media (prefers-reduced-motion:reduce){.pc{opacity:1;transform:none;transition:none}}
+</style>
+<style id="tune">
+.tp{position:fixed;right:16px;top:16px;z-index:5000;width:360px;max-height:calc(100vh - 32px);overflow:auto;background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.2);font:13px/1.4 "Gotham","Noto Sans TC",sans-serif;color:#111}
+.tp header{position:sticky;top:0;background:#111;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.tp header button{color:#fff;opacity:.7;font-size:12px}
+.tp.min .tb{display:none}
+.tb{padding:8px 16px 16px}
+.tg{border-top:1px solid #eee;padding:12px 0 4px}.tg:first-child{border-top:0}
+.tg h5{font-size:12px;color:#888;font-weight:500;margin-bottom:8px}
+.tc{display:grid;grid-template-columns:104px 1fr 56px;align-items:center;gap:8px;margin-bottom:8px}
+.tc input{width:100%;accent-color:#E64C3D}
+.tc output{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.tc select{grid-column:2/4;padding:4px 6px;border:1px solid #ddd;border-radius:6px;font:inherit}
+.tbtns{display:flex;gap:8px;margin-top:10px}
+.tbtns button{flex:1;height:34px;border-radius:999px;border:1px solid #111;font-size:12px;font-weight:600}
+.tbtns button.p{background:#111;color:#fff}
+.thint{font-size:11px;color:#999;margin-top:10px;line-height:1.6}
+.tframe{position:fixed;left:calc(50% - 190px - 180px);top:16px;z-index:4999;width:390px;height:calc(100vh - 32px);max-height:844px;border:0;border-radius:24px;box-shadow:0 12px 40px rgba(0,0,0,.35);background:#fff}
+.tback{position:fixed;inset:0;z-index:4998;background:rgba(20,20,20,.85)}
+.ttoast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;z-index:6000;opacity:0;transition:.3s}
+.ttoast.on{opacity:1}
+body.inframe .tp,body.inframe .tback,body.inframe .tframe,body.inframe .demo-tag{display:none}
+.ttoast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;z-index:6000;opacity:0;transition:.3s}
+body.tune-d{padding-right:392px}
+body.tune-d .header{margin-right:0}
+body:not(.tune-m) .tframe,body:not(.tune-m) .tback{display:none}
+.tmode{display:flex;gap:6px;margin:4px 0 6px}
+.tmode button{flex:1;height:32px;border-radius:999px;border:1px solid #111;font-size:12px;font-weight:600}
+.tmode button.on{background:#111;color:#fff}
+body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{display:none!important}
+.demo-tag{display:none}
+</style>
+</head>
+<body>
+
+<div class="demo-tag">DEMO 示意稿・非正式網站</div>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="hd-bar">
+    <a class="logo" href="index.html"><img src="images/tcl_logo.svg" alt="TCL"></a>
+    <ul class="nav">
+      <li class="has-mega"><a class="nav-link" href="#">顯示器 &amp; Soundbar</a><div class="mega"><div class="mm-inner"><div class="mm-row"><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_x11l.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">全部電視</h4><ul class="mm-list"><li style="--i:0"><a href="tvs.html?tech=SQD-Mini+LED">SQD-Mini LED 顯示器</a></li><li style="--i:1"><a href="tvs.html?tech=RGB-Mini+LED">RGB-Mini LED 顯示器</a></li><li style="--i:2"><a href="tvs.html?tech=QD-Mini+LED">QD-Mini LED 顯示器</a></li><li style="--i:3"><a href="tvs.html?tech=SQD-Mini+LED,RGB-Mini+LED,QD-Mini+LED">Mini LED 顯示器</a></li><li style="--i:4"><a href="tvs.html?tech=QLED">QLED 顯示器</a></li><li style="--i:5"><a href="tvs.html?tech=4K+HDR">4K HDR 顯示器</a></li><li style="--i:6"><a href="tvs.html?feat=gtv">Google TV</a></li><li style="--i:7"><a href="tvs.html">全部顯示器</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_c8l.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">精選推薦</h4><ul class="mm-list"><li style="--i:0"><a href="#">家庭劇院</a></li><li style="--i:1"><a href="#">電玩專用</a></li><li style="--i:2"><a href="#">賽事專用</a></li><li style="--i:3"><a href="tvs.html?feat=big">大尺寸螢幕</a></li><li style="--i:4"><a href="#">TCL 畫質技術</a></li><li style="--i:5"><a href="#">選購指南</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_c7l.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">依尺寸</h4><ul class="mm-list"><li style="--i:0"><a href="tvs.html?size=98%2B">98 吋以上</a></li><li style="--i:1"><a href="tvs.html?size=85-97">85 吋</a></li><li style="--i:2"><a href="tvs.html?size=75-84">75–84 吋</a></li><li style="--i:3"><a href="tvs.html?size=65-74">65–74 吋</a></li><li style="--i:4"><a href="tvs.html?size=55-64">55–64 吋</a></li><li style="--i:5"><a href="tvs.html?size=44-50">44–50 吋</a></li><li style="--i:6"><a href="tvs.html?size=43">43 吋以下</a></li></ul></div></div></div><div class="mm-row"><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_rm9l.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">最新產品</h4><ul class="mm-list"><li style="--i:0"><a href="#">X11L</a></li><li style="--i:1"><a href="#">C8L</a></li><li style="--i:2"><a href="#">C7L</a></li><li style="--i:3"><a href="#">RM9L</a></li><li style="--i:4"><a href="#">A400 Pro</a></li><li style="--i:5"><a href="#">A400M</a></li><li style="--i:6"><a href="#">A400</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_q85h.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">Soundbar</h4><ul class="mm-list"><li style="--i:0"><a href="#">Q85H</a></li><li style="--i:1"><a href="#">Q75H</a></li><li style="--i:2"><a href="#">S45H</a></li><li style="--i:3"><a href="#">了解更多</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_32x3b.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">電競顯示器</h4><ul class="mm-list"><li style="--i:0"><a href="#">32X3B</a></li><li style="--i:1"><a href="#">34R83Q</a></li><li style="--i:2"><a href="#">27R83U</a></li><li style="--i:3"><a href="#">了解更多</a></li></ul></div></div></div></div></div></li>
+      <li class="has-mega"><a class="nav-link" href="#">生活家電</a><div class="mega"><div class="mm-inner"><div class="mm-row"><div class="mm-col"><div class="mm-thumb"><img src="https://www.tcl-shop.com.tw/upload/products/b_2506021006360000001.jpg" alt=""></div><div class="mm-body"><h4 class="mm-title">電冰箱</h4><ul class="mm-list"><li style="--i:0"><a href="#">P415TM 智慧變頻雙門</a></li><li style="--i:1"><a href="#">P333TM 智慧變頻雙門</a></li><li style="--i:2"><a href="#">了解更多</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb"><img src="https://www.tcl-shop.com.tw/upload/products/b_2602111724420000001.jpg" alt=""></div><div class="mm-body"><h4 class="mm-title">洗衣機</h4><ul class="mm-list"><li style="--i:0"><a href="#">P315TLG 直立式變頻</a></li><li style="--i:1"><a href="#">P312TLG 直立式變頻</a></li><li style="--i:2"><a href="#">了解更多</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb"><img src="https://www.tcl-shop.com.tw/upload/products/b_2306201832010000001.jpg" alt=""></div><div class="mm-body"><h4 class="mm-title">冷凍櫃</h4><ul class="mm-list"><li style="--i:0"><a href="#">F408CFW 臥式變頻</a></li><li style="--i:1"><a href="#">F200CFW 臥式</a></li><li style="--i:2"><a href="#">P272SDS 直立式</a></li><li style="--i:3"><a href="#">了解更多</a></li></ul></div></div></div></div></div></li>
+      <li><a class="nav-link" href="#">最新消息</a></li>
+      <li><a class="nav-link" href="#">銷售據點</a></li>
+    </ul>
+    <ul class="nav nav-right">
+      <li class="has-mega"><a class="nav-link" href="#">支援</a><div class="mega"><div class="mm-inner"><div class="mm-row"><div class="mm-col noimg"><div class="mm-body"><h4 class="mm-title">服務</h4><ul class="mm-list"><li style="--i:0"><a href="#">線上報修</a></li><li style="--i:1"><a href="#">產品註冊</a></li><li style="--i:2"><a href="#">保固說明</a></li></ul></div></div><div class="mm-col noimg"><div class="mm-body"><h4 class="mm-title">資源</h4><ul class="mm-list"><li style="--i:0"><a href="#">使用手冊下載</a></li><li style="--i:1"><a href="#">常見問題</a></li><li style="--i:2"><a href="#">軟體更新</a></li></ul></div></div><div class="mm-col noimg"><div class="mm-body"><h4 class="mm-title">聯絡我們</h4><ul class="mm-list"><li style="--i:0"><a href="#">客服中心</a></li><li style="--i:1"><a href="#">服務據點</a></li></ul></div></div></div></div></div></li>
+      <li><a class="nav-link" href="#">關於 TCL</a></li>
+    </ul>
+    <div class="tools">
+      <a href="#" aria-label="搜尋"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></a>
+      <a href="#" aria-label="會員"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></a>
+      <a href="#" aria-label="購物車"><svg viewBox="0 0 24 24"><path d="M5 7h14l-1.2 12.1a2 2 0 0 1-2 1.9H8.2a2 2 0 0 1-2-1.9z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count">0</span></a>
+      <button class="burger" aria-label="選單" aria-expanded="false"><i></i><i></i><i></i></button>
+    </div>
+  </div>
+</header>
+<div class="hd-dim"></div>
+
+<nav class="drawer" aria-hidden="true"><div class="dr-inner">
+  <div class="dr-l1" style="--i:0"><button class="dr-head" aria-expanded="false"><span>顯示器 &amp; Soundbar</span><i class="dr-ico"></i></button>
+    <div class="dr-acc"><div class="dr-acc-in"><div class="dr-sec"><h5>全部電視</h5><ul><li><a href="tvs.html?tech=SQD-Mini+LED">SQD-Mini LED 顯示器</a></li><li><a href="tvs.html?tech=RGB-Mini+LED">RGB-Mini LED 顯示器</a></li><li><a href="tvs.html?tech=QD-Mini+LED">QD-Mini LED 顯示器</a></li><li><a href="tvs.html?tech=SQD-Mini+LED,RGB-Mini+LED,QD-Mini+LED">Mini LED 顯示器</a></li><li><a href="tvs.html?tech=QLED">QLED 顯示器</a></li><li><a href="tvs.html?tech=4K+HDR">4K HDR 顯示器</a></li><li><a href="tvs.html?feat=gtv">Google TV</a></li><li><a href="tvs.html">全部顯示器</a></li></ul></div><div class="dr-sec"><h5>精選推薦</h5><ul><li><a href="#">家庭劇院</a></li><li><a href="#">電玩專用</a></li><li><a href="#">賽事專用</a></li><li><a href="tvs.html?feat=big">大尺寸螢幕</a></li><li><a href="#">TCL 畫質技術</a></li><li><a href="#">選購指南</a></li></ul></div><div class="dr-sec"><h5>依尺寸</h5><ul><li><a href="tvs.html?size=98%2B">98 吋以上</a></li><li><a href="tvs.html?size=85-97">85 吋</a></li><li><a href="tvs.html?size=75-84">75–84 吋</a></li><li><a href="tvs.html?size=65-74">65–74 吋</a></li><li><a href="tvs.html?size=55-64">55–64 吋</a></li><li><a href="tvs.html?size=44-50">44–50 吋</a></li><li><a href="tvs.html?size=43">43 吋以下</a></li></ul></div><div class="dr-sec"><h5>最新產品</h5><ul><li><a href="#">X11L</a></li><li><a href="#">C8L</a></li><li><a href="#">C7L</a></li><li><a href="#">RM9L</a></li><li><a href="#">A400 Pro</a></li><li><a href="#">A400M</a></li><li><a href="#">A400</a></li></ul></div><div class="dr-sec"><h5>Soundbar</h5><ul><li><a href="#">Q85H</a></li><li><a href="#">Q75H</a></li><li><a href="#">S45H</a></li></ul></div><div class="dr-sec"><h5>電競顯示器</h5><ul><li><a href="#">32X3B</a></li><li><a href="#">34R83Q</a></li><li><a href="#">27R83U</a></li></ul></div></div></div></div>
+  <div class="dr-l1" style="--i:1"><button class="dr-head" aria-expanded="false"><span>生活家電</span><i class="dr-ico"></i></button>
+    <div class="dr-acc"><div class="dr-acc-in"><div class="dr-sec"><h5>電冰箱</h5><ul><li><a href="#">P415TM 智慧變頻雙門</a></li><li><a href="#">P333TM 智慧變頻雙門</a></li></ul></div><div class="dr-sec"><h5>洗衣機</h5><ul><li><a href="#">P315TLG 直立式變頻</a></li><li><a href="#">P312TLG 直立式變頻</a></li></ul></div><div class="dr-sec"><h5>冷凍櫃</h5><ul><li><a href="#">F408CFW 臥式變頻</a></li><li><a href="#">F200CFW 臥式</a></li><li><a href="#">P272SDS 直立式</a></li></ul></div></div></div></div>
+  <div class="dr-l1" style="--i:2"><a class="dr-head dr-link" href="#"><span>最新消息</span><i class="dr-arr"></i></a></div>
+  <div class="dr-l1" style="--i:3"><a class="dr-head dr-link" href="#"><span>銷售據點</span><i class="dr-arr"></i></a></div>
+  <div class="dr-l1" style="--i:4"><button class="dr-head" aria-expanded="false"><span>支援</span><i class="dr-ico"></i></button>
+    <div class="dr-acc"><div class="dr-acc-in"><div class="dr-sec"><h5>服務</h5><ul><li><a href="#">線上報修</a></li><li><a href="#">產品註冊</a></li><li><a href="#">保固說明</a></li></ul></div><div class="dr-sec"><h5>資源</h5><ul><li><a href="#">使用手冊下載</a></li><li><a href="#">常見問題</a></li><li><a href="#">軟體更新</a></li></ul></div><div class="dr-sec"><h5>聯絡我們</h5><ul><li><a href="#">客服中心</a></li><li><a href="#">服務據點</a></li></ul></div></div></div></div>
+  <div class="dr-l1" style="--i:5"><a class="dr-head dr-link" href="#"><span>關於 TCL</span><i class="dr-arr"></i></a></div>
+  <div class="dr-foot" style="--i:6"><a href="#">會員登入</a><span>台灣 / 繁體中文</span></div>
+</div></nav>
+
+<main>
+
+
+<nav class="crumb"><div class="wrap"><a href="index.html">首頁</a><svg viewBox="0 0 6 10"><path d="M1 1l4 4-4 4"/></svg><b>全部顯示器</b></div></nav>
+
+<!-- ================= 關鍵 Banner ================= -->
+<section class="hero kb" id="hero">
+  <div class="hero-track">
+    <div class="hero-slide" data-label="X11L">
+      <picture><source media="(max-width:720px)" srcset="images/hero_x11l_mb.jpg"><img src="images/kb_x11l_pc.jpg" alt="X11L"></picture>
+      <div class="hero-copy"><h2><img class="title-svg" src="images/title_sqd-miniled_pc.svg" alt="TCL SQD-Mini LED TV"></h2>
+        <p><span class="pm">X11L</span><span class="ps">｜</span><span class="pt">Mini LED 巔峰之作</span></p><a class="btn btn-hero" href="#">了解更多</a></div>
+    </div>
+    <div class="hero-slide" data-label="RM9L">
+      <picture><source media="(max-width:720px)" srcset="images/hero_rm9l_mb.jpg"><img src="images/kb_rm9l_pc.jpg" alt="RM9L"></picture>
+      <div class="hero-copy"><h2><img class="title-svg" src="images/title_rgb-miniled_pc.svg" alt="TCL RGB-Mini LED TV"></h2>
+        <p><span class="pm">RM9L</span><span class="ps">｜</span><span class="pt">RGB 色彩新典範</span></p><a class="btn btn-hero" href="#">了解更多</a></div>
+    </div>
+    <div class="hero-slide" data-label="C8L">
+      <picture><source media="(max-width:720px)" srcset="images/hero_c8l_mb.jpg"><img src="images/kb_c8l_pc.jpg" alt="C8L"></picture>
+      <div class="hero-copy"><h2><img class="title-svg" src="images/title_sqd-miniled_pc.svg" alt="TCL SQD-Mini LED TV"></h2>
+        <p><span class="pm">C8L</span><span class="ps">｜</span><span class="pt">全新旗艦之選</span></p><a class="btn btn-hero" href="#">了解更多</a></div>
+    </div>
+    <div class="hero-slide dark left-copy" data-label="A400 Pro">
+      <picture><source media="(max-width:720px)" srcset="images/hero_a400pro_mb.jpg"><img src="images/kb_a400pro_pc.jpg" alt="A400 Pro"></picture>
+      <div class="hero-copy"><h2><img class="title-svg" src="images/title_nxtvision_pc_dark.svg" alt="TCL NXTVISION TV"></h2>
+        <p><span class="pm">A400 Pro</span><span class="ps">｜</span><span class="pt">藝術級升級 美學與性能極致演繹</span></p><a class="btn btn-hero" href="#">了解更多</a></div>
+    </div>
+    <div class="hero-slide" data-label="A400M">
+      <picture><source media="(max-width:720px)" srcset="images/hero_a400m_mb.jpg"><img src="images/kb_a400m_pc.jpg" alt="A400M"></picture>
+      <div class="hero-copy"><h2><img class="title-svg" src="images/title_qd-miniled_pc.svg" alt="TCL QD-Mini LED TV"></h2>
+        <p><span class="pm">A400M</span><span class="ps">｜</span><span class="pt">沉浸大畫面 細膩每一刻</span></p><a class="btn btn-hero" href="#">了解更多</a></div>
+    </div>
+  </div>
+  <button class="hero-arrow prev" aria-label="上一張"><svg viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8"/></svg></button>
+  <button class="hero-arrow next" aria-label="下一張"><svg viewBox="0 0 24 24"><path d="M9 4l8 8-8 8"/></svg></button>
+  <div class="hero-ui">
+    <div class="hero-label"></div>
+    <div class="hero-dots"></div>
+  </div>
+</section>
+
+<!-- ================= 產品列表 ================= -->
+<section class="pl" id="pl">
+  <div class="pl-bar"><div class="wrap">
+    <button class="pl-toggle" aria-expanded="true"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8.5V20l-4-2v-4.5z"/></svg>篩選</button>
+    <span class="pl-count">共 <b id="plN">0</b> 項產品</span>
+    <label class="pl-sort"><span>排序</span><select id="plSort"><option value="rec">推薦排序</option><option value="new">最新上市</option><option value="big">尺寸：大到小</option></select></label>
+  </div></div>
+  <div class="wrap">
+    <div class="pl-chips-wrap" id="plChipsWrap"><div class="pl-chips-in"><div class="pl-chips" id="plChips"></div></div></div>
+    <div class="pl-body">
+      <aside class="pf" id="pf"></aside>
+      <div class="pf-dim"></div>
+      <div class="pf-foot"><button class="reset">清除全部</button><button class="ok">查看 <span id="plN2">0</span> 項產品</button></div>
+      <div class="pg" id="pg"></div>
+    </div>
+  </div>
+</section>
+
+<div class="cmp-bar" id="cmpBar"><div class="wrap"><div class="cmp-items"></div><span class="tip">最多可比較 3 項產品</span><button class="go" disabled>開始比較</button></div></div>
+
+<!-- ================= SEO 文案 ================= -->
+<section class="seo"><div class="wrap">
+  <h2>TCL 顯示器</h2>
+  <p>TCL 致力以創新顯示技術重新定義居家娛樂。從 SQD-Mini LED、RGB-Mini LED 到 QD-Mini LED 與 QLED，以精準控光、高亮度與廣色域，呈現更貼近真實的畫面；搭配 Google TV 智慧系統，影音串流、遊戲與賽事一機搞定。</p>
+  <p>無論是打造家庭劇院的 98 吋以上大尺寸，或是適合房間的 43 吋，TCL 提供完整的尺寸選擇；NXTVISION 藝術顯示器更以畫框式設計，讓顯示器在關機時也能成為空間中的一幅畫。</p>
+</div></section>
+
+<section class="faq"><div class="wrap">
+  <h2>常見問題</h2>
+  <details><summary>SQD-Mini LED、RGB-Mini LED 與 QD-Mini LED 有什麼不同？<i></i></summary><p>三者都是以 Mini LED 背光搭配分區控光。QD-Mini LED 以量子點膜提升色彩；SQD-Mini LED 在此基礎上強化色彩純度與控光精度；RGB-Mini LED 則以紅綠藍三色 Mini LED 直接發光，色彩表現更廣。實際規格請以各型號頁面為準。</p></details>
+  <details><summary>客廳該選多大尺寸的顯示器？<i></i></summary><p>一般建議觀賞距離約為螢幕對角線的 1.2–1.5 倍。例如觀賞距離 2.5 公尺，可考慮 75–85 吋；3 公尺以上則可考慮 98 吋以上的大尺寸。</p></details>
+  <details><summary>TCL 顯示器有提供到府安裝嗎？<i></i></summary><p>（示意文案，正式內容待確認）於官方通路購買可享專人到府安裝服務，壁掛架與安裝細節請洽客服。</p></details>
+  <details><summary>保固期間多久？如何申請維修？<i></i></summary><p>（示意文案，正式內容待確認）請參考「支援 › 保固說明」，或透過線上報修填寫產品資訊與購買證明。</p></details>
+</div></section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="f-grid">
+      <div class="f-col">
+        <h4>顯示器 &amp; Soundbar</h4>
+        <ul><li><a href="#">SQD-Mini LED</a></li><li><a href="#">RGB-Mini LED</a></li><li><a href="#">QD-Mini LED</a></li><li><a href="#">QLED</a></li><li><a href="#">Soundbar</a></li><li><a href="#">電競顯示器</a></li></ul>
+        <h4>生活家電</h4>
+        <ul><li><a href="#">電冰箱</a></li><li><a href="#">洗衣機</a></li><li><a href="#">冷凍櫃</a></li></ul>
+      </div>
+      <div class="f-col">
+        <h4>新品推薦</h4>
+        <ul><li><a href="#">X11L</a></li><li><a href="#">C8L</a></li><li><a href="#">C7L</a></li><li><a href="#">RM9L</a></li><li><a href="#">A400 Pro</a></li></ul>
+        <h4>購物</h4>
+        <ul><li><a href="#">線上商城</a></li><li><a href="#">銷售據點</a></li><li><a href="#">購物說明</a></li></ul>
+      </div>
+      <div class="f-col">
+        <h4>支援</h4>
+        <ul><li><a href="#">線上報修</a></li><li><a href="#">產品註冊</a></li><li><a href="#">使用手冊下載</a></li><li><a href="#">常見問題</a></li><li><a href="#">保固說明</a></li></ul>
+      </div>
+      <div class="f-col">
+        <h4>關於 TCL</h4>
+        <ul><li><a href="#">品牌故事</a></li><li><a href="#">最新消息</a></li><li><a href="#">奧林匹克合作夥伴</a></li><li><a href="#">隱私權政策</a></li></ul>
+      </div>
+      <div class="f-col">
+        <h4>追蹤我們</h4>
+        <div class="social">
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 7.3A4.7 4.7 0 1 0 12 16.7 4.7 4.7 0 0 0 12 7.3zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm5-8.9a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 3c-2.4 0-2.7 0-3.7.1C5.1 3.2 3.2 5 3.1 8.3 3 9.3 3 9.6 3 12s0 2.7.1 3.7c.1 3.2 2 5.1 5.2 5.2 1 .1 1.3.1 3.7.1s2.7 0 3.7-.1c3.2-.1 5.1-2 5.2-5.2.1-1 .1-1.3.1-3.7s0-2.7-.1-3.7C20.8 5 19 3.2 15.7 3.1 14.7 3 14.4 3 12 3z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3z"/></svg></a>
+          <a href="#" aria-label="LINE"><svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 6.6 2 11.1c0 4 3.6 7.4 8.4 8 .3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5 1.1-.5 5.9-3.5 8-5.9 1.5-1.6 2.2-3.2 2.2-5C22 6.6 17.5 3 12 3z"/></svg></a>
+        </div>
+        <div class="f-cs">客服專線<strong>0800-000-000</strong>週一至週五 09:00–18:00<br><span style="font-size:11px;color:var(--gray-500)">※ 示意號碼，正式上線前替換</span></div>
+      </div>
+    </div>
+    <div class="f-bottom">
+      <img src="images/tcl_logo.svg" alt="TCL">
+      <div class="f-links"><a href="#">使用條款</a><a href="#">隱私權政策</a><a href="#">Cookie 政策</a><a href="#">網站地圖</a></div>
+      <div class="f-lang"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3z"/></svg>台灣 / 繁體中文</div>
+      <div class="f-copy">Copyright © 2026 TCL Taiwan. All Rights Reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- Hero carousel ---------- */
+(function(){
+  const hero=document.getElementById('hero'), track=hero.querySelector('.hero-track'),
+        slides=[...hero.querySelectorAll('.hero-slide')], dotsBox=hero.querySelector('.hero-dots'),
+        label=hero.querySelector('.hero-label'), DUR=6000;
+  let i=0, timer=null, paused=false;
+  slides.forEach((_,n)=>{const b=document.createElement('button');b.setAttribute('aria-label','第'+(n+1)+'張');b.innerHTML='<i></i>';b.onclick=()=>go(n);dotsBox.appendChild(b)});
+  const pauseBtn=document.createElement('button');pauseBtn.className='hero-pause';pauseBtn.setAttribute('aria-label','暫停');
+  const P='<svg viewBox="0 0 8 10"><rect x="0" width="2.6" height="10" rx=".4"/><rect x="5.4" width="2.6" height="10" rx=".4"/></svg>',
+        R='<svg viewBox="0 0 9 10"><path d="M0 0.6v8.8a.6.6 0 0 0 .9.5l7.6-4.4a.6.6 0 0 0 0-1L.9.1A.6.6 0 0 0 0 .6z"/></svg>';
+  const icoPause=P.replace('<svg','<svg class="cur"')+'<i class="sl"></i>'+R, icoPlay=P+'<i class="sl"></i>'+R.replace('<svg','<svg class="cur"');
+  pauseBtn.innerHTML=icoPause;pauseBtn.onclick=()=>{paused=!paused;hero.classList.toggle('paused',paused);pauseBtn.innerHTML=paused?icoPlay:icoPause;pauseBtn.setAttribute('aria-label',paused?'繼續播放':'暫停');paused?clearTimeout(timer):schedule()};
+  dotsBox.appendChild(pauseBtn);
+  const dots=[...dotsBox.querySelectorAll('button:not(.hero-pause)')];
+  function render(){
+    track.style.transform='translateX('+(-i*100)+'%)';
+    slides.forEach((sl,n)=>sl.classList.toggle('is-on',n===i));
+    dots.forEach((d,n)=>{d.classList.toggle('on',n===i);const f=d.querySelector('i');f.style.animation='none';f.offsetWidth;f.style.animation='';});
+    hero.style.setProperty('--dur',DUR+'ms');label.textContent=slides[i].dataset.label;hero.classList.toggle('on-dark',slides[i].classList.contains('dark'));
+  }
+  function schedule(){clearTimeout(timer);if(!paused)timer=setTimeout(()=>go(i+1),DUR)}
+  function go(n){i=(n+slides.length)%slides.length;render();schedule()}
+  hero.querySelector('.prev').onclick=()=>go(i-1);hero.querySelector('.next').onclick=()=>go(i+1);
+  let x0=null;hero.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+  hero.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40)go(i+(dx<0?1:-1));x0=null});
+  render();schedule();
+  /* 首張 banner 圖載入後才播放文字淡入，避免圖還沒出來文字就先出現 */
+  const first=slides[0].querySelector('img'),go1=()=>requestAnimationFrame(()=>hero.classList.add('ready'));
+  if(first.complete)go1();else{first.addEventListener('load',go1,{once:true});first.addEventListener('error',go1,{once:true});setTimeout(go1,1500)}
+})();
+/* ---------- Mega menu（參照 TCL Global：hover 開啟、白底瞬間展開、內容下滑淡入、背景變暗） ---------- */
+(function(){
+  const header=document.querySelector('.header'),dim=document.querySelector('.hd-dim'),items=[...document.querySelectorAll('.nav > li')];
+  let closeT=null;
+  const closeAll=()=>{items.forEach(i=>i.classList.remove('active'));dim.classList.remove('on')};
+  items.forEach(li=>{
+    li.addEventListener('mouseenter',()=>{
+      clearTimeout(closeT);
+      if(li.classList.contains('active'))return;
+      items.forEach(i=>{if(i!==li&&i.classList.contains('active')){i.classList.add('no-tr');i.classList.remove('active');void i.offsetWidth;requestAnimationFrame(()=>i.classList.remove('no-tr'))}});
+      if(li.classList.contains('has-mega')){
+        li.classList.remove('active');void li.offsetWidth;  // 切換選單時重播動畫
+        li.classList.add('active');dim.classList.add('on');
+      }else{dim.classList.remove('on');li.classList.add('active')}
+    });
+  });
+  header.addEventListener('mouseleave',()=>{closeT=setTimeout(closeAll,parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--close-delay'))*1000)});
+  header.addEventListener('mouseenter',()=>clearTimeout(closeT));
+})();
+/* ---------- 手機版頂部選單：捲動時顯示，停止 1 秒後淡出（回到頁首或開啟選單時保持顯示） ---------- */
+(function(){
+  const hd=document.querySelector('.header'),drawer=document.querySelector('.drawer');let t=null;
+  const mob=()=>innerWidth<=720;
+  const atTop=()=>scrollY<=hd.offsetHeight;
+  const show=()=>{hd.classList.remove('hd-hide');clearTimeout(t);
+    t=setTimeout(()=>{if(mob()&&!atTop()&&!(drawer&&drawer.classList.contains('open')))hd.classList.add('hd-hide')},1000)};
+  addEventListener('scroll',()=>{if(mob())show();else hd.classList.remove('hd-hide')},{passive:true});
+  addEventListener('resize',()=>{if(!mob())hd.classList.remove('hd-hide')});
+})();
+/* ---------- 手機選單：開關、手風琴展開 ---------- */
+(function(){
+  const dr=document.querySelector('.drawer'),bg=document.querySelector('.burger');
+  dr.querySelectorAll('.dr-sec ul').forEach(u=>[...u.children].forEach((li,j)=>li.style.setProperty('--j',j)));
+  const set=on=>{if(on)document.querySelector('.header').classList.remove('hd-hide');dr.classList.toggle('open',on);bg.classList.toggle('on',on);bg.setAttribute('aria-expanded',on);dr.setAttribute('aria-hidden',!on);document.documentElement.classList.toggle('dr-lock',on);
+    if(!on)dr.querySelectorAll('.dr-l1.open').forEach(l=>l.classList.remove('open'))};
+  bg.addEventListener('click',()=>set(!dr.classList.contains('open')));
+  dr.querySelectorAll('button.dr-head').forEach(h=>h.addEventListener('click',()=>{
+    const l=h.parentElement,on=!l.classList.contains('open');
+    if(!document.documentElement.classList.contains('acc-multi'))dr.querySelectorAll('.dr-l1.open').forEach(x=>x!==l&&x.classList.remove('open'));
+    l.classList.toggle('open',on);h.setAttribute('aria-expanded',on)}));
+  addEventListener('resize',()=>{if(innerWidth>1024)set(false)});
+  window.__drawer=set;
+})();
+/* ---------- 全部顯示器：篩選／排序／尺寸切換／比較 ---------- */
+(function(){
+  const DATA=[{"s": "X11L", "t": "Mini LED 巔峰之作", "tech": "SQD-Mini LED", "f": ["高達100% BT.2020 全景廣色域", "20,736 精準區域控光", "高達HDR 10,000尼特峰值亮度"], "img": "b_2604101118130000001.webp", "new": true, "art": false, "sz": [[98, "207"], [85, "208"], [75, "209"]], "draft": true, "im": "x11l.webp"}, {"s": "RM9L", "t": "RGB-Mini LED 新標竿", "tech": "RGB-Mini LED", "f": ["高達100% BT.2020全景廣色域", "WHVA 2.0 Ultra 面板，色彩精準", "8736 區精準區域控光"], "img": "b_2604271607480000001.webp", "new": true, "art": false, "sz": [[85, "210"]], "draft": true, "im": "rm9l.webp"}, {"s": "C8L", "t": "全新之選 SQD-Mini LED 顯示器", "tech": "SQD-Mini LED", "f": ["高達100% BT.2020全景廣色域", "4,032區精準區域控光", "高達HDR 6,000尼特峰值亮度"], "img": "b_26051217273500000001.webp", "new": true, "art": false, "sz": [[98, "211"], [85, "212"], [75, "213"], [65, "214"], [55, "220"]], "draft": false, "im": "c8l.webp", "imz": {"98": "c8l_98.webp"}}, {"s": "C7L", "t": "輕奢之選 SQD-Mini LED 顯示器", "tech": "SQD-Mini LED", "f": ["高達100% BT.2020全景廣色域", "2,176 區精準區域控光", "高達HDR 3,000尼特峰值亮度"], "img": "b_26050615294700000001.webp", "new": true, "art": false, "sz": [[98, "215"], [85, "216"], [75, "217"], [65, "218"], [55, "219"]], "draft": false, "im": "c7l.webp", "imz": {"98": "c7l_98.webp"}}, {"s": "Q7D Pro", "t": "匠心之選", "tech": "SQD-Mini LED", "f": ["高達100% BT.2020全景廣色域", "1,056區精準區域控光", "高達HDR 2,000尼特峰值亮度"], "img": "b_2605251104410000001.webp", "new": true, "art": false, "sz": [[85, "221"], [75, "222"], [65, "223"], [55, "224"]], "draft": false, "im": "q7d-pro.webp"}, {"s": "Q7D", "t": "RGB-Mini LED 色彩新境", "tech": "RGB-Mini LED", "f": ["高達100% BT.2020全景廣色域", "HVA Pro 面板，光色精準", "1800 區精準區域控光"], "img": "b_26071611205400000001.webp", "new": true, "art": false, "sz": [[75, "257"], [65, "258"]], "draft": true, "im": "q7d.webp"}, {"s": "A400 Pro", "t": "美學與性能極致演繹", "tech": "QD-Mini LED", "f": ["畫框式靈感設計", "藝術館收藏", "QD-Mini LED旗艦畫質"], "img": "b_26052011010100000001.webp", "new": true, "art": true, "sz": [[85, "262"], [75, "225"], [65, "226"], [55, "227"]], "draft": false, "im": "a400-pro.webp"}, {"s": "A400M", "t": "智慧升級 締造極致畫質", "tech": "QD-Mini LED", "f": ["超薄一體化機身", "448區精準區域控光", "QLED超過10億種生動色彩"], "img": "b_26060417214900000001.webp", "new": true, "art": true, "sz": [[98, "233"], [85, "234"], [75, "235"], [65, "236"], [55, "237"]], "draft": false, "im": "a400m.webp"}, {"s": "A400", "t": "藝術融入生活", "tech": "QLED", "f": ["纖薄設計，優雅純粹", "藝術生活，超越想像的美學呈現", "QLED色彩升級大進化"], "img": "b_26060316373200000001.webp", "new": true, "art": true, "sz": [[98, "228"], [85, "229"], [75, "230"], [65, "231"], [55, "232"]], "draft": true, "im": "a400.webp"}, {"s": "T8D", "t": "高階 QLED 量子畫質", "tech": "QLED", "f": ["QD-Mini LED調光技術，還原每一處精彩", "ONKYO 2.1 Hi-Fi 系統，震撼音效", "144Hz 原生刷新率，為速度而生"], "img": "b_26070217544200000001.jpg", "new": true, "art": false, "sz": [[85, "252"], [75, "253"], [65, "254"], [55, "255"]], "draft": true, "im": "t8d.webp"}, {"s": "T6D", "t": "高階 QLED 全尺寸選擇", "tech": "QLED", "f": ["QLED重塑色彩的定義，綻放無限光彩", "纖薄一體式設計", "AiPQ處理器 強大處理效能"], "img": "b_26070217340200000001.jpg", "new": true, "art": false, "sz": [[75, "247"], [65, "248"], [55, "249"], [50, "250"], [43, "251"]], "draft": true, "im": "t6d.webp"}, {"s": "P7L", "t": "高階 QLED 量子智能", "tech": "QLED", "f": ["QLED重塑色彩的定義，綻放無限光彩", "ONKYO 2.1 Hi-Fi 系統震撼音效 卓越家庭劇院體驗", "纖薄一體式設計"], "img": "b_26061512144700000001.webp", "new": true, "art": false, "sz": [[85, "238"], [75, "239"], [65, "240"], [55, "241"], [50, "242"], [43, "243"]], "draft": true, "im": "p7l.webp"}, {"s": "P6L", "t": "4K 智慧連網", "tech": "4K HDR", "f": ["4K HDR微小細節 清晰可見", "AiPQ 處理器 強大處理效能", "MEMC流暢不受限"], "img": "b_26061710442700000001.jpg", "new": true, "art": false, "sz": [[75, "244"], [65, "245"], [55, "246"]], "draft": true, "im": "p6l.webp"}, {"s": "V6D", "t": "4K Google TV 輕鬆入門", "tech": "4K HDR", "f": ["4K HDR微小細節 清晰可見", "AiPQ 處理器 強大處理效能", "MEMC流暢不受限"], "img": "b_26071616031700000001.jpg", "new": true, "art": false, "sz": [[75, "259"], [65, "260"], [55, "261"]], "draft": true, "im": "v6d.webp"}, {"s": "C7K", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["QD-Mini LED高達 2880 區精準區域控光", "HDR 3000 nits 明亮鮮豔的細節", "QLED 精采絕倫 超過10億種生動色彩"], "img": "b_25080516165000000001.webp", "new": false, "art": false, "sz": [[115, "201"], [98, "152"], [85, "153"], [75, "154"], [65, "155"], [55, "156"]], "draft": true, "im": "c7k.webp", "imz": {"98": "c7k_98.webp"}}, {"s": "X11K", "t": "頂級 QD-Mini LED 旗艦", "tech": "QD-Mini LED", "f": ["QD-Mini LED高達10368區精準區域控光", "HDR 6500nits 明亮鮮豔的細節", "B&O 揚聲器 卓越音效 完美體驗"], "img": "b_2506020947430000001.webp", "new": false, "art": false, "sz": [[85, "163"]], "draft": true, "im": "x11k.webp"}, {"s": "C8K", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["QD-Mini LED高達 3840 區精準區域控光", "HDR 5000 nits 明亮鮮豔的細節", "QLED 精采絕倫 超過10億種生動色彩"], "img": "b_25051918254500000001.webp", "new": false, "art": false, "sz": [[98, "157"], [85, "158"], [75, "159"], [65, "160"]], "draft": true, "im": "c8k.webp", "imz": {"98": "c8k_98.webp"}}, {"s": "C6K", "t": "QD-Mini LED 高 CP 值", "tech": "QD-Mini LED", "f": ["QD-Mini LED高達512區 精準區域控光", "高HDR亮度 畫面璀璨明亮", "QLED 精采絕倫 超過10億種生動色彩"], "img": "b_2505151719100000001.webp", "new": false, "art": false, "sz": [[98, "143"], [85, "148"], [75, "149"], [65, "150"], [55, "151"]], "draft": true, "im": "c6k.webp", "imz": {"98": "c6k_98.webp"}}, {"s": "C855", "t": "頂級 QD-Mini LED 視覺傑作", "tech": "QD-Mini LED", "f": ["QD-Mini LED視覺傑作 親臨視覺饗宴", "1344區域控光 尖峰畫質 細節滿點", "HDR 3300尼特明亮璀璨 細節可見"], "img": "b_2410011510220000001.jpg", "new": false, "art": false, "sz": [[85, "108"], [75, "109"], [65, "110"]], "draft": true, "im": "c855.webp", "imz": {"85": "c855_85.webp"}}, {"s": "C755", "t": "QD-Mini LED 視覺傑作", "tech": "QD-Mini LED", "f": ["QD-Mini LED視覺傑作 親臨視覺饗宴", "384 Zones 量身打造每一幀影像", "HDR 1300 nits 明亮璀璨 細節可見"], "img": "b_24062111590500000001.webp", "new": false, "art": false, "sz": [[85, "97"], [75, "98"], [65, "99"], [55, "100"]], "draft": true, "im": "c755.webp"}, {"s": "Q7C", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["QD-Mini LED高達 1568 區精準區域控光", "HDR 3000 nits 明亮鮮豔的細節", "QLED 精采絕倫 超過10億種生動色彩"], "img": "b_25061717011800000001.jpg", "new": false, "art": false, "sz": [[85, "174"], [75, "178"], [65, "179"], [55, "180"]], "draft": true, "im": "q7c.webp"}, {"s": "Q6C", "t": "頂級 QD-Mini LED", "tech": "QD-Mini LED", "f": ["高達420區 精準區域控光", "高HDR亮度 畫面璀璨明亮", "QLED 精采絕倫 超過10億種生動色彩"], "img": "b_25061719471700000001.jpg", "new": false, "art": false, "sz": [[85, "181"], [75, "182"], [65, "183"], [55, "184"]], "draft": true, "im": "q6c.webp"}, {"s": "P8K", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED重塑色彩的定義，綻放無限光彩", "144Hz NRR 讓您快速獲得勝利", "ONKYO 2.1 Hi-Fi 系統震撼音效 卓越家庭劇院體驗"], "img": "b_2505121717500000001.jpg", "new": false, "art": false, "sz": [[98, "142"], [85, "144"], [75, "145"], [65, "146"], [55, "147"]], "draft": true, "im": "p8k.webp"}, {"s": "T8C", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED重塑色彩的定義，綻放無限光彩", "144Hz NRR 讓您快速獲得勝利", "ONKYO 2.1 Hi-Fi 系統震撼音效 卓越家庭劇院體驗"], "img": "b_25061909235500000001.jpg", "new": false, "art": false, "sz": [[85, "185"], [75, "188"], [65, "189"], [55, "190"]], "draft": true, "im": "t8c.webp"}, {"s": "T6C", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED 重塑色彩的定義，綻放無限光彩", "AiPQ 處理器 強大處理效能", "Dolby Vision · Atmos 有如身歷其境的體驗"], "img": "b_25061909303200000001.jpg", "new": false, "art": false, "sz": [[85, "186"], [75, "191"], [65, "192"], [55, "193"], [50, "194"], [43, "195"]], "draft": true, "im": "t6c.webp"}, {"s": "P7K", "t": "QLED 量子智能", "tech": "QLED", "f": ["QLED 重塑色彩的定義，綻放無限光彩", "AiPQ 處理器 強大處理效能", "Dolby Vision · Atmos 有如身歷其境的體驗"], "img": "b_25060617513400000001.webp", "new": false, "art": false, "sz": [[85, "165"], [75, "166"], [65, "167"], [55, "168"], [50, "169"], [43, "170"]], "draft": true, "im": "p7k.webp"}, {"s": "P6K", "t": "4K 智慧連網", "tech": "4K HDR", "f": ["AiPQ 處理器 強大處理效能", "MEMC流暢不受限", "HVA 面板呈現震撼細節"], "img": "b_25060618040500000001.webp", "new": false, "art": false, "sz": [[75, "171"], [65, "172"], [55, "173"]], "draft": true, "im": "p6k.webp"}, {"s": "V6C", "t": "4K 智慧連網", "tech": "4K HDR", "f": ["AiPQ 處理器 強大處理效能", "MEMC流暢不受限", "HVA 面板呈現震撼細節"], "img": "b_25061909401400000001.jpg", "new": false, "art": false, "sz": [[75, "187"], [65, "196"], [55, "197"], [50, "198"], [43, "199"]], "draft": true, "im": "v6c.webp"}, {"s": "S5K", "t": "QLED 小尺寸首選", "tech": "QLED", "f": ["QLED 超廣色域 栩栩如生的畫面體驗", "2K FHD 展現更多細節", "HDR 10微小細節 清晰可見"], "img": "b_25121609494000000001.webp", "new": false, "art": false, "sz": [[50, "204"], [40, "164"]], "draft": true, "im": "s5k.webp"}], IMG='https://www.tcl-shop.com.tw/upload/products/';
+  const GTV=["T8D", "T6D", "P7L", "P6L", "V6D", "C7K", "X11K", "C8K", "C6K", "C855", "C755", "Q7C", "Q6C", "P8K", "T8C", "T6C", "P7K", "P6K", "V6C", "S5K"];
+  const SZ=[['98+','98 吋以上',s=>s>=98],['85-97','85–97 吋',s=>s>=85&&s<98],['75-84','75–84 吋',s=>s>=75&&s<85],['65-74','65–74 吋',s=>s>=65&&s<75],['55-64','55–64 吋',s=>s>=55&&s<65],['44-50','44–50 吋',s=>s>=44&&s<=50],['43','43 吋以下',s=>s<=43]];
+  const GROUPS=[
+    {k:'tech',h:'顯示技術',o:['SQD-Mini LED','RGB-Mini LED','QD-Mini LED','QLED','4K HDR'].map(t=>[t,t,p=>p.tech===t])},
+    {k:'feat',h:'精選推薦',o:[['art','藝術顯示器 NXTVISION',p=>p.art],['big','大尺寸螢幕',p=>p.sz.some(x=>x[0]>=98)],['gtv','Google TV',p=>GTV.includes(p.s)],['new','2026 新品',p=>p.new]]},
+    {k:'size',h:'依尺寸',o:SZ.map(([k,l,f])=>[k,l,p=>p.sz.some(x=>f(x[0]))])},
+  ];
+  const pl=document.getElementById('pl'),pf=document.getElementById('pf'),pg=document.getElementById('pg'),chips=document.getElementById('plChips'),sortSel=document.getElementById('plSort');
+  const sel={tech:new Set(),feat:new Set(),size:new Set()};
+  const imgFor=(p,size)=>p.im?'images/tv/'+((p.imz&&p.imz[size])||p.im):IMG+p.img;
+  const fmt=n=>'NT$ '+n.toLocaleString('en-US');
+  const en=t=>t.replace(/([A-Za-z0-9][A-Za-z0-9 .+\-]*[A-Za-z0-9+]|[A-Za-z0-9])/g,'<span class="en">$1</span>');
+
+  pf.innerHTML=GROUPS.map((g,gi)=>`<div class="pf-g open" data-g="${g.k}"><button class="pf-h">${g.h}<i></i></button><div class="pf-list"><div><ul>`+
+    g.o.map(([k,l])=>`<li><label><input type="checkbox" data-k="${k}">${l}<em></em></label></li>`).join('')+`</ul></div></div></div>`).join('');
+  pf.querySelectorAll('.pf-h').forEach(h=>h.onclick=()=>h.parentElement.classList.toggle('open'));
+  pf.addEventListener('change',e=>{const g=e.target.closest('.pf-g').dataset.g;e.target.checked?sel[g].add(e.target.dataset.k):sel[g].delete(e.target.dataset.k);render()});
+
+  const match=(p,skip)=>GROUPS.every(g=>g.k===skip||!sel[g.k].size||g.o.some(([k,,f])=>sel[g.k].has(k)&&f(p)));
+  function sizesFor(p){const s=sel.size;if(!s.size)return p.sz;const fs=SZ.filter(x=>s.has(x[0])).map(x=>x[2]);return p.sz.filter(x=>fs.some(f=>f(x[0])))}
+
+  function card(p,k){
+    const sz=sizesFor(p);
+    return `<article class="pc" style="--k:${k%6}" data-s="${p.s}">${p.new?'<span class="tag">NEW</span>':''}
+      <a class="pc-img" href="#"><img src="${imgFor(p,sz[0][0])}" alt="TCL ${p.s}" loading="lazy"></a>
+      <div class="pc-sz"><button class="arr l" aria-label="較大尺寸"><svg viewBox="0 0 7 12"><path d="M6 1 1 6l5 5"/></svg></button><div class="rail no-tr"><div>`+
+      sz.map((x,i)=>`<button class="s${i?'':' on'}" data-i="${i}">${x[0]}</button>`).join('')+
+      `</div></div><button class="arr r" aria-label="較小尺寸"><svg viewBox="0 0 7 12"><path d="m1 1 5 5-5 5"/></svg></button></div>
+      <h3>${en(p.t)}</h3><div class="md">${sz[0][0]}${p.s.replace(' ','')}</div>
+      <ul>${p.f.map(f=>`<li>${f}</li>`).join('')}</ul>
+      <div class="act"><a class="more" href="#">了解更多</a></div>
+      <label class="cmp"><input type="checkbox">加入比較</label></article>`;
+  }
+  function bindCard(el,p){
+    const sz=sizesFor(p),rail=el.querySelector('.rail'),row=rail.firstElementChild,bs=[...row.children],L=el.querySelector('.arr.l'),R=el.querySelector('.arr.r');let cur=0;
+    /* 選取的尺寸永遠置中，左右淡出 */
+    const center=()=>{const b=bs[cur];row.style.transform=`translateX(${rail.clientWidth/2-(b.offsetLeft+b.offsetWidth/2)}px)`};
+    const pick=i=>{i=Math.max(0,Math.min(bs.length-1,i));if(i===cur&&bs[i].classList.contains('on'))return;cur=i;
+      bs.forEach((o,k)=>o.classList.toggle('on',k===i));L.disabled=i===0;R.disabled=i===bs.length-1;center();
+      el.querySelector('.md').textContent=sz[i][0]+p.s.replace(' ','');
+      const im=el.querySelector('.pc-img img'),u=imgFor(p,sz[i][0]);if(!im.src.endsWith(u)){im.style.opacity=0;setTimeout(()=>{im.src=u;im.onload=()=>im.style.opacity=1},180)}};
+    bs.forEach((b,i)=>b.onclick=()=>pick(i));
+    L.onclick=()=>pick(cur-1);R.onclick=()=>pick(cur+1);
+    let x0=null;rail.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+    rail.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>24)pick(cur+(dx<0?1:-1))},{passive:true});
+    L.disabled=true;R.disabled=bs.length<2;
+    requestAnimationFrame(()=>{center();requestAnimationFrame(()=>rail.classList.remove('no-tr'))});
+    new ResizeObserver(()=>{rail.classList.add('no-tr');center();requestAnimationFrame(()=>rail.classList.remove('no-tr'))}).observe(rail);
+    el.querySelector('.cmp input').onchange=e=>toggleCmp(p,e.target);
+  }
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+
+  function render(){
+    let list=DATA.filter(p=>match(p));
+    const v=sortSel.value,big=p=>Math.max(...p.sz.map(x=>x[0]));
+    if(v==='new')list=[...list].sort((a,b)=>b.new-a.new);
+    if(v==='big')list=[...list].sort((a,b)=>big(b)-big(a));
+    pg.innerHTML=list.length?list.map(card).join(''):'<div class="pg-empty">沒有符合條件的產品<br><button>清除篩選條件</button></div>';
+    [...pg.querySelectorAll('.pc')].forEach(el=>{bindCard(el,DATA.find(p=>p.s===el.dataset.s));const c=el.querySelector('.cmp input');c.checked=cmp.some(x=>x.s===el.dataset.s);io.observe(el)});
+    const eb=pg.querySelector('.pg-empty button');if(eb)eb.onclick=clearAll;
+    document.getElementById('plN').textContent=document.getElementById('plN2').textContent=list.length;
+    /* 各選項後方顯示符合數量 */
+    GROUPS.forEach(g=>g.o.forEach(([k,,f])=>{const n=DATA.filter(p=>match(p,g.k)&&f(p)).length,lab=pf.querySelector(`[data-g="${g.k}"] [data-k="${k}"]`).parentElement;lab.querySelector('em').textContent=n;lab.style.opacity=n?1:.4}));
+    drawChips();
+  }
+  /* 篩選標籤：新增的放最前面並由左淡入，原有標籤 FLIP 往右讓位；移除時淡出 */
+  const chipOrder=[];
+  function drawChips(){
+    const want=[];GROUPS.forEach(g=>g.o.forEach(([k,l])=>{if(sel[g.k].has(k))want.push({id:g.k+'|'+k,g:g.k,k,l})}));
+    const ids=want.map(w=>w.id);
+    for(let i=chipOrder.length-1;i>=0;i--)if(!ids.includes(chipOrder[i]))chipOrder.splice(i,1);
+    ids.forEach(id=>{if(!chipOrder.includes(id))chipOrder.unshift(id)});
+    const wrap=document.getElementById('plChipsWrap'),cr=chips.getBoundingClientRect();
+    const cur=[...chips.children].filter(e=>!e.classList.contains('c-out'));
+    const first=new Map(cur.map(e=>[e,e.getBoundingClientRect()]));
+    const outMs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fc-out-dur'))*1000||250;
+    cur.forEach(e=>{const keep=e.classList.contains('clear')?chipOrder.length>0:chipOrder.includes(e.dataset.id);if(keep)return;
+      const r=first.get(e);e.style.left=(r.left-cr.left)+'px';e.style.top=(r.top-cr.top)+'px';e.classList.remove('c-in','c-shift');e.style.transform='';
+      e.classList.add('c-out');setTimeout(()=>e.remove(),outMs+30)});
+    const fresh=[];
+    chipOrder.forEach(id=>{let e=chips.querySelector(`[data-id="${CSS.escape(id)}"]:not(.c-out)`);
+      if(!e){const w=want.find(x=>x.id===id);e=document.createElement('button');e.dataset.id=id;e.dataset.g=w.g;e.dataset.k=w.k;e.textContent=w.l;e.className='c-new';fresh.push(e)}
+      chips.appendChild(e)});
+    let clr=chips.querySelector('.clear:not(.c-out)');
+    if(chipOrder.length){if(!clr){clr=document.createElement('button');clr.className='clear c-new';clr.textContent='清除全部';fresh.push(clr)}chips.appendChild(clr)}
+    chips.querySelectorAll('.c-out').forEach(e=>chips.appendChild(e));
+    /* FLIP：原有標籤從舊位置滑到新位置 */
+    first.forEach((r,e)=>{if(!e.isConnected||e.classList.contains('c-out'))return;const n=e.getBoundingClientRect(),dx=r.left-n.left,dy=r.top-n.top;
+      if(!dx&&!dy)return;e.classList.remove('c-shift');e.style.transform=`translate(${dx}px,${dy}px)`});
+    wrap.classList.toggle('on',chipOrder.length>0);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      first.forEach((r,e)=>{if(e.isConnected&&!e.classList.contains('c-out')&&e.style.transform){e.classList.add('c-shift');e.style.transform=''}});
+      fresh.forEach(e=>{e.classList.add('c-in');e.classList.remove('c-new')});
+    }));
+  }
+  function clearAll(){Object.values(sel).forEach(s=>s.clear());pf.querySelectorAll('input').forEach(i=>i.checked=false);render()}
+  chips.onclick=e=>{const b=e.target.closest('button');if(!b||b.classList.contains('c-out'))return;if(b.classList.contains('clear'))return clearAll();
+    sel[b.dataset.g].delete(b.dataset.k);pf.querySelector(`[data-g="${b.dataset.g}"] [data-k="${b.dataset.k}"]`).checked=false;render()};
+  sortSel.onchange=render;
+
+  /* 桌機：收合側欄；手機：開啟底部面板 */
+  const tg=document.querySelector('.pl-toggle'),mob=()=>innerWidth<=720;
+  const sheet=on=>{pl.classList.toggle('sheet',on);document.documentElement.style.overflow=on?'hidden':''};
+  tg.onclick=()=>{if(mob())return sheet(true);const c=pl.classList.toggle('collapsed');tg.setAttribute('aria-expanded',!c)};
+  document.querySelector('.pf-dim').onclick=()=>sheet(false);
+  document.querySelector('.pf-foot .ok').onclick=()=>{sheet(false);pl.scrollIntoView({behavior:'smooth'})};
+  document.querySelector('.pf-foot .reset').onclick=clearAll;
+
+  /* 比較列（最多 3 項） */
+  const cmp=[],bar=document.getElementById('cmpBar');
+  function toggleCmp(p,box){const i=cmp.findIndex(x=>x.s===p.s);
+    if(box.checked){if(cmp.length>=3){box.checked=false;return bar.querySelector('.tip').animate([{color:'#e64c3d'},{color:''}],900)}cmp.push(p)}else if(i>-1)cmp.splice(i,1);drawCmp()}
+  function drawCmp(){bar.classList.toggle('on',cmp.length>0);bar.querySelector('.go').disabled=cmp.length<2;
+    bar.querySelector('.cmp-items').innerHTML=cmp.map(p=>`<div><img src="${imgFor(p,p.sz[0][0])}" alt="">${p.s}<button data-s="${p.s}" aria-label="移除">×</button></div>`).join('')}
+  bar.querySelector('.cmp-items').onclick=e=>{const s=e.target.dataset.s;if(!s)return;cmp.splice(cmp.findIndex(x=>x.s===s),1);drawCmp();const b=pg.querySelector(`.pc[data-s="${s}"] .cmp input`);if(b)b.checked=false};
+
+
+  /* 由選單連結帶入篩選條件（例：tvs.html?tech=QLED、?size=98+、?feat=gtv） */
+  (function(){const q=new URLSearchParams(location.search);let any=false;
+    ['tech','feat','size'].forEach(g=>{(q.get(g)||'').split(',').filter(Boolean).forEach(k=>{const box=pf.querySelector(`[data-g="${g}"] [data-k="${k}"]`);if(box){box.checked=true;sel[g].add(k);any=true}})});
+    if(any)requestAnimationFrame(()=>setTimeout(()=>scrollTo({top:pl.getBoundingClientRect().top+scrollY-(document.querySelector('.header').offsetHeight||0),behavior:'instant'}),50));
+  })();
+  /* 篩選列 sticky 位置跟著 header 高度 */
+  const setH=()=>document.documentElement.style.setProperty('--hd-h',document.querySelector('.header').offsetHeight+'px');setH();addEventListener('resize',setH);
+  render();
+})();
+
+</script>
+
+<div class="tback"></div>
+<iframe class="tframe" id="tframe" title="手機預覽"></iframe>
+<aside class="tp" id="tp"><header><b>篩選動畫調整</b><button id="tmin">收合 / 展開</button></header><div class="tb" id="tb"></div></aside>
+<div class="ttoast" id="ttoast"></div>
+<script>
+(function(){
+  const root=document.documentElement,inFrame=location.search.includes('frame=1');
+  const pl=document.getElementById('pl');
+  if(inFrame){document.body.classList.add('inframe');
+    let done=false;const go=()=>{if(done||!innerHeight)return;done=true;scrollTo({top:pl.getBoundingClientRect().top+scrollY-8,behavior:'instant'})};
+    addEventListener('message',e=>{const d=e.data||{};if(d.vars)Object.entries(d.vars).forEach(([k,v])=>root.style.setProperty(k,v));setTimeout(go,80)});return;}
+  const G={d:[["標籤列出現（下方內容往下推）", [["--fc-bar-dur", "展開／淡入時間", 0, 1.5, 0.05, "s"], ["--fc-bar-x", "由左滑入距離", -80, 0, 1, "px"], ["--fc-pt", "與上方距離", 0, 40, 1, "px"]]], ["新增標籤", [["--fc-in-dur", "淡入時間", 0, 1.5, 0.05, "s"], ["--fc-in-x", "由左滑入距離", -80, 0, 1, "px"], ["--fc-in-delay", "淡入延遲", 0, 0.6, 0.01, "s"]]], ["原有標籤往右讓位", [["--fc-shift-dur", "移動時間", 0, 1.5, 0.05, "s"], ["--fc-gap", "標籤間距", 0, 24, 1, "px"]]], ["移除標籤", [["--fc-out-dur", "淡出時間", 0, 1, 0.05, "s"]]]],m:[["標籤列出現（下方內容往下推）", [["--fc-bar-dur", "展開／淡入時間", 0, 1.5, 0.05, "s"], ["--fc-bar-x", "由左滑入距離", -80, 0, 1, "px"], ["--fc-pt", "與上方距離", 0, 40, 1, "px"]]], ["新增標籤", [["--fc-in-dur", "淡入時間", 0, 1.5, 0.05, "s"], ["--fc-in-x", "由左滑入距離", -80, 0, 1, "px"], ["--fc-in-delay", "淡入延遲", 0, 0.6, 0.01, "s"]]], ["原有標籤往右讓位", [["--fc-shift-dur", "移動時間", 0, 1.5, 0.05, "s"], ["--fc-gap", "標籤間距", 0, 24, 1, "px"]]], ["移除標籤", [["--fc-out-dur", "淡出時間", 0, 1, 0.05, "s"]]]]};
+  const DEF={};Object.values(G).flat().forEach(([,cs])=>cs.forEach(c=>DEF[c[0]]=parseFloat(getComputedStyle(root).getPropertyValue(c[0]))));
+  const val={...DEF};let mode='d';
+  const tb=document.getElementById('tb'),fr=document.getElementById('tframe');
+  const mvars=()=>{const v={};G.m.forEach(([,cs])=>cs.forEach(c=>v[c[0]]=val[c[0]]+c[5]));return v};
+  const push=()=>fr.contentWindow&&fr.contentWindow.postMessage({vars:mvars()},'*');
+  const apply=(k,u)=>root.style.setProperty(k,val[k]+u);
+  function build(){
+    document.body.classList.toggle('tune-d',mode==='d');document.body.classList.toggle('tune-m',mode==='m');
+    tb.innerHTML='<div class="tmode"><button data-m="d" class="'+(mode==='d'?'on':'')+'">桌機版</button><button data-m="m" class="'+(mode==='m'?'on':'')+'">手機版</button></div>'+
+      G[mode].map(([g,cs])=>'<div class="tg"><h5>'+g+'</h5>'+cs.map(([k,l,mn,mx,st,u])=>`<div class="tc"><label>${l}</label><input type="range" data-k="${k}" data-u="${u}" min="${mn}" max="${mx}" step="${st}" value="${val[k]}"><output>${val[k]}${u}</output></div>`).join('')+'</div>').join('')+
+      `<div class="tbtns"><button id="treset">還原預設</button><button class="p" id="tcopy">複製目前數值</button></div>
+       <p class="thint">・直接勾選左側篩選看動畫：第一次勾選時標籤列會展開，下方內容往下推。<br>・再勾其他選項，新標籤會出現在最前面，舊的往右讓位。<br>・「複製目前數值」會一次複製桌機＋手機兩組。</p>`;
+    tb.querySelectorAll('.tmode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;build();if(mode==='m')push()});
+    tb.querySelectorAll('input').forEach(r=>r.addEventListener('input',()=>{val[r.dataset.k]=+r.value;r.nextElementSibling.textContent=r.value+r.dataset.u;
+      apply(r.dataset.k,r.dataset.u);push()}));
+    document.getElementById('treset').onclick=()=>{G[mode].forEach(([,cs])=>cs.forEach(c=>{val[c[0]]=DEF[c[0]];root.style.removeProperty(c[0])}));build();push();toast('已還原預設值')};
+    document.getElementById('tcopy').onclick=()=>{const L=['/* TCL 篩選動畫 — 定案數值 */'];
+      [['d','篩選動畫']].forEach(([m,n])=>G[m].forEach(([g,cs])=>{L.push('/* '+n+'｜'+g+' */');cs.forEach(c=>L.push('  '+c[0]+': '+val[c[0]]+c[5]+';  /* '+c[1]+' */'))}));
+      const t=L.join('\n');(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('已複製！直接貼給 Claude 就好'),()=>prompt('複製以下數值：',t))};
+  }
+  function toast(t){const el=document.getElementById('ttoast');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1800)}
+  document.getElementById('tmin').onclick=()=>document.getElementById('tp').classList.toggle('min');
+  build();
+  fr.src=location.pathname.split('/').pop()+'?frame=1';fr.onload=()=>setTimeout(push,500);
+  setTimeout(()=>scrollTo({top:pl.getBoundingClientRect().top+scrollY-60,behavior:'instant'}),400);
+})();
+</script>
+</body>
+</html>
