@@ -611,6 +611,8 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .pl-body{display:flex;gap:var(--pl-gap);padding-top:var(--pl-gap);align-items:flex-start}
 /* 側邊篩選 */
 .pf{flex:0 0 var(--pl-side);background:#fff;padding:8px 20px 20px;position:sticky;top:calc(var(--hd-h,64px) + 76px);max-height:calc(100vh - var(--hd-h,64px) - 92px);overflow:auto;transition:margin .45s var(--ease),opacity .3s}
+.pf{scrollbar-width:none;overscroll-behavior:contain}
+.pf::-webkit-scrollbar{display:none}
 .pl.collapsed .pf{margin-left:calc(-1 * (var(--pl-side) + var(--pl-gap)));opacity:0;pointer-events:none}
 .pf-g{border-bottom:1px solid var(--gray-100)}
 .pf-g:last-child{border-bottom:0}
