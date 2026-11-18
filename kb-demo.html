@@ -590,12 +590,23 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .pl-count b{font-weight:600;color:var(--black)}
 .pl-sort{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray-700)}
 .pl-sort select{font:inherit;color:var(--black);border:1px solid var(--gray-300);border-radius:999px;padding:7px 34px 7px 16px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23111' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 14px center/10px;appearance:none;cursor:pointer}
-.pl-chips{display:flex;flex-wrap:wrap;gap:8px;padding:16px 0 0}
-.pl-chips:empty{display:none}
-.pl-chips button{display:flex;align-items:center;gap:6px;font-size:13px;background:#fff;border:1px solid var(--gray-300);border-radius:999px;padding:6px 12px}
+/* 篩選標籤列：出現時下方內容往下推、標籤由左往右淡入、舊標籤往右讓位（數值可在 chips-demo.html 調整） */
+:root{--fc-bar-dur:.45s; --fc-bar-x:-24px; --fc-in-dur:.45s; --fc-in-x:-20px; --fc-in-delay:.05s; --fc-shift-dur:.45s; --fc-out-dur:.25s; --fc-gap:8px; --fc-pt:16px; --fc-ease:cubic-bezier(.3,.7,.2,1);}
+.pl-chips-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--fc-bar-dur) var(--fc-ease)}
+.pl-chips-wrap.on{grid-template-rows:1fr}
+.pl-chips-in{min-height:0;overflow-x:visible;overflow-y:clip}
+.pl-chips{position:relative;display:flex;flex-wrap:wrap;gap:var(--fc-gap);padding:var(--fc-pt) 0 0;opacity:0;transform:translateX(var(--fc-bar-x));transition:opacity var(--fc-bar-dur) var(--ease),transform var(--fc-bar-dur) var(--fc-ease)}
+.pl-chips-wrap.on .pl-chips{opacity:1;transform:none}
+.pl-chips button{display:flex;align-items:center;gap:6px;font-size:13px;background:#fff;border:1px solid var(--gray-300);border-radius:999px;padding:6px 12px;white-space:nowrap}
 .pl-chips button::after{content:"";width:9px;height:9px;background:linear-gradient(45deg,transparent 45%,#111 45% 55%,transparent 55%),linear-gradient(-45deg,transparent 45%,#111 45% 55%,transparent 55%)}
 .pl-chips .clear{border:0;background:none;text-decoration:underline;color:var(--gray-700)}
 .pl-chips .clear::after{display:none}
+.pl-chips .c-new{opacity:0;transform:translateX(var(--fc-in-x))}
+.pl-chips .c-in{opacity:1;transform:none;transition:opacity var(--fc-in-dur) var(--ease) var(--fc-in-delay),transform var(--fc-in-dur) var(--fc-ease) var(--fc-in-delay)}
+.pl-chips .c-shift{transition:transform var(--fc-shift-dur) var(--fc-ease)}
+.pl-chips .c-leave{position:absolute;margin:0;pointer-events:none;opacity:1;transform:none}
+.pl-chips .c-leave.c-out{opacity:0;transform:translateX(var(--fc-in-x));transition:opacity var(--fc-out-dur) var(--ease),transform var(--fc-out-dur) var(--ease)}
+
 
 .pl-body{display:flex;gap:var(--pl-gap);padding-top:var(--pl-gap);align-items:flex-start}
 /* 側邊篩選 */
@@ -864,7 +875,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
     <label class="pl-sort"><span>排序</span><select id="plSort"><option value="rec">推薦排序</option><option value="new">最新上市</option><option value="big">尺寸：大到小</option></select></label>
   </div></div>
   <div class="wrap">
-    <div class="pl-chips" id="plChips"></div>
+    <div class="pl-chips-wrap" id="plChipsWrap"><div class="pl-chips-in"><div class="pl-chips" id="plChips"></div></div></div>
     <div class="pl-body">
       <aside class="pf" id="pf"></aside>
       <div class="pf-dim"></div>
@@ -1077,10 +1088,43 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
     document.getElementById('plN').textContent=document.getElementById('plN2').textContent=list.length;
     /* 各選項後方顯示符合數量 */
     GROUPS.forEach(g=>g.o.forEach(([k,,f])=>{const n=DATA.filter(p=>match(p,g.k)&&f(p)).length,lab=pf.querySelector(`[data-g="${g.k}"] [data-k="${k}"]`).parentElement;lab.querySelector('em').textContent=n;lab.style.opacity=n?1:.4}));
-    chips.innerHTML=GROUPS.flatMap(g=>g.o.filter(([k])=>sel[g.k].has(k)).map(([k,l])=>`<button data-g="${g.k}" data-k="${k}">${l}</button>`)).join('')+(Object.values(sel).some(s=>s.size)?'<button class="clear">清除全部</button>':'');
+    drawChips();
+  }
+  /* 篩選標籤：新增的放最前面並由左淡入，原有標籤 FLIP 往右讓位；移除時淡出 */
+  const chipOrder=[];
+  function drawChips(){
+    const want=[];GROUPS.forEach(g=>g.o.forEach(([k,l])=>{if(sel[g.k].has(k))want.push({id:g.k+'|'+k,g:g.k,k,l})}));
+    const ids=want.map(w=>w.id);
+    for(let i=chipOrder.length-1;i>=0;i--)if(!ids.includes(chipOrder[i]))chipOrder.splice(i,1);
+    ids.forEach(id=>{if(!chipOrder.includes(id))chipOrder.unshift(id)});
+    const wrap=document.getElementById('plChipsWrap'),cr=chips.getBoundingClientRect();
+    const cur=[...chips.children].filter(e=>!e.classList.contains('c-leave'));
+    const first=new Map(cur.map(e=>[e,e.getBoundingClientRect()]));
+    const leaving=[];
+    const outMs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fc-out-dur'))*1000||250;
+    cur.forEach(e=>{const keep=e.classList.contains('clear')?chipOrder.length>0:chipOrder.includes(e.dataset.id);if(keep)return;
+      const r=first.get(e);e.style.left=(r.left-cr.left)+'px';e.style.top=(r.top-cr.top)+'px';e.classList.remove('c-in','c-shift');e.style.transform='';
+      e.classList.add('c-leave');leaving.push(e);setTimeout(()=>e.remove(),outMs+80)});
+    const fresh=[];
+    chipOrder.forEach(id=>{let e=chips.querySelector(`[data-id="${CSS.escape(id)}"]:not(.c-leave)`);
+      if(!e){const w=want.find(x=>x.id===id);e=document.createElement('button');e.dataset.id=id;e.dataset.g=w.g;e.dataset.k=w.k;e.textContent=w.l;e.className='c-new';fresh.push(e)}
+      chips.appendChild(e)});
+    let clr=chips.querySelector('.clear:not(.c-leave)');
+    if(chipOrder.length){if(!clr){clr=document.createElement('button');clr.className='clear c-new';clr.textContent='清除全部';fresh.push(clr)}chips.appendChild(clr)}
+    
+    /* FLIP：原有標籤從舊位置滑到新位置 */
+    first.forEach((r,e)=>{if(!e.isConnected||e.classList.contains('c-leave'))return;const n=e.getBoundingClientRect(),dx=r.left-n.left,dy=r.top-n.top;
+      if(!dx&&!dy)return;e.classList.remove('c-shift');e.style.transition='none';e.style.transform=`translate(${dx}px,${dy}px)`});
+    void chips.offsetWidth;
+    leaving.forEach(e=>e.classList.add('c-out'));   /* 位置固定後才開始淡出 */
+    wrap.classList.toggle('on',chipOrder.length>0);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      first.forEach((r,e)=>{if(e.isConnected&&!e.classList.contains('c-leave')&&e.style.transform){e.style.transition='';e.classList.add('c-shift');e.style.transform=''}});
+      fresh.forEach(e=>{e.classList.add('c-in');e.classList.remove('c-new')});
+    }));
   }
   function clearAll(){Object.values(sel).forEach(s=>s.clear());pf.querySelectorAll('input').forEach(i=>i.checked=false);render()}
-  chips.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.classList.contains('clear'))return clearAll();
+  chips.onclick=e=>{const b=e.target.closest('button');if(!b||b.classList.contains('c-leave'))return;if(b.classList.contains('clear'))return clearAll();
     sel[b.dataset.g].delete(b.dataset.k);pf.querySelector(`[data-g="${b.dataset.g}"] [data-k="${b.dataset.k}"]`).checked=false;render()};
   sortSel.onchange=render;
 
