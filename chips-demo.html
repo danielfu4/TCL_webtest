@@ -1112,10 +1112,11 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
     chips.querySelectorAll('.c-out').forEach(e=>chips.appendChild(e));
     /* FLIP：原有標籤從舊位置滑到新位置 */
     first.forEach((r,e)=>{if(!e.isConnected||e.classList.contains('c-out'))return;const n=e.getBoundingClientRect(),dx=r.left-n.left,dy=r.top-n.top;
-      if(!dx&&!dy)return;e.classList.remove('c-shift');e.style.transform=`translate(${dx}px,${dy}px)`});
+      if(!dx&&!dy)return;e.classList.remove('c-shift');e.style.transition='none';e.style.transform=`translate(${dx}px,${dy}px)`});
+    void chips.offsetWidth;
     wrap.classList.toggle('on',chipOrder.length>0);
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      first.forEach((r,e)=>{if(e.isConnected&&!e.classList.contains('c-out')&&e.style.transform){e.classList.add('c-shift');e.style.transform=''}});
+      first.forEach((r,e)=>{if(e.isConnected&&!e.classList.contains('c-out')&&e.style.transform){e.style.transition='';e.classList.add('c-shift');e.style.transform=''}});
       fresh.forEach(e=>{e.classList.add('c-in');e.classList.remove('c-new')});
     }));
   }
