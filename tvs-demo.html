@@ -556,7 +556,12 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .pl-bar{background:#fff;position:sticky;top:var(--hd-h,64px);z-index:20;border-bottom:1px solid var(--gray-100)}
 .pl-bar .wrap{display:flex;align-items:center;height:60px;gap:16px}
 .pl-toggle{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:500}
-.pl-toggle svg{width:18px;height:18px;stroke:#e64c3d;fill:none;stroke-width:1.7}
+.pl-toggle svg{width:18px;height:18px;stroke:#e64c3d;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+/* Lucide「List Filter」圖示動畫（參照 animate-ui）：三條線依序由上往下淡入，滑過或點擊時播放 */
+@keyframes lfBar{from{transform:translateY(-3px);opacity:0}to{transform:none;opacity:1}}
+.pl-toggle:hover svg path,.pl-toggle.play svg path{animation:lfBar .3s ease-out both}
+.pl-toggle:hover svg path:nth-child(2),.pl-toggle.play svg path:nth-child(2){animation-delay:.09s}
+.pl-toggle:hover svg path:nth-child(3),.pl-toggle.play svg path:nth-child(3){animation-delay:.18s}
 .pl-count{font-size:15px;color:var(--gray-700);padding-left:16px;border-left:1px solid var(--gray-300)}
 .pl-count b{font-weight:600;color:var(--black)}
 .pl-sort{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray-700)}
@@ -847,7 +852,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
 <!-- ================= 產品列表 ================= -->
 <section class="pl" id="pl">
   <div class="pl-bar"><div class="wrap">
-    <button class="pl-toggle" aria-expanded="true"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8.5V20l-4-2v-4.5z"/></svg>篩選</button>
+    <button class="pl-toggle" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h20"/><path d="M6 12h12"/><path d="M9 19h6"/></svg>篩選</button>
     <span class="pl-count">共 <b id="plN">0</b> 項產品</span>
     <label class="pl-sort"><span>排序</span><select id="plSort"><option value="rec">推薦排序</option><option value="new">最新上市</option><option value="big">尺寸：大到小</option></select></label>
   </div></div>
@@ -1109,7 +1114,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   /* 桌機：收合側欄；手機：開啟底部面板 */
   const tg=document.querySelector('.pl-toggle'),mob=()=>innerWidth<=720;
   const sheet=on=>{pl.classList.toggle('sheet',on);document.documentElement.style.overflow=on?'hidden':''};
-  tg.onclick=()=>{if(mob())return sheet(true);const c=pl.classList.toggle('collapsed');tg.setAttribute('aria-expanded',!c)};
+  tg.onclick=()=>{tg.classList.remove('play');void tg.offsetWidth;tg.classList.add('play');clearTimeout(tg._t);tg._t=setTimeout(()=>tg.classList.remove('play'),600);if(mob())return sheet(true);const c=pl.classList.toggle('collapsed');tg.setAttribute('aria-expanded',!c)};
   document.querySelector('.pf-dim').onclick=()=>sheet(false);
   document.querySelector('.pf-foot .ok').onclick=()=>{sheet(false);pl.scrollIntoView({behavior:'smooth'})};
   document.querySelector('.pf-foot .reset').onclick=clearAll;
