@@ -1075,13 +1075,13 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   function card(p,k){
     const sz=sizesFor(p);
     return `<article class="pc" style="--k:${k%6}" data-s="${p.s}">${p.new?'<span class="tag">全新</span>':''}
-      <a class="pc-img" href="#"><img src="${imgFor(p,sz[0][0])}" alt="TCL ${p.s}" ${k<6?'fetchpriority="high"':'loading="lazy"'} decoding="async" width="600" height="372"></a>
+      <a class="pc-img" href="${p.s==='X11L'?'x11l.html':'#'}"><img src="${imgFor(p,sz[0][0])}" alt="TCL ${p.s}" ${k<6?'fetchpriority="high"':'loading="lazy"'} decoding="async" width="600" height="372"></a>
       <div class="pc-sz"><button class="arr l" aria-label="較大尺寸"><svg viewBox="0 0 7 12"><path d="M6 1 1 6l5 5"/></svg></button><div class="rail no-tr"><div>`+
       sz.map((x,i)=>`<button class="s${i?'':' on'}" data-i="${i}">${x[0]}</button>`).join('')+
       `</div></div><button class="arr r" aria-label="較小尺寸"><svg viewBox="0 0 7 12"><path d="m1 1 5 5-5 5"/></svg></button></div>
       <h3>${en(p.t)}</h3><div class="md">${sz[0][0]}${p.s.replace(' ','')}</div>
       <ul>${p.f.map(f=>`<li>${f}</li>`).join('')}</ul>
-      <div class="act"><a class="more" href="#">了解更多</a></div>
+      <div class="act"><a class="more" href="${p.s==='X11L'?'x11l.html':'#'}">了解更多</a></div>
       <label class="cmp"><input type="checkbox">加入比較</label></article>`;
   }
   function bindCard(el,p){
