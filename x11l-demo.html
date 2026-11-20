@@ -787,51 +787,54 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 /* ================= 商品頁（X11L） ================= */
 :root{--pd-gold:#d9b98a;--pd-gold2:#f3dfbd;--pd-dark:#000;--pd-dark2:#0d0d0d;--pd-line:rgba(255,255,255,.14);--pd-sub-h:56px;--pd-top:64px}
 
-/* ---------- 購買區 ---------- */
-.pd-buy{padding:24px 0 72px;background:#fff}
-.pd-buy .wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:64px;align-items:start}
-.pd-gal{position:sticky;top:calc(var(--pd-top) + var(--pd-sub-h) + 16px)}
-.pd-main{position:relative;aspect-ratio:4/3;background:var(--gray-50);border-radius:16px;overflow:hidden}
+/* ---------- 購買區（參照 TCL Global 商品頁） ---------- */
+.pd-crumb{padding:28px 0 0}
+.pd-crumb .wrap{max-width:1216px;font-size:15px;color:#999}
+.pd-crumb a{color:#999;transition:color .2s}.pd-crumb a:hover{color:#111}
+.pd-crumb i{font-style:normal;margin:0 8px;color:#bbb}
+.pd-crumb b{font-weight:400;color:#111}
+.pd-buy{padding:40px 0 72px;background:#fff}
+.pd-buy .wrap{max-width:1216px;display:grid;grid-template-columns:640px minmax(0,496px);gap:32px;justify-content:center;align-items:start}
+.pd-gal{position:relative}
+.pd-main{position:relative;aspect-ratio:4/3;background:#fff}
 .pd-main img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .45s var(--ease)}
 .pd-main img.on{opacity:1}
-.pd-main .nav{position:absolute;top:50%;width:40px;height:40px;margin-top:-20px;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 2px 10px rgba(0,0,0,.08);display:grid;place-items:center;z-index:2;opacity:0;transition:opacity .25s}
-.pd-main:hover .nav{opacity:1}
-.pd-main .nav.l{left:14px}.pd-main .nav.r{right:14px}
-.pd-main .nav svg{width:8px;height:14px;fill:none;stroke:#111;stroke-width:1.6}
-.pd-main .cnt{position:absolute;right:14px;bottom:12px;font-size:12px;color:var(--gray-500);z-index:2}
-.pd-thumbs{display:flex;gap:10px;margin-top:12px;overflow-x:auto;scrollbar-width:none}
+.pd-main .nav{position:absolute;top:50%;width:40px;height:40px;margin-top:-20px;border-radius:50%;background:rgba(0,0,0,.2);display:grid;place-items:center;z-index:2;transition:background .2s}
+.pd-main .nav:hover{background:rgba(0,0,0,.35)}
+.pd-main .nav.l{left:-20px}.pd-main .nav.r{right:-20px}
+.pd-main .nav svg{width:8px;height:14px;fill:none;stroke:#fff;stroke-width:1.6}
+.pd-main .cnt{display:none}
+.pd-thumbs{display:flex;justify-content:center;gap:8px;margin-top:24px;overflow-x:auto;scrollbar-width:none}
 .pd-thumbs::-webkit-scrollbar{display:none}
-.pd-thumbs button{flex:none;width:72px;aspect-ratio:4/3;border-radius:8px;background:var(--gray-50);border:1.5px solid transparent;overflow:hidden;transition:border-color .2s}
-.pd-thumbs button.on{border-color:#111}
+.pd-thumbs button{flex:none;width:49px;height:49px;padding:3px;border:1px solid #eee;background:#fff;transition:border-color .2s}
+.pd-thumbs button.on{border-color:var(--red)}
 .pd-thumbs img{width:100%;height:100%;object-fit:contain}
 
-.pd-info .tags{display:flex;gap:8px;margin-bottom:14px}
-.pd-info .tags span{font-size:12px;line-height:1;padding:6px 10px;border-radius:999px;background:var(--gray-100);color:var(--gray-700)}
-.pd-info .tags .new{background:var(--red);color:#fff}
-.pd-info .md{font-size:15px;color:var(--gray-500);letter-spacing:.04em}
-.pd-info h1{font-size:30px;line-height:1.35;font-weight:600;margin:6px 0 18px;word-break:keep-all;overflow-wrap:anywhere}
-.pd-feat{list-style:none;display:grid;gap:8px;padding:18px 0;border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-100)}
-.pd-feat li{position:relative;padding-left:16px;font-size:15px;color:var(--gray-700)}
-.pd-feat li::before{content:"";position:absolute;left:2px;top:.62em;width:5px;height:5px;border-radius:50%;background:#111}
-.pd-lab{font-size:14px;font-weight:600;margin:24px 0 10px;display:flex;justify-content:space-between;align-items:baseline}
-.pd-lab a{font-size:13px;font-weight:400;color:var(--gray-500);text-decoration:underline;text-underline-offset:3px}
-.pd-size{display:flex;gap:10px;flex-wrap:wrap}
-.pd-size button{min-width:84px;height:48px;padding:0 18px;border-radius:10px;border:1.5px solid var(--gray-300);font-size:16px;font-weight:500;transition:border-color .2s,background .2s}
-.pd-size button small{font-size:12px;margin-left:1px}
+.pd-info{padding-top:16px}
+.pd-info .md{font-size:16px;line-height:24px;color:var(--red)}
+.pd-info h1{font-size:34px;line-height:40px;font-weight:500;color:#111;margin:8px 0 8px;word-break:keep-all;overflow-wrap:anywhere}
+.pd-info .sub{font-size:16px;line-height:24px;color:rgba(0,0,0,.7)}
+.pd-feat{list-style:none;margin-top:24px;padding-bottom:24px;border-bottom:1px solid #eee}
+.pd-feat li{font-size:14px;line-height:24px;color:#000;padding-top:4px}
+.pd-feat li::before{content:"· "}
+.pd-lab{font-size:16px;line-height:24px;color:#111;margin:32px 0 12px;display:flex;justify-content:space-between;align-items:baseline}
+.pd-lab a{font-size:13px;color:var(--gray-500);text-decoration:underline;text-underline-offset:3px}
+.pd-size{display:flex;gap:12px;flex-wrap:wrap;padding-bottom:24px;border-bottom:1px solid #eee}
+.pd-size button{width:80px;height:40px;border-radius:4px;border:.67px solid #d6d6d6;font-size:14px;color:#111;transition:border-color .2s,color .2s}
 .pd-size button:hover{border-color:#111}
-.pd-size button.on{border-color:#111;background:#111;color:#fff}
-.pd-price{margin-top:26px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.pd-price small{font-size:13px;color:var(--gray-500)}
-.pd-price b{font-size:28px;font-weight:600;letter-spacing:.01em}
+.pd-size button.on{border-color:var(--red);color:var(--red)}
+.pd-price{margin-top:24px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pd-price small{font-size:14px;color:rgba(0,0,0,.7)}
+.pd-price b{font-size:26px;font-weight:500;color:#111}
 .pd-price em{font-style:normal;font-size:12px;color:var(--gray-500);width:100%}
-.pd-cta{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:20px}
-.pd-btn{height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:500;transition:background .2s,color .2s,border-color .2s}
-.pd-btn.pri{background:#111;color:#fff}
-.pd-btn.pri:hover{background:#333}
-.pd-btn.sec{border:1.5px solid var(--gray-300);padding:0 24px}
-.pd-btn.sec:hover{border-color:#111}
+.pd-cta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.pd-btn{height:48px;border-radius:4px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;transition:background .2s,color .2s,border-color .2s}
+.pd-btn.pri{background:var(--red);color:#fff}
+.pd-btn.pri:hover{background:#cf3f31}
+.pd-btn.ghost{border:1px solid #111;color:#111}
+.pd-btn.ghost:hover{background:#111;color:#fff}
 .pd-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6}
-.pd-ch{margin-top:12px;border-radius:12px;background:var(--gray-50);overflow:hidden;max-height:0;transition:max-height .45s var(--ease)}
+.pd-ch{margin-top:12px;border-radius:4px;background:var(--gray-50);overflow:hidden;max-height:0;transition:max-height .45s var(--ease)}
 .pd-ch.open{max-height:400px}
 .pd-ch ul{list-style:none;padding:8px 18px}
 .pd-ch li a{display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-size:15px;border-bottom:1px solid var(--gray-100)}
@@ -853,7 +856,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .pd-sub nav a.on,.pd-sub nav a:hover{color:#111}
 .pd-sub nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:#111;transform:scaleX(0);transition:transform .3s var(--ease)}
 .pd-sub nav a.on::after{transform:none}
-.pd-sub .go{height:36px;padding:0 20px;border-radius:999px;background:#111;color:#fff;font-size:13px;display:flex;align-items:center;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s}
+.pd-sub .go{height:36px;padding:0 20px;border-radius:4px;background:var(--red);color:#fff;font-size:13px;display:flex;align-items:center;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s}
 .pd-sub.past .go{opacity:1;pointer-events:auto}
 
 /* ---------- 詳細規格 ---------- */
@@ -907,6 +910,9 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 /* ---------- 手機底部購買列 ---------- */
 .pd-bar{display:none}
 
+@media (max-width:1240px){
+  .pd-buy .wrap{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+}
 @media (max-width:1024px){
   .pd-buy .wrap{gap:36px}
   .pd-rel .row{grid-template-columns:repeat(2,1fr)}
@@ -917,18 +923,18 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   .pd-buy{padding:8px 0 48px}
   .pd-buy .wrap{grid-template-columns:1fr;gap:22px;padding:0}
   .pd-gal{position:static}
-  .pd-main{border-radius:0}
+  .pd-crumb{padding-top:16px}.pd-crumb .wrap{font-size:13px}
   .pd-main .nav{display:none}
   .pd-thumbs{display:none}
   .pd-dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
   .pd-dots i{width:6px;height:6px;border-radius:50%;background:var(--gray-300);transition:background .2s,width .3s}
-  .pd-dots i.on{background:#111;width:18px;border-radius:3px}
+  .pd-dots i.on{background:var(--red);width:18px;border-radius:3px}
   .pd-info{padding:0 20px}
-  .pd-info h1{font-size:23px}
-  .pd-feat li{font-size:14px}
-  .pd-size button{flex:1;min-width:0}
-  .pd-cta{grid-template-columns:1fr}
-  .pd-btn.sec{order:2}
+  .pd-info{padding-top:0}
+  .pd-info h1{font-size:24px;line-height:32px}
+  .pd-size button{flex:1;width:auto;min-width:0}
+  .pd-cta{grid-template-columns:1fr 1fr}
+  .pd-btn.ghost{order:2}
   .pd-sub .wrap{gap:16px;padding:0 0 0 20px}
   .pd-sub .nm{display:none}
   .pd-sub nav{gap:22px;padding-right:20px}
@@ -951,7 +957,7 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
   .pd-bar .t{flex:1;min-width:0}
   .pd-bar .t b{display:block;font-size:14px}
   .pd-bar .t span{font-size:12px;color:var(--gray-500)}
-  .pd-bar a{height:42px;padding:0 22px;border-radius:999px;background:#111;color:#fff;font-size:14px;display:flex;align-items:center}
+  .pd-bar a{height:42px;padding:0 22px;border-radius:4px;background:var(--red);color:#fff;font-size:14px;display:flex;align-items:center}
 }
 @media (min-width:721px){.pd-dots{display:none}}
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
@@ -1097,7 +1103,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
 <main>
 
 
-<nav class="crumb"><div class="wrap"><a href="index.html">首頁</a><svg viewBox="0 0 6 10"><path d="M1 1l4 4-4 4"/></svg><a href="tvs.html">全部顯示器</a><svg viewBox="0 0 6 10"><path d="M1 1l4 4-4 4"/></svg><b>X11L</b></div></nav>
+<nav class="pd-crumb"><div class="wrap"><a href="index.html">首頁</a><i>/</i><a href="tvs.html">顯示器</a><i>/</i><b>X11L</b></div></nav>
 
 <!-- ================= 購買區 ================= -->
 <section class="pd-buy" id="buy">
@@ -1112,13 +1118,13 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
       <div class="pd-dots" id="pdDots"></div>
     </div>
     <div class="pd-info">
-      <div class="tags"><span class="new">2026 NEW</span><span>SQD-Mini LED</span></div>
       <div class="md" id="pdModel">98X11L</div>
-      <h1>X11L 頂級 SQD-Mini LED 量子智能連網液晶顯示器</h1>
+      <h1>TCL X11L SQD-Mini LED 顯示器</h1>
+      <div class="sub">Mini LED 巔峰之作</div>
       <ul class="pd-feat">
         <li>高達 100% BT.2020 全景廣色域</li>
-        <li>20,736 區精準區域控光<sup>*</sup></li>
-        <li>高達 HDR 10,000 尼特峰值亮度<sup>*</sup></li>
+        <li>20,736 區精準區域控光</li>
+        <li>高達 HDR 10,000 尼特峰值亮度</li>
         <li>WHVA 2.0 Ultra 面板，色彩精準</li>
         <li>Super QLED 卓越穩定的色彩表現</li>
         <li>純平至薄外觀設計</li>
@@ -1126,7 +1132,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
         <li>TSR AiPQ 處理器，極致運算</li>
         <li>TCL AI 全面升級多場景體驗</li>
       </ul>
-      <div class="pd-lab">尺寸<a href="#size">尺寸怎麼選？</a></div>
+      <div class="pd-lab">選擇尺寸<a href="#size">尺寸怎麼選？</a></div>
       <div class="pd-size" id="pdSize">
         <button data-s="98" class="on">98<small>吋</small></button>
         <button data-s="85">85<small>吋</small></button>
@@ -1135,7 +1141,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
       <div class="pd-price"><small>建議售價</small><b id="pdPrice">NT$ 369,990</b><em>實際售價依各通路公告為準</em></div>
       <div class="pd-cta">
         <button class="pd-btn pri" id="pdBuy">前往通路購買<svg viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"/></svg></button>
-        <a class="pd-btn sec" id="pdCmp" href="compare.html?m=X11L-98">加入比較</a>
+        <a class="pd-btn ghost" id="pdCmp" href="compare.html?m=X11L-98">加入比較</a>
       </div>
       <div class="pd-ch" id="pdCh">
         <ul>
