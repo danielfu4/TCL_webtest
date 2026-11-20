@@ -910,6 +910,13 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .rc li{font-size:13px;line-height:16px;color:#fff;padding:4px 0}
 .rc li::before{content:"· "}
 
+/* ---------- 置頂按鈕 ---------- */
+.pd-top{position:fixed;right:24px;bottom:24px;z-index:70;width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.15);display:grid;place-items:center;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .3s,transform .3s var(--ease),background .2s,bottom .4s var(--ease)}
+.pd-top.on{opacity:1;transform:none;pointer-events:auto}
+.pd-top:hover{background:#f2f2f2}
+.pd-top svg{width:16px;height:16px;fill:none;stroke:#111;stroke-width:1.8}
+@media (max-width:720px){.pd-top{right:16px;bottom:20px;width:42px;height:42px}body:has(.pd-bar.on) .pd-top{bottom:calc(84px + env(safe-area-inset-bottom))}}
+
 /* ---------- 手機底部購買列 ---------- */
 .pd-bar{display:none}
 
@@ -1201,6 +1208,7 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   </section>
 </div></div>
 
+<button class="pd-top" id="pdTop" aria-label="回到頁面頂端"><svg viewBox="0 0 16 16"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg></button>
 <div class="pd-bar" id="pdBar"><div class="t"><b id="pdBarM">98X11L</b><span id="pdBarP">建議售價 NT$ 369,990</span></div><a href="#buy" data-go>前往購買</a></div>
 
 </main>
@@ -1396,13 +1404,15 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   const onScroll=()=>{syncTop();
     const y=sub.getBoundingClientRect().bottom+40;let cur=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<=y)cur=i});
     links.forEach((a,i)=>a.classList.toggle('on',i===cur));
-    const past=$('.pd-cta').getBoundingClientRect().bottom<0;sub.classList.toggle('past',past);$('#pdBar').classList.toggle('on',past)};
+    const past=$('.pd-cta').getBoundingClientRect().bottom<0;sub.classList.toggle('past',past);$('#pdBar').classList.toggle('on',past);$('#pdTop').classList.toggle('on',scrollY>innerHeight)};
   addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);
   new MutationObserver(syncTop).observe(hd,{attributes:true,attributeFilter:['class']});
   links.forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=$(a.getAttribute('href'));
     scrollTo({top:t.getBoundingClientRect().top+scrollY-hd.offsetHeight-sub.offsetHeight+1,behavior:'smooth'})}));
   $$('.pd-links a,.pd-lab a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=$(a.getAttribute('href'));
     scrollTo({top:t.getBoundingClientRect().top+scrollY-hd.offsetHeight-sub.offsetHeight-10,behavior:'smooth'})}));
+
+  $('#pdTop').onclick=()=>scrollTo({top:0,behavior:'smooth'});
 
   /* ---------- 進場動畫 ---------- */
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});
