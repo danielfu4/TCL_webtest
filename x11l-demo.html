@@ -874,6 +874,8 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .sp-cur{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:18px 16px 10px;font-size:14px;color:#999}
 .sp-cur button{width:40px;height:30px;border-radius:15px;font-size:14px;color:#fff;transition:color .2s,box-shadow .2s}
 .sp-cur button.on{color:var(--red);box-shadow:inset 0 0 0 1px var(--red)}
+.sp-list{transition:opacity .22s var(--ease),transform .22s var(--ease)}
+.sp-list.out{opacity:0;transform:translateY(6px)}
 .sp-list .sp-row{display:grid;grid-template-columns:42% 1fr;gap:16px;padding:16px;font-size:17px;line-height:24px}
 .sp-list .sp-row:nth-child(even){background:#1d1d1d}
 .sp-list dt{color:#fff}
@@ -1378,8 +1380,16 @@ body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{d
   let grp=SPEC[0].k;
   $('#spTabs').innerHTML=SPEC.map(g=>`<button data-k="${g.k}">${g.h}</button>`).join('');
   $$('#spTabs button').forEach(b=>b.onclick=()=>{grp=b.dataset.k;drawSpec()});
+  let spT=0,spFirst=true;
   function drawSpec(){
     $$('#spTabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===grp));
+    const body=$('#spBody');
+    if(spFirst||matchMedia('(prefers-reduced-motion:reduce)').matches){spFirst=false;fillSpec();return}
+    /* 淡出 → 換內容 → 淡入 */
+    clearTimeout(spT);body.classList.add('out');
+    spT=setTimeout(()=>{fillSpec();requestAnimationFrame(()=>body.classList.remove('out'))},220);
+  }
+  function fillSpec(){
     const g=SPEC.find(x=>x.k===grp);
     $('#spBody').innerHTML=g.r.map(([l,v])=>{const x=typeof v==='object'&&v!==null?v[size]:v;const na=x==null||x==='—';
       return `<div class="sp-row"><dt>${l}</dt><dd${na?' class="na"':''}>${na?'—':x==='✓'?CHK:x}</dd></div>`}).join('');
