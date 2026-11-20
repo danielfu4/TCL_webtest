@@ -912,6 +912,9 @@ html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;tra
 .rc li{font-size:13px;line-height:16px;color:#fff;padding:4px 0}
 .rc li::before{content:"· "}
 
+/* 黑底區直接接頁尾，中間不留白 */
+body:has(.pd-dark) .footer{margin-top:0}
+
 /* ---------- 置頂按鈕 ---------- */
 .pd-top{position:fixed;right:24px;bottom:24px;z-index:70;width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.15);display:grid;place-items:center;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .3s,transform .3s var(--ease),background .2s,bottom .4s var(--ease)}
 .pd-top.on{opacity:1;transform:none;pointer-events:auto}
