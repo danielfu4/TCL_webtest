@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW" class="dr-fade">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>【測試頁】X11L 頂級 SQD-Mini LED 量子智能連網液晶顯示器｜TCL 台灣官方網站</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:"Gotham";src:url(fonts/Gotham-Light.woff2) format("woff2");font-weight:300 400;font-style:normal;font-display:swap}  /* 缺 Book，暫以 Light 代替 400 */
+@font-face{font-family:"Gotham";src:url(fonts/Gotham-Medium.woff2) format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Gotham";src:url(fonts/Gotham-Bold.woff2) format("woff2");font-weight:600 700;font-style:normal;font-display:swap}
+/* ============================================================
+   TCL Taiwan — Homepage demo (layout modeled on tcl.com/global)
+   字體：TCLSans-Unity 未授權，暫以 Gotham + Noto Sans TC 替代
+   ============================================================ */
+:root{
+  --black:#111111; --white:#ffffff; --red:#E64C3D; --pink:#F00075;
+  --gray-50:#f7f7f7; --gray-100:#efefef; --gray-300:#d6d6d6; --gray-500:#8a8a8a; --gray-700:#4a4a4a;
+  --header-h:64px; --max:1200px;
+  --font:"Gotham","Noto Sans TC",-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--black);background:#fff;-webkit-font-smoothing:antialiased;line-height:1.5}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+/* ---------- Demo tag ---------- */
+.demo-tag{position:fixed;left:16px;bottom:16px;z-index:200;background:var(--black);color:#fff;font-size:12px;letter-spacing:.08em;padding:6px 12px;border-radius:999px;opacity:.85}
+
+/* ---------- Header（參照 TCL Global） ---------- */
+:root{
+  /* 下拉選單定案數值（2026-11-17 第二版） */
+  --ease:cubic-bezier(.4,0,.2,1);
+  --panel-dur:.6s; --close-delay:.15s;
+  --slide:16px; --c-dur:.75s; --c-op:.95s; --c-delay:.15s;
+  --l-x:-24px; --l-y:0px; --l-dur:.5s; --l-delay:.25s; --l-stagger:.03s;
+  --dim-op:.7; --dim-dur:.75s; --dim-delay:.2s;
+  --link-dur:.7s; --zoom:1.13; --zoom-dur:.6s; --thumb-w:143px;
+  /* 新品上市定案數值（2026-11-17） */
+  --na-in-x:0px; --na-in-y:40px; --na-in-dur:.6s; --na-in-delay:0s; --na-in-stagger:.08s; --na-in-scale:1;
+  --na-tx-x:0px; --na-tx-y:16px; --na-tx-dur:.8s; --na-tx-delay:.25s;
+  --na-zoom:1.1; --na-zoom-dur:.3s; --na-inset:6%;
+  --na-pop-op:.7; --na-pop-dur:.25s; --na-pop-delay:.1s;
+  --na-pt-x:0px; --na-pt-y:6px; --na-pt-dur:.35s; --na-pt-delay:.15s; --na-pb-delay:.3s;
+  --na-line-dur:.4s; --na-radius:10px;
+}
+.header{position:sticky;top:0;z-index:2000;background:#fff}
+.hd-bar{height:var(--header-h);max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;gap:8px}
+.logo{display:flex;align-items:center;margin-right:22px}
+.logo img{height:24px;width:auto;display:block}
+.nav{display:flex;height:100%;list-style:none}
+.nav-right{margin-left:auto}
+.nav > li{display:flex;align-items:center;height:100%;position:static}
+.nav-link{display:flex;align-items:center;height:100%;padding:0 12.5px;font-size:15px;font-weight:400;color:var(--black);transition:color var(--link-dur) var(--ease)}
+.nav > li.active > .nav-link,.nav-link:hover{color:var(--red)}
+.tools{display:flex;gap:8px;align-items:center;margin-left:8px}  /* 頂部選單列定案：文字 15px、選項間距 25px、LOGO 右側 22px、圖示間距 8px */
+.tools a{display:flex;align-items:center;gap:6px;font-size:13px}
+.tools svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6}
+.cart-count{font-size:11px;background:var(--black);color:#fff;border-radius:999px;min-width:18px;height:18px;display:inline-grid;place-items:center;padding:0 5px}
+.burger{display:none}
+
+/* 下拉面板：白底由上往下展開，標題/縮圖下滑淡入，連結由左往右逐行滑入 */
+/* 共用白色底：第一次打開時由上往下展開；在不同選單間切換時不重播，只平滑改變高度 */
+:root{--switch-dur:.4s}
+.mega-bg{position:absolute;left:0;right:0;top:var(--header-h);height:0;background:#fff;z-index:1;pointer-events:none;clip-path:inset(0 0 100% 0);
+  transition:clip-path var(--panel-dur) var(--ease) var(--close-delay),height 0s calc(var(--close-delay) + var(--panel-dur))}
+.mega-bg.on{clip-path:inset(0 0 0 0);transition:clip-path var(--panel-dur) var(--ease),height var(--switch-dur) var(--ease)}
+.mega{position:absolute;left:0;right:0;top:var(--header-h);background:transparent;visibility:hidden;clip-path:inset(0 0 100% 0);
+  transition:clip-path var(--panel-dur) var(--ease) var(--close-delay),visibility 0s calc(var(--close-delay) + var(--panel-dur))}
+.nav > li.active .mega{visibility:visible;z-index:2;clip-path:inset(0 0 0 0);transition:clip-path var(--panel-dur) var(--ease)}
+/* 選單之間切換時，前一個面板立即收起，不跑收起動畫，避免蓋住新面板 */
+.nav > li.no-tr .mega,.nav > li.no-tr .mega *{transition:none!important}
+.mm-inner{max-width:1180px;margin:0 auto;padding:4px 40px 24px}
+.mm-row{display:grid;grid-template-columns:repeat(3,1fr)}
+.mm-row + .mm-row{border-top:1px solid #e6e6e6}
+.mm-col{display:grid;grid-template-columns:var(--thumb-w) 1fr;gap:34px;padding:24px 20px 28px 0}
+.mm-col + .mm-col{border-left:1px solid #ececec;padding-left:20px}
+.mm-col.noimg{grid-template-columns:1fr}
+.mm-thumb,.mm-title{opacity:0;transform:translateY(calc(var(--slide) * -1));transition:transform var(--c-dur) var(--ease) var(--c-delay),opacity var(--c-op) var(--ease) var(--c-delay)}
+.mm-thumb{overflow:hidden;align-self:start;margin-top:38px}
+.mm-thumb img{width:116px;aspect-ratio:4/3;object-fit:cover;transition:transform var(--zoom-dur) var(--ease)}
+.mm-thumb.cut{overflow:visible}
+.mm-thumb.cut img{width:var(--thumb-w);aspect-ratio:auto;height:auto;object-fit:contain}
+.mm-thumb.cut img[src*="menu_32x3b"],.mm-thumb.cut img[src*="menu_q85h"]{width:auto;height:calc(var(--thumb-w) * .6);margin:0 auto}  /* 高度與 RM9L 縮圖（400×240）對齊，上下不超出 */
+.mm-col:hover .mm-thumb img{transform:scale(var(--zoom))}
+.mm-title{font-size:14px;font-weight:500;color:#8a8a8a;letter-spacing:.04em;margin:10px 0 18px}  /* 分類標題：12px 再放大 15%、細一級、灰階 */
+.mm-list{list-style:none;display:grid;gap:12px}
+.mm-list li{opacity:0;transform:translate(var(--l-x),var(--l-y));
+  transition:transform var(--l-dur) var(--ease) calc(var(--l-delay) + var(--l-stagger) * var(--i,0)),opacity var(--l-dur) var(--ease) calc(var(--l-delay) + var(--l-stagger) * var(--i,0))}
+.mm-list a{font-size:15px;color:#333;transition:color .2s var(--ease)}
+.mm-list a:hover{color:var(--red)}
+.nav > li.active .mm-thumb,.nav > li.active .mm-title,.nav > li.active .mm-list li{opacity:1;transform:none}
+.nav > li:not(.active) .mm-thumb,.nav > li:not(.active) .mm-title,.nav > li:not(.active) .mm-list li{transition:none}
+/* 分隔線：等白底展開後再出現——橫線由左到右，接著直線由上到下 */
+:root{--hl-delay:.5s; --hl-dur:.5s; --vl-after:.25s; --vl-dur:.45s}
+.mm-row{position:relative}
+.mm-row + .mm-row{border-top:0}
+.mm-row + .mm-row::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:#e6e6e6;transform:scaleX(0);transform-origin:left center}
+.mm-col{position:relative}
+.mm-col + .mm-col{border-left:0}
+.mm-col + .mm-col::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:#ececec;transform:scaleY(0);transform-origin:center top}
+.nav > li.active .mm-row + .mm-row::before{transform:none;transition:transform var(--hl-dur) var(--ease) var(--hl-delay)}
+.nav > li.active .mm-col + .mm-col::before{transform:none;transition:transform var(--vl-dur) var(--ease) calc(var(--hl-delay) + var(--vl-after))}
+.nav > li:not(.active) .mm-row + .mm-row::before,.nav > li:not(.active) .mm-col + .mm-col::before{transition:none}
+/* 背景遮罩 */
+.hd-dim{position:fixed;inset:0;z-index:1999;background:#000;opacity:0;visibility:hidden;pointer-events:none;transition:opacity var(--dim-dur) var(--ease),visibility 0s var(--dim-dur)}
+.hd-dim.on{opacity:var(--dim-op);visibility:visible;transition:opacity var(--dim-dur) var(--ease) var(--dim-delay)}
+
+/* ---------- Hero ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 22px;border-radius:999px;font-size:13px;font-weight:600;letter-spacing:.02em;transition:.2s;white-space:nowrap}
+.btn-dark{background:var(--black);color:#fff}.btn-dark:hover{background:#333}
+.btn-light{background:#fff;color:var(--black)}.btn-light:hover{background:var(--gray-100)}
+.btn-line{border:1px solid var(--black);color:var(--black)}.btn-line:hover{background:var(--black);color:#fff}
+.hero{position:relative;overflow:hidden;background:#0b0b0b}
+.hero-track{display:flex;transition:transform .8s cubic-bezier(.65,.05,.36,1)}
+.hero-slide{flex:0 0 100%;position:relative;color:#fff}
+.hero-slide img{width:100%;aspect-ratio:2400/1012;object-fit:cover}
+.hero-copy{position:absolute;left:9%;top:50%;transform:translateY(-50%);max-width:34%}
+.hero-slide .hero-copy .title-svg{height:clamp(22px,2.35vw,56px);width:auto;max-width:none;aspect-ratio:auto;object-fit:contain;display:block}
+.hero-copy h2{font-family:"Gotham","Noto Sans TC",sans-serif;font-weight:600;font-size:clamp(24px,2.35vw,56px);line-height:1.1;letter-spacing:-.005em;white-space:nowrap}
+.hero-copy p{font-size:clamp(14px,1.25vw,26px);font-weight:400;line-height:1.5;margin-top:clamp(12px,1.6vw,30px)}
+.hero-copy .btn-hero{margin-top:clamp(18px,2.6vw,50px)}
+.btn-hero{height:clamp(36px,2.6vw,46px);padding:0 clamp(20px,1.6vw,28px);background:#fff;color:var(--black);font-size:clamp(13px,.95vw,16px)}
+.btn-hero:hover{background:var(--gray-100)}
+/* 進站時 banner 文字淡入：標題 → 副標 → 按鈕 依序由下往上 */
+.hero-copy > *{opacity:0;transform:translateY(20px)}
+/* 每次換張：先出現圖，文字再依序淡入；離開的那張文字快速淡出 */
+.hero-copy > *{transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.hero.ready .hero-slide.is-on .hero-copy > *{opacity:1;transform:none;transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.hero.ready .hero-slide.is-on .hero-copy > :nth-child(1){transition-delay:.7s}
+.hero.ready .hero-slide.is-on .hero-copy > :nth-child(2){transition-delay:.9s}
+.hero.ready .hero-slide.is-on .hero-copy > :nth-child(3){transition-delay:1.1s}
+/* 過場：淡入淡出＋微縮放（新圖由 105% 縮回 100%），電腦版與手機版相同 */
+@media all{
+  .hero-track{display:grid;transform:none!important;transition:none}
+  .hero-slide{grid-area:1/1;opacity:0;transform:scale(1.05);z-index:0;pointer-events:none;
+    transition:opacity 1s var(--ease),transform 1.4s var(--ease)}
+  .hero-slide.is-on{opacity:1;transform:none;z-index:1;pointer-events:auto}
+  .hero{overflow:hidden}
+}
+@media (prefers-reduced-motion:reduce){.hero-copy > *{opacity:1;transform:none;transition:none!important}.hero-slide{transition:none!important}}
+.hero-slide.dark{color:var(--black)}
+.hero-slide.dark .btn-hero{background:var(--black);color:#fff}
+.hero-slide.dark .btn-hero:hover{background:#333}
+/* A400 Pro：電視靠左，文字往左移 */
+.hero-slide.left-copy .hero-copy{left:6.5%}
+/* 品牌 slide：圖上已有文字，只放按鈕在文字下方 */
+.brand-slide .hero-copy{left:34.6%;top:auto;bottom:19%;transform:translateX(-50%);max-width:none}
+.brand-slide .hero-copy .btn-hero{margin-top:0}
+/* 箭頭 */
+.hero-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:52px;display:grid;place-items:center;border:1px solid transparent;border-radius:4px;transition:.25s;z-index:3;color:#fff}
+.hero-arrow svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6}
+.hero-arrow:hover{border-color:currentColor;background:rgba(0,0,0,.12)}
+.hero-arrow.prev{left:0}.hero-arrow.next{right:12px}
+.hero.on-dark .hero-arrow,.hero.on-dark .hero-label{color:var(--black)}
+/* 指示器 */
+.hero-ui{position:absolute;left:50%;bottom:clamp(16px,2.4vw,44px);transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:clamp(10px,1vw,16px);z-index:3}
+.hero-label{color:#fff;font-size:clamp(14px,1.15vw,20px);font-weight:500;letter-spacing:.01em;transition:color .4s}
+/* 指示器比例（參照國際版）：圓點 10、間距 20、進度條 120、暫停鍵 56×28 */
+.hero-dots{display:flex;align-items:center;gap:clamp(12px,1.2vw,20px)}
+.hero-dots button{width:clamp(7px,.6vw,10px);height:clamp(7px,.6vw,10px);border-radius:999px;background:#fff;position:relative;overflow:hidden;flex:none;transition:width .45s var(--ease),background .3s}
+.hero.on-dark .hero-dots button{background:#111}
+.hero-dots button.on{width:clamp(56px,6.2vw,120px);background:rgba(255,255,255,.35)}
+.hero.on-dark .hero-dots button.on{background:rgba(0,0,0,.2)}
+.hero-dots button.on i{position:absolute;inset:0;background:#fff;transform-origin:left;animation:fill var(--dur,6s) linear forwards}
+.hero.on-dark .hero-dots button.on i{background:#111}
+.hero.paused .hero-dots button.on i{animation-play-state:paused}
+@keyframes fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* 暫停 / 繼續鍵 */
+.hero-dots .hero-pause{width:auto;height:clamp(22px,1.55vw,30px);padding:0 clamp(8px,.6vw,11px);margin-left:clamp(4px,.4vw,8px);border-radius:4px;
+  background:rgba(255,255,255,.25);color:#fff;display:inline-flex;align-items:center;gap:clamp(4px,.35vw,6px);transition:background .2s}
+.hero-dots .hero-pause:hover{background:rgba(255,255,255,.4)}
+.hero.on-dark .hero-dots .hero-pause{background:rgba(0,0,0,.12);color:#111}
+.hero.on-dark .hero-dots .hero-pause:hover{background:rgba(0,0,0,.2)}
+.hero-pause svg{height:clamp(8px,.6vw,11px);width:auto;fill:currentColor;opacity:.4;transition:opacity .2s}
+.hero-pause svg.cur{opacity:1}
+.hero-pause .sl{width:1.5px;height:clamp(10px,.75vw,14px);background:currentColor;opacity:.4;transform:skewX(-18deg)}
+
+/* ---------- Section title ---------- */
+.sec{padding:96px 0}
+.sec-title{text-align:center;font-size:30px;font-weight:600;letter-spacing:.06em;margin-bottom:24px}
+.tabs{display:flex;justify-content:center;gap:28px;flex-wrap:wrap}
+.tabs button{position:relative;font-size:14px;font-weight:500;padding:4px 0 2px;opacity:.75;transition:opacity .2s}
+.tabs button:hover{opacity:1}
+.tabs button.on{opacity:1}
+/* 底線動畫：與新品上市相同（由中間往兩側展開，0.4s） */
+.tabs button::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;background:currentColor;transform:scaleX(0);transition:transform var(--na-line-dur) var(--ease)}
+.tabs button.on::after{transform:scaleX(1)}
+.tabs button:focus,.na-tabs button:focus{outline:none}
+.tabs button:focus-visible,.na-tabs button:focus-visible{outline:none}
+
+/* ---------- New arrivals（版面參照 TCL Global，動畫為 2026-11-17 定案值） ---------- */
+.na-wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.na-title{text-align:center;font-size:34px;line-height:40px;font-weight:500;margin-bottom:40px;letter-spacing:.02em}
+.na-tabs{list-style:none;display:flex;justify-content:center;gap:40px;margin-bottom:40px}
+.na-tabs button{position:relative;font-size:16px;font-weight:500;line-height:24px;padding-bottom:2px}
+.na-tabs .line{position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--black);transform:scaleX(0);transition:transform var(--na-line-dur) var(--ease)}
+.na-tabs button.on .line{transform:scaleX(1)}
+.na-panel{display:none;justify-content:space-between;gap:32px}
+.na-panel.on{display:flex}
+.na-panel.n3,.na-panel.n2{justify-content:center}
+.na-col.lg{flex:0 0 48%}
+.na-col.xs{flex:0 0 calc(26% - 32px);display:flex;flex-direction:column;gap:16px}
+/* 卡片進場：由下往上 */
+.na-card{position:relative;border-radius:var(--na-radius);overflow:hidden;background:#fff;aspect-ratio:1/1;
+  opacity:0;transform:translate(var(--na-in-x),var(--na-in-y)) scale(var(--na-in-scale))}
+.na-panel.play .na-card{opacity:1;transform:none;
+  transition:opacity var(--na-in-dur) var(--ease) calc(var(--na-in-delay) + var(--na-in-stagger) * var(--i,0)),transform var(--na-in-dur) var(--ease) calc(var(--na-in-delay) + var(--na-in-stagger) * var(--i,0))}
+.na-link{position:absolute;inset:0;display:flex;flex-direction:column}
+.na-bg{position:absolute;inset:0;overflow:hidden}
+/* 商品圖電視位於 21–80%，往上移讓下方文字不壓到腳架 */
+.na-card.lg .na-bg{top:-5%;bottom:5%}
+.na-card.xs .na-bg{top:-10%;bottom:10%}
+/* 左右留白 6%：放大 1.1 倍後電視約 97% 寬，不會出框 */
+.na-bg img{width:100%;height:100%;object-fit:contain;padding:0 var(--na-inset);transition:transform var(--na-zoom-dur) var(--ease)}
+.na-card:hover .na-bg img{transform:scale(var(--na-zoom))}
+/* 型號＋說明文字進場：比卡片晚 0.25s */
+.na-text{position:relative;margin-top:auto;text-align:center;padding:0 24px 28px;opacity:0;transform:translate(var(--na-tx-x),var(--na-tx-y))}
+.na-panel.play .na-text{opacity:1;transform:none;
+  transition:opacity var(--na-tx-dur) var(--ease) calc(var(--na-in-delay) + var(--na-tx-delay) + var(--na-in-stagger) * var(--i,0)),transform var(--na-tx-dur) var(--ease) calc(var(--na-in-delay) + var(--na-tx-delay) + var(--na-in-stagger) * var(--i,0))}
+.na-card.lg .na-text h3{font-size:24px;line-height:28px;font-weight:500}
+.na-card.lg .na-text p{font-size:18px;line-height:22px;margin-top:8px}
+.na-card.xs .na-text{padding:0 16px 16px}
+.na-card.xs .na-text h3{font-size:16px;line-height:20px;font-weight:600}
+.na-text .en{font-weight:500}  /* 英文技術名稱加粗一級：Light → Medium */
+.na-card.xs .na-text p{font-size:12px;line-height:14px;margin-top:6px;color:#333}
+/* hover 遮罩 */
+.na-pop{position:absolute;inset:0;border-radius:var(--na-radius);background:rgba(0,0,0,var(--na-pop-op));display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;visibility:hidden;
+  transition:opacity var(--na-pop-dur) var(--ease),visibility 0s var(--na-pop-dur)}
+.na-card:hover .na-pop{opacity:1;visibility:visible;transition:opacity var(--na-pop-dur) var(--ease) var(--na-pop-delay),visibility 0s var(--na-pop-delay)}
+.na-pop p,.na-pop .btn-pop{opacity:0;transform:translate(var(--na-pt-x),var(--na-pt-y));transition:opacity .15s,transform .15s}
+.na-card:hover .na-pop p{opacity:1;transform:none;transition:opacity var(--na-pt-dur) var(--ease) var(--na-pt-delay),transform var(--na-pt-dur) var(--ease) var(--na-pt-delay)}
+.na-card:hover .na-pop .btn-pop{opacity:1;transform:none;transition:opacity var(--na-pt-dur) var(--ease) var(--na-pb-delay),transform var(--na-pt-dur) var(--ease) var(--na-pb-delay),background .2s}
+.na-pop p{color:#fff;font-size:18px;font-weight:400}
+.na-card.xs .na-pop p{font-size:16px}
+.btn-pop{margin-top:10px;height:40px;padding:0 24px;border-radius:20px;background:#fff;color:var(--black);font-size:14px;font-weight:500;display:inline-flex;align-items:center}
+.na-card.xs .btn-pop{margin-top:7px;height:36px;padding:0 20px}
+.btn-pop:hover{background:#e9e9e9}
+@media (prefers-reduced-motion:reduce){.na-card,.na-text{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* ---------- Immersive category ---------- */
+.immersive{position:relative;color:#fff;overflow:hidden;aspect-ratio:1920/906;min-height:520px;display:flex;flex-direction:column}  /* 高度永遠跟情境圖同比例，大螢幕不會裁掉上下，電視不會跑到分類按鈕底下 */
+.immersive .bg{position:absolute;inset:0}
+.immersive .bg > img,.immersive .bg picture{position:absolute;inset:0;opacity:0;transform:scale(1.04);transition:opacity .8s,transform 1.6s}
+.immersive .bg > img.on,.immersive .bg picture.on{opacity:1;transform:none}
+.immersive .bg img{width:100%;height:100%;object-fit:cover;object-position:center 60%}
+.immersive .bg > img{position:absolute;inset:0}
+.immersive::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.18) 20%,rgba(0,0,0,0) 34%,rgba(0,0,0,0) 58%,rgba(0,0,0,.58) 100%)}
+.immersive.light{color:var(--black)}
+.immersive.light::before{background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 30%,rgba(0,0,0,0) 65%,rgba(0,0,0,.22) 100%)}
+.immersive .top,.immersive .bottom{position:relative;z-index:2;text-align:center}
+.immersive .top{padding-top:clamp(20px,2.4vw,64px)}
+.immersive .top .sec-title{font-size:clamp(22px,1.6vw,40px)}
+.immersive .tabs button{font-size:clamp(13px,.72vw,18px)}
+.immersive .tabs{gap:clamp(18px,1.6vw,40px)}
+.immersive .top .sec-title{margin-bottom:clamp(8px,.8vw,20px)}
+.immersive .bottom{margin-top:auto;padding:0 24px clamp(28px,3vw,56px)}
+.immersive .bottom h3{font-size:clamp(22px,2.1vw,38px);font-weight:500;letter-spacing:.01em;line-height:1.2}
+.immersive .bottom p{font-size:clamp(13px,1vw,17px);margin:6px 0 clamp(12px,1.2vw,20px);opacity:.92}
+.immersive.light .bottom{color:#fff}
+.imm-copy{transition:opacity .4s}
+
+/* ---------- Brand / Olympic ---------- */
+.brand{text-align:center}
+.brand h2{font-family:"Gotham",sans-serif;font-weight:700;font-size:clamp(40px,7.2vw,96px);letter-spacing:.03em;line-height:1}
+.brand .sub{font-size:18px;font-weight:500;margin:40px 0 32px}
+.brand .media{max-width:900px;margin:0 auto;border-radius:4px;overflow:hidden;position:relative}
+.brand .media img{width:100%;aspect-ratio:16/9;object-fit:cover}
+
+/* ---------- News ---------- */
+.news{padding-top:24px}
+.news-viewport{overflow:hidden}
+.news-track{display:flex;gap:16px;transition:transform .6s cubic-bezier(.65,.05,.36,1)}
+.news-card{flex:0 0 calc((100% - 32px)/3)}
+.news-card .pic{overflow:hidden}
+.news-card img{width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform .5s}
+.news-card:hover img{transform:scale(1.04)}
+.news-card h3{font-size:15px;font-weight:600;line-height:1.5;margin:14px 4px 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:45px}
+.news-card time{display:block;font-size:12px;color:var(--gray-500);margin:0 4px}
+.news-card .tag{display:block;font-size:12px;color:var(--gray-700);margin:10px 4px 0}
+.news-nav{display:flex;justify-content:center;gap:14px;margin-top:36px}
+.news-nav button{width:34px;height:34px;border-radius:50%;border:1px solid var(--black);display:grid;place-items:center;transition:.2s}
+.news-nav button:disabled{opacity:.25;cursor:default}
+.news-nav button:not(:disabled):hover{background:var(--black);color:#fff}
+.news-nav svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ---------- Footer ---------- */
+.footer{background:var(--gray-50);border-top:1px solid var(--gray-100);padding:56px 0 28px;font-size:13px;margin-top:96px}
+.f-grid{display:grid;grid-template-columns:repeat(4,1fr) 1.2fr;gap:0}
+.f-col{padding:0 24px 32px;border-left:1px solid var(--gray-100)}
+.f-col:first-child{border-left:0;padding-left:0}
+.f-col h4{font-size:14px;font-weight:600;margin-bottom:16px}
+.f-col h4 + ul + h4{margin-top:32px}
+.f-col ul{list-style:none;display:grid;gap:10px;color:var(--gray-700)}
+.f-col ul a:hover{color:var(--black);text-decoration:underline}
+.social{display:flex;gap:12px;margin-bottom:24px}
+.social a{width:30px;height:30px;border-radius:50%;background:var(--gray-300);display:grid;place-items:center;transition:.2s}
+.social a:hover{background:var(--black)}
+.social svg{width:15px;height:15px;fill:#fff}
+.f-cs{color:var(--gray-700);line-height:1.8}
+.f-cs strong{display:block;color:var(--black);font-size:20px;letter-spacing:.02em}
+.f-bottom{border-top:1px solid var(--gray-100);margin-top:16px;padding-top:24px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.f-bottom img{height:18px;width:auto}
+.f-links{display:flex;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--gray-700)}
+.f-copy{font-size:12px;color:var(--gray-500)}
+.f-lang{display:flex;align-items:center;gap:6px;font-size:12px}
+.f-lang svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.5}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1024px){
+  .na-panel.on{flex-wrap:wrap;gap:16px}
+  .na-col.lg{flex:0 0 100%}
+  .na-col.xs{flex:0 0 calc(50% - 8px)}
+
+  .nav{display:none}
+  .burger{display:grid;place-items:center;width:32px;height:32px}
+  .hd-bar{padding:0 20px}
+  .tools{margin-left:auto}
+  .tools .lbl{display:none}
+  .f-grid{grid-template-columns:repeat(2,1fr)}
+  .f-col{border-left:0;padding-left:0}
+}
+@media (max-width:720px){
+  /* 手機版 banner（參照國際版）：直式 750×1334 圖，文案置中放在上方留白區 */
+  .hero-slide img{aspect-ratio:750/1334;object-fit:cover;object-position:center}
+  .hero-slide picture{display:block}
+  .hero-copy,.hero-slide.left-copy .hero-copy{left:24px;right:24px;top:10.5%;transform:none;max-width:none;text-align:center;display:flex;flex-direction:column;align-items:center}
+  .hero-copy h2{white-space:normal;font-size:28px;line-height:1.2}
+  .hero-slide .hero-copy .title-svg{height:auto;width:82%;max-width:320px;margin:0 auto}
+  .hero-copy p{font-size:15px;line-height:1.5;margin-top:12px}
+  .hero-copy .btn-hero{margin-top:22px;height:38px;padding:0 22px;font-size:14px}
+  .hero-slide.mb-shade::after{content:"";position:absolute;inset:0 0 auto 0;height:42%;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,0));pointer-events:none}
+  .hero-slide.mb-shade .hero-copy{z-index:1}
+  .hero-ui{bottom:22px}
+  .brand-slide .hero-copy{left:24px;right:24px;top:36%;bottom:auto;transform:none}  /* 按鈕放在「奧林匹克全球合作夥伴」下方 */
+  .hero-arrow{display:none}
+  .sec{padding:64px 0}
+  .sec-title{font-size:24px}
+  .na-title{font-size:26px;margin-bottom:24px}
+  .na-tabs{gap:24px;margin-bottom:24px;justify-content:flex-start;overflow-x:auto;white-space:nowrap;padding-bottom:6px;scrollbar-width:none}
+  .na-panel.on{flex-wrap:wrap;gap:12px}
+  .na-col.lg{flex:0 0 100%}
+  .na-col.xs{flex:0 0 calc(50% - 6px);gap:12px}
+  .na-card.lg .na-text h3{font-size:20px}.na-card.lg .na-text p{font-size:14px}
+  /* 手機：圖片與文字上下分開，避免文字壓到電視 */
+  .na-card{aspect-ratio:auto}
+  .na-link{position:relative}
+  .na-card .na-bg,.na-card.lg .na-bg,.na-card.xs .na-bg{position:relative;inset:auto;aspect-ratio:5/4}
+  .na-text,.na-card.xs .na-text{margin-top:0;padding:4px 10px 14px}
+  .na-card.xs .na-text h3{font-size:14px}.na-card.xs .na-text p{font-size:11px;line-height:14px}
+  .news-card{flex:0 0 85%}
+  .immersive{min-height:auto;aspect-ratio:750/1530}
+  /* 分類收納：單行左右滑（參照國際版手機版），左右邊緣淡出提示可滑動 */
+  .immersive .tabs{flex-wrap:nowrap;justify-content:flex-start;gap:18px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    padding:0 20px 8px;scroll-padding:0 20px;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 32px),transparent 100%);
+            mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 32px),transparent 100%)}
+  .immersive .tabs::-webkit-scrollbar{display:none}
+  .immersive .tabs button{flex:none;white-space:nowrap}
+  .tabs{gap:18px}
+}
+
+/* ---------- 手機選單（漢堡選單） ---------- */
+:root{
+  /* 文字：2026-11-17 測試頁定案值；動畫：參照 Apple 官網手機選單（cubic-bezier(.4,0,.6,1)、0.24–0.32s、延遲 80ms、逐項 20ms） */
+  --dr-ease:cubic-bezier(.4,0,.6,1);
+  --dr-dur:.32s; --dr-pad:24px;
+  --dr-l1-fs:21px; --dr-l1-w:600; --dr-l1-py:22px; --dr-div:1.1;
+  --dr-h5-fs:14px; --dr-l2-fs:15px; --dr-l2-lh:1.5; --dr-l2-gap:12px; --dr-indent:0px; --dr-sec-gap:24px;
+  --dr-acc-dur:.32s; --dr-stagger:.02s; --dr-delay:.08s; --dr-dist:4px; --dr-sub-stagger:.02s; --dr-item-dur:.24s;
+}
+.drawer{position:fixed;inset:var(--header-h) 0 0 0;background:#fff;z-index:99;overflow:auto;overscroll-behavior:contain;visibility:hidden;
+  transform:translateX(100%);transition:transform var(--dr-dur) var(--dr-ease),opacity var(--dr-dur) var(--dr-ease),clip-path var(--dr-dur) var(--dr-ease),visibility 0s var(--dr-dur)}
+.drawer.open{visibility:visible;transform:none;transition:transform var(--dr-dur) var(--dr-ease),opacity var(--dr-dur) var(--dr-ease),clip-path var(--dr-dur) var(--dr-ease)}
+html.dr-down .drawer{transform:none;clip-path:inset(0 0 100% 0)}
+html.dr-down .drawer.open{clip-path:inset(0 0 0 0)}
+html.dr-fade .drawer{transform:none;opacity:0}
+html.dr-fade .drawer.open{opacity:1}
+.dr-inner{padding:8px var(--dr-pad) 40px}
+/* 第一層 */
+.dr-l1{border-bottom:1px solid rgba(0,0,0,calc(.08 * var(--dr-div)));opacity:0;transform:translateY(var(--dr-dist))}
+.drawer.open .dr-l1,.drawer.open .dr-foot{opacity:1;transform:none;transition:opacity var(--dr-item-dur) var(--dr-ease) calc(var(--dr-delay) + var(--dr-stagger) * var(--i)),transform var(--dr-item-dur) var(--dr-ease) calc(var(--dr-delay) + var(--dr-stagger) * var(--i))}
+.dr-head{width:100%;display:flex;align-items:center;justify-content:space-between;padding:var(--dr-l1-py) 0;font-size:var(--dr-l1-fs);font-weight:var(--dr-l1-w);text-align:left;color:var(--black)}
+/* 展開圖示：＋ → － */
+.dr-ico{position:relative;width:14px;height:14px;flex:none}
+.dr-ico::before,.dr-ico::after{content:"";position:absolute;left:0;right:0;top:50%;height:1.6px;margin-top:-.8px;background:currentColor;transition:transform var(--dr-acc-dur) var(--dr-ease)}
+.dr-ico::after{transform:rotate(90deg)}
+.dr-l1.open .dr-ico::after{transform:rotate(0)}
+html.ico-chev .dr-ico::before{width:8px;height:8px;left:3px;top:1px;margin:0;background:none;border-right:1.6px solid;border-bottom:1.6px solid;transform:rotate(45deg)}
+html.ico-chev .dr-ico::after{display:none}
+html.ico-chev .dr-l1.open .dr-ico::before{transform:translateY(4px) rotate(225deg)}
+.dr-arr{width:8px;height:8px;border-right:1.6px solid;border-top:1.6px solid;transform:rotate(45deg);margin-right:3px}
+/* 第二層：展開動畫 */
+.dr-acc{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--dr-acc-dur) var(--dr-ease)}
+.dr-l1.open .dr-acc{grid-template-rows:1fr}
+.dr-acc-in{overflow:hidden;padding-left:var(--dr-indent)}
+.dr-sec{padding-bottom:var(--dr-sec-gap)}
+.dr-sec:first-child{padding-top:2px}
+.dr-sec h5{opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s;font-size:var(--dr-h5-fs);font-weight:500;color:#8a8a8a;letter-spacing:.04em;margin-bottom:10px}
+.dr-sec ul{list-style:none;display:grid;gap:var(--dr-l2-gap) 16px}
+html.dr-2col .dr-sec ul{grid-template-columns:1fr 1fr}
+.dr-sec a{font-size:var(--dr-l2-fs);line-height:var(--dr-l2-lh);color:#333}
+.dr-sec li{opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s}
+.dr-l1.open .dr-sec h5{opacity:1;transform:none;transition:opacity var(--dr-item-dur) var(--dr-ease) .16s,transform var(--dr-item-dur) var(--dr-ease) .16s}
+.dr-l1.open .dr-sec li{opacity:1;transform:none;transition:opacity var(--dr-item-dur) var(--dr-ease) calc(.16s + var(--dr-sub-stagger) * var(--j,0)),transform var(--dr-item-dur) var(--dr-ease) calc(.16s + var(--dr-sub-stagger) * var(--j,0))}
+/* 底部 */
+.dr-foot{display:flex;justify-content:space-between;align-items:center;padding-top:24px;font-size:13px;color:#8a8a8a;opacity:0;transform:translateY(var(--dr-dist))}
+.dr-foot a{color:var(--black);font-weight:500}
+/* 漢堡 → X */
+.burger{position:relative}
+.burger i{position:absolute;left:5px;right:5px;height:1.8px;background:currentColor;border-radius:2px;transition:transform var(--dr-dur) var(--dr-ease),opacity .2s,top var(--dr-dur) var(--dr-ease)}
+.burger i:nth-child(1){top:9px}.burger i:nth-child(2){top:15px}.burger i:nth-child(3){top:21px}
+.burger.on i:nth-child(1){top:15px;transform:rotate(45deg)}
+.burger.on i:nth-child(2){opacity:0}
+.burger.on i:nth-child(3){top:15px;transform:rotate(-45deg)}
+html.dr-lock,html.dr-lock body{overflow:hidden}
+
+/* ================= Banner 文案與按鈕：2026-11-17 測試頁定案值 =================
+   電腦版以 1920 寬為基準（px），隨螢幕等比例縮放；手機版為固定 px */
+@media (min-width:721px){
+  .hero-slide .hero-copy .title-svg{height:calc(44 / 1920 * 100vw)}
+  .hero-copy p{font-size:calc(24 / 1920 * 100vw);margin-top:calc(18 / 1920 * 100vw)}
+  .hero-copy .btn-hero{margin-top:calc(19 / 1920 * 100vw)}
+  .btn-hero{height:calc(37 / 1920 * 100vw);padding:0 calc(28 / 1920 * 100vw);font-size:calc(16 / 1920 * 100vw);font-weight:600}
+  .hero-copy{left:9%}
+  .hero-slide.left-copy .hero-copy{left:6.5%}
+}
+@media (max-width:720px){
+  .hero-slide .hero-copy .title-svg{width:100%;max-width:none}
+  .hero-copy p{font-size:18px;margin-top:12px}
+  .hero-copy .btn-hero{margin-top:14px;height:33px;padding:0 23px;font-size:14.5px;font-weight:600}
+  .hero-copy,.hero-slide.left-copy .hero-copy{top:16%}
+}
+
+/* ================= 手機版「顯示器」區塊：2026-11-17 測試頁定案值（第二版） ================= */
+@media (max-width:720px){
+  .immersive .top{padding-top:52px}
+  .immersive .top .sec-title{font-size:33px}
+  .immersive .tabs button{font-size:16.5px}
+  .immersive .tabs{gap:24px}
+  .immersive .bottom{padding-bottom:61px}
+  .immersive .bottom h3{font-size:24px}
+  .immersive .bottom p{font-size:15.5px;margin:6px 0 14px}
+  .immersive .bottom .btn{height:34px;padding:0 23px;font-size:14px}
+}
+
+/* 32X3B：文字標題（無 SVG）＋ 左下角 B&O 標示 */
+.hero-credit{opacity:0;transition:opacity .3s}
+.hero.ready .hero-slide.is-on .hero-credit{opacity:1;transition:opacity .9s var(--ease) 1.2s}
+.hero-copy .hero-txt-title{font-weight:500;line-height:1.1;letter-spacing:-.005em;white-space:nowrap}
+.hero-copy .hero-txt-title sup{font-size:.5em;vertical-align:.9em;margin-left:.04em}
+.hero-credit{position:absolute;left:9.2%;bottom:18.9%;z-index:2;line-height:0}  /* 電腦版定案：寬 214、左 9.2%、底 18.9% */
+.hero-credit picture{display:block}
+.hero-credit img{display:block;width:calc(214 / 1920 * 100vw);height:auto!important;aspect-ratio:auto!important;object-fit:contain!important}
+.hero-credit span{font-size:calc(15 / 1920 * 100vw)}
+.hero-credit b{font-size:calc(17 / 1920 * 100vw);font-weight:500;letter-spacing:.12em}
+@media (min-width:721px){.hero-copy .hero-txt-title{font-size:calc(44 / 1920 * 100vw)}}
+@media (max-width:720px){
+  .hero-copy .hero-txt-title{font-size:min(23px,5.9vw);white-space:nowrap}
+  .hero-slide[data-label="32X3B"] .hero-copy{top:9%}
+  .hero-slide[data-label="32X3B"] .hero-copy p{font-size:14px!important;margin-top:8px!important}
+  .hero-credit{left:50%;bottom:104px;transform:translateX(-50%)}  /* 手機版：置中版 LOGO */
+  .hero-credit img{width:120px}
+  .hero-slide[data-label="32X3B"] .hero-copy .btn-hero{margin-top:12px!important}
+}
+
+/* 新品上市：顯示器以外的分類加灰色方塊（參照國際版 #F5F5F5），白底商品圖用 multiply 融入灰底 */
+.na-panel.gray .na-card{background:#f5f5f5}
+.na-panel.gray .na-bg img{mix-blend-mode:multiply}
+/* 灰底分類：文案往上靠近顯示器（大卡上移 36px、小卡上移 16px） */
+.na-panel.gray .na-card.lg .na-text{padding-bottom:64px}
+.na-panel.gray .na-card.xs .na-text{padding-bottom:32px}
+
+/* ---------- 新品上市 手機版：所有產品排成一行，一次顯示一個，左右滑 ---------- */
+:root{--nm-side:36px; --nm-gap:16px; --nm-peek:0px; --nm-pt:72px; --nm-ar:1.65; --nm-tt:24px; --nm-tb:44px; --nm-h3:25px; --nm-p:14px; --nm-radius:10px; --nm-inset:8%;}  /* 2026-11-17 測試頁定案值 */
+.na-xs-wrap{display:contents}
+.na-dots{display:none}
+@media (max-width:720px){
+  .na-panel.on{display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:flex-start;gap:var(--nm-gap);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+    margin:0 -24px;padding:0 var(--nm-side) 4px;scroll-padding:0 var(--nm-side);-webkit-overflow-scrolling:touch}
+  .na-panel.on::-webkit-scrollbar{display:none}
+  .na-col.lg,.na-col.xs,.na-xs-wrap,.na-panel.n2 .na-col.lg{display:contents}
+  .na-panel .na-card{flex:0 0 calc(100% - var(--nm-peek));scroll-snap-align:center;scroll-snap-stop:always;order:var(--i,0);border-radius:var(--nm-radius);aspect-ratio:auto}
+  .na-link{position:relative;padding-top:var(--nm-pt)}
+  .na-card .na-bg,.na-card.lg .na-bg,.na-card.xs .na-bg{position:relative;inset:auto;aspect-ratio:var(--nm-ar)}
+  .na-bg img{object-fit:cover;padding:0 var(--nm-inset)}
+  .na-text,.na-card.xs .na-text,.na-panel.gray .na-card.lg .na-text,.na-panel.gray .na-card.xs .na-text{margin-top:0;padding:var(--nm-tt) 16px var(--nm-tb)}
+  .na-card.xs .na-text h3,.na-card.lg .na-text h3{font-size:var(--nm-h3);line-height:1.3}
+  .na-card.xs .na-text p,.na-card.lg .na-text p{font-size:var(--nm-p);line-height:1.5;margin-top:4px}
+  .na-pop{border-radius:var(--nm-radius)}
+  .na-dots{display:flex;justify-content:center;gap:8px;margin-top:16px}
+  .na-dots i{width:6px;height:6px;border-radius:999px;background:#ccc;transition:width .3s var(--ease),background .3s}
+  .na-dots i.on{width:20px;background:#111}
+  .na-dots[hidden]{display:none}
+}
+
+/* ---------- 新品上市 手機版：標題與分類比照「顯示器」區塊 ---------- */
+@media (max-width:720px){
+  .na-title{font-size:33px;font-weight:600;letter-spacing:.06em;line-height:1.5;margin-bottom:8px}
+  .na-tabs{gap:24px;margin:0 -24px 24px;padding:0 20px 8px;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;scroll-padding:0 20px;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 32px),transparent 100%);
+            mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 32px),transparent 100%)}
+  .na-tabs::-webkit-scrollbar{display:none}
+  .na-tabs li{flex:none}
+  .na-tabs button{font-size:16.5px;line-height:1.5;white-space:nowrap;opacity:.75;transition:opacity .2s}
+  .na-tabs button.on{opacity:1}
+}
+
+/* 手機版：「顯示器」分類也加灰色面板（電腦版維持白底） */
+@media (max-width:720px){
+  .na-panel .na-card{background:#f5f5f5}
+  .na-panel .na-bg img{mix-blend-mode:multiply}
+}
+
+/* 手機版：頂部選單不固定顯示，捲動時出現，停止 1 秒後淡出 */
+@media (max-width:720px){
+  .header{transition:opacity .35s var(--ease),transform .35s var(--ease)}
+  .header.hd-hide{opacity:0;transform:translateY(-100%);pointer-events:none}
+}
+
+/* 手機版分類：選項少（放得下）時置中，放不下時維持可左右滑 */
+@media (max-width:720px){
+  .immersive .tabs button:first-child,.na-tabs li:first-child{margin-left:auto}
+  .immersive .tabs button:last-child,.na-tabs li:last-child{margin-right:auto}
+}
+
+/* ---------- INSPIRE GREATNESS：SVG 標誌＋捲動到才由下往上淡入（同新品上市進場） ---------- */
+.brand h2{line-height:0}
+.brand h2 picture{display:inline-block}
+.brand .inspire{display:block;width:clamp(320px,56vw,960px);height:auto;margin:0 auto}
+@media (max-width:720px){.brand .inspire{width:min(76vw,300px)}}
+.brand .rv{opacity:0;transform:translateY(var(--na-in-y,40px))}
+.brand.play .rv{opacity:1;transform:none;transition:opacity var(--na-in-dur,.6s) var(--ease),transform var(--na-in-dur,.6s) var(--ease)}
+.brand.play .rv:nth-child(2){transition-delay:.15s}
+.brand.play .rv:nth-child(3){transition-delay:.3s}
+@media (prefers-reduced-motion:reduce){.brand .rv{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* ---------- 斷行改善：中文不在詞中間斷行、各行長度平均 ---------- */
+.hero-copy p,.immersive .bottom p,.na-text p{word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
+@media (max-width:720px){
+  /* 手機版 banner 副標：型號一行、標語一行 */
+  .hero-copy p .pm{display:block}
+  .hero-copy p .ps{display:none}
+  .hero-copy p .pt{display:block}
+}
+/* ---------- 手機選單打開時，頂部列固定顯示（修正捲動後打開選單，頂部列消失的問題） ---------- */
+html.dr-lock .header{position:fixed;top:0;left:0;right:0;opacity:1!important;transform:none!important;pointer-events:auto!important}
+</style>
+<style id="tvs-css">
+/* ================= 全部顯示器（參照 TCL Global /tvs） ================= */
+:root{--pl-side:276px; --pl-gap:23px; --pl-cols:3; --pc-radius:0px; --pc-pad:16px; --pc-img-ar:1.22; --pc-zoom:1.05; --pc-in-y:30px; --pc-in-dur:.6s; --pc-stagger:.06s;}
+.crumb{background:#fff;border-bottom:1px solid var(--gray-100)}
+.crumb .wrap{display:flex;align-items:center;gap:8px;height:52px;font-size:13px;color:var(--gray-500)}
+.crumb a{color:var(--gray-500)}.crumb a:hover{color:var(--black)}
+.crumb b{font-weight:500;color:var(--black)}
+.crumb svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:1.6}
+
+/* 關鍵 Banner：沿用首頁 hero，桌機改為較矮的比例 */
+@media (min-width:721px){
+  .hero.kb .hero-slide img{object-position:center}
+  .hero.kb .hero-copy .btn-hero{display:none}
+}
+.hero.kb .hero-copy p .pt{font-weight:400}
+@media (min-width:721px){
+  .hero.kb .hero-label{display:none}   /* 參照國際版：只留指示點 */
+  .hero.kb{--kbd-u:calc(100vw / 1920)}
+  .hero.kb .hero-ui{bottom:calc(var(--kbd-bottom) * var(--kbd-u))}
+  .hero.kb .hero-dots{gap:calc(var(--kbd-gap) * var(--kbd-u))}
+  .hero.kb .hero-dots button{width:calc(var(--kbd-dot) * var(--kbd-u));height:calc(var(--kbd-dot) * var(--kbd-u))}
+  .hero.kb .hero-dots button.on{width:calc(var(--kbd-bar) * var(--kbd-u));background:rgba(255,255,255,var(--kbd-bar-op))}
+  .hero.kb.on-dark .hero-dots button.on{background:rgba(0,0,0,calc(var(--kbd-bar-op) * .6))}
+  .hero.kb .hero-dots .hero-pause{width:auto;height:calc(var(--kbd-pause-h) * var(--kbd-u));padding:0 calc(var(--kbd-pause-px) * var(--kbd-u));margin-left:calc(var(--kbd-pause-gap) * var(--kbd-u));border-radius:calc(var(--kbd-pause-r) * var(--kbd-u))}
+  .hero.kb .hero-pause svg{height:calc(var(--kbd-icon) * var(--kbd-u))}
+  .hero.kb .hero-pause .sl{height:calc(var(--kbd-icon) * 1.3 * var(--kbd-u))}
+}
+/* 全部顯示器 Banner 文案（數值可在 kb-demo.html 調整；桌機數值以 1920 寬為基準） */
+:root{--kb-h:405; --kbd-bottom:14; --kbd-dot:8; --kbd-gap:11; --kbd-bar:120; --kbd-bar-op:.35; --kbd-pause-h:30; --kbd-pause-px:11; --kbd-pause-gap:2; --kbd-pause-r:10.5; --kbd-icon:9.5; --kb-title:29; --kb-sub:24; --kb-sub-w:400; --kb-gap:11; --kb-sub-lh:1.5; --kb-sub-ls:0em; --kb-maxw:63%; --kb-left:20%; --kb-left-l:18.5%; --kb-top:50%;
+  --kbm-title-w:100%; --kbm-sub:18px; --kbm-gap:12px; --kbm-btn-gap:14px; --kbm-top:16%;}
+@media (min-width:721px){
+  .hero.kb .hero-slide > picture img{aspect-ratio:1920 / var(--kb-h)}
+  .hero.kb .hero-slide .hero-copy .title-svg{height:calc(var(--kb-title) / 1920 * 100vw)}
+  .hero.kb .hero-copy p{font-size:calc(var(--kb-sub) / 1920 * 100vw);line-height:var(--kb-sub-lh);letter-spacing:var(--kb-sub-ls);font-weight:var(--kb-sub-w);margin-top:calc(var(--kb-gap) / 1920 * 100vw)}
+  .hero.kb .hero-copy{left:var(--kb-left);top:var(--kb-top);max-width:var(--kb-maxw)}
+  .hero.kb .hero-slide.left-copy .hero-copy{left:var(--kb-left-l);top:var(--kb-top)}
+}
+@media (max-width:720px){
+  .hero.kb .hero-slide .hero-copy .title-svg{width:var(--kbm-title-w)}
+  .hero.kb .hero-copy p{font-size:var(--kbm-sub);margin-top:var(--kbm-gap)}
+  .hero.kb .hero-copy .btn-hero{margin-top:var(--kbm-btn-gap)}
+  .hero.kb .hero-copy,.hero.kb .hero-slide.left-copy .hero-copy{top:var(--kbm-top)}
+}
+
+
+/* 篩選列 */
+.pl{background:#f5f5f5;padding-bottom:72px}
+.pl-bar{background:#fff;position:sticky;top:var(--hd-h,64px);z-index:20;border-bottom:1px solid var(--gray-100)}
+.pl-bar .wrap{display:flex;align-items:center;height:60px;gap:16px}
+.pl-toggle{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:500}
+.pl-toggle{transition:color .3s}
+.pl.collapsed .pl-toggle{color:#bdbdbd}
+.pl.collapsed .pl-toggle svg{stroke:#bdbdbd}
+.pl-toggle svg{transition:stroke .3s;width:18px;height:18px;stroke:#e64c3d;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+
+.pl-count{font-size:15px;color:var(--gray-700);padding-left:16px;border-left:1px solid var(--gray-300)}
+.pl-count b{font-weight:600;color:var(--black)}
+.pl-sort{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray-700)}
+.pl-sort select{font:inherit;color:var(--black);border:1px solid var(--gray-300);border-radius:999px;padding:7px 34px 7px 16px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23111' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 14px center/10px;appearance:none;cursor:pointer}
+/* 篩選標籤列：出現時下方內容往下推、標籤由左往右淡入、舊標籤往右讓位（數值可在 chips-demo.html 調整） */
+:root{--fc-bar-dur:.45s; --fc-bar-x:-24px; --fc-in-dur:.45s; --fc-in-x:-20px; --fc-in-delay:.05s; --fc-shift-dur:.45s; --fc-out-dur:.25s; --fc-gap:8px; --fc-pt:16px; --fc-ease:cubic-bezier(.3,.7,.2,1);}
+.pl-chips-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--fc-bar-dur) var(--fc-ease)}
+.pl-chips-wrap.on{grid-template-rows:1fr}
+.pl-chips-in{min-height:0;overflow-x:visible;overflow-y:clip}
+.pl-chips{position:relative;display:flex;flex-wrap:wrap;gap:var(--fc-gap);padding:var(--fc-pt) 0 0;opacity:0;transform:translateX(var(--fc-bar-x));transition:opacity var(--fc-bar-dur) var(--ease),transform var(--fc-bar-dur) var(--fc-ease)}
+.pl-chips-wrap.on .pl-chips{opacity:1;transform:none}
+.pl-chips button{display:flex;align-items:center;gap:6px;font-size:13px;background:#fff;border:1px solid var(--gray-300);border-radius:999px;padding:6px 12px;white-space:nowrap}
+.pl-chips button::after{content:"";width:9px;height:9px;background:linear-gradient(45deg,transparent 45%,#111 45% 55%,transparent 55%),linear-gradient(-45deg,transparent 45%,#111 45% 55%,transparent 55%)}
+.pl-chips .clear{border:0;background:none;text-decoration:underline;color:var(--gray-700)}
+.pl-chips .clear::after{display:none}
+.pl-chips .c-new{opacity:0;transform:translateX(var(--fc-in-x))}
+.pl-chips .c-in{opacity:1;transform:none;transition:opacity var(--fc-in-dur) var(--ease) var(--fc-in-delay),transform var(--fc-in-dur) var(--fc-ease) var(--fc-in-delay)}
+.pl-chips .c-shift{transition:transform var(--fc-shift-dur) var(--fc-ease)}
+.pl-chips .c-leave{position:absolute;margin:0;pointer-events:none;opacity:1;transform:none}
+.pl-chips .c-leave.c-out{opacity:0;transform:translateX(var(--fc-in-x));transition:opacity var(--fc-out-dur) var(--ease),transform var(--fc-out-dur) var(--ease)}
+
+
+.pl-body{display:flex;gap:var(--pl-gap);padding-top:var(--pl-gap);align-items:flex-start}
+/* 側邊篩選 */
+.pf{flex:0 0 var(--pl-side);background:#fff;padding:8px 20px;position:sticky;top:calc(var(--hd-h,64px) + 76px);max-height:calc(100vh - var(--hd-h,64px) - 92px);overflow:auto;transition:margin .45s var(--ease),opacity .3s}
+.pf{scrollbar-width:none;overscroll-behavior:contain}
+.pf::-webkit-scrollbar{display:none}
+.pl.collapsed .pf{margin-left:calc(-1 * (var(--pl-side) + var(--pl-gap)));opacity:0;pointer-events:none}
+.pf-g{border-bottom:1px solid var(--gray-100)}
+.pf-g:last-child{border-bottom:0}
+.pf-h{display:flex;justify-content:space-between;align-items:center;width:100%;padding:16px 0;font-size:var(--pf-h);font-weight:var(--pf-h-w)}
+.pf-h i{position:relative;width:12px;height:12px}
+.pf-h i::before,.pf-h i::after{content:"";position:absolute;left:0;top:5.5px;width:12px;height:1.3px;background:#111;transition:transform .3s var(--ease)}
+.pf-h i::after{transform:rotate(90deg)}
+.pf-g.open .pf-h i::after{transform:rotate(0)}
+.pf-list{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s var(--ease)}
+.pf-g.open .pf-list{grid-template-rows:1fr}
+.pf-list > div{overflow:hidden}
+.pf-list ul{padding-bottom:14px}
+.pf label{display:flex;align-items:center;gap:10px;padding:var(--pf-opt-py) 0;font-size:var(--pf-opt);cursor:pointer;color:var(--gray-700)}
+.pf label:hover{color:var(--black)}
+.pf input{appearance:none;width:16px;height:16px;border:1px solid #999;border-radius:2px;flex:none;display:grid;place-items:center;transition:.2s}
+.pf input:checked{background:#111;border-color:#111}
+.pf input:checked::after{content:"";width:8px;height:4px;border:solid #fff;border-width:0 0 1.6px 1.6px;transform:translate(0,-1px) rotate(-45deg)}
+.pf label em{font-style:normal;margin-left:auto;font-size:12px;color:var(--gray-500)}
+.pf-foot{display:none}
+
+/* 產品格線（數值皆可在 tvs-demo.html 調整） */
+:root{
+  --pc-pad:20px; --pc-img-w:90%; --pc-img-ar:1.33; --pc-tag:11px;
+  --pc-sz-fs:13.5px; --pc-sz-h:25px; --pc-sz-mt:3px; --pc-sz-mb:15px;
+  --pc-h3:14.5px; --pc-h3-w:500; --pc-h3-lh:1.45;
+  --pc-md:13px; --pc-md-w:400; --pc-md-mt:5px;
+  --pc-ul-mt:14px; --pc-ul-pt:12px;
+  --pc-li:13px; --pc-li-w:400; --pc-li-lh:1.5; --pc-li-py:3.5px;
+  --pc-btn-mt:7px; --pc-btn-h:41px; --pc-btn-fs:14px; --pc-btn-w:400;
+  --pc-cmp-mt:14px; --pc-cmp-fs:12.5px;
+  --pf-h:15.5px; --pf-h-w:500; --pf-opt:14px; --pf-opt-py:10px;
+  /* 手機 */
+  --m-pl-gap:12px; --m-pc-pad:20px; --m-pc-img-w:72%; --m-pc-img-ar:1.6;
+  --m-pc-sz-fs:13.5px; --m-pc-sz-h:25px; --m-pc-h3:17px; --m-pc-h3-w:600; --m-pc-h3-lh:1.45;
+  --m-pc-md:13px; --m-pc-li:14px; --m-pc-li-lh:1.5; --m-pc-li-py:3px; --m-pc-btn-h:42px; --m-pc-btn-fs:15px;
+}
+.pg{flex:1;min-width:0;display:grid;grid-template-columns:repeat(var(--pl-cols),minmax(0,1fr));gap:var(--pl-gap)}
+.pl.collapsed .pg{--pl-cols:4}
+.pc{background:#fff;border-radius:var(--pc-radius);padding:var(--pc-pad);display:flex;flex-direction:column;position:relative;
+  opacity:0;transform:translateY(var(--pc-in-y));transition:opacity var(--pc-in-dur) var(--ease),transform var(--pc-in-dur) var(--ease);transition-delay:calc(var(--k,0) * var(--pc-stagger))}
+.pc.in{opacity:1;transform:none}
+.pc .tag{position:absolute;left:var(--pc-pad);top:var(--pc-pad);z-index:1;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-tag);font-weight:500;letter-spacing:.04em;color:var(--gray-500)}
+.pc-img{aspect-ratio:var(--pc-img-ar);display:grid;place-items:center;overflow:hidden}
+.pc-img img{width:var(--pc-img-w);height:100%;object-fit:contain;transition:transform .5s var(--ease),opacity .25s}
+.pc:hover .pc-img img{transform:scale(var(--pc-zoom))}
+.pc-sz{display:flex;align-items:center;gap:2px;margin:var(--pc-sz-mt) 0 var(--pc-sz-mb)}
+:root{--sz-w:43px; --sz-gap:4px; --sz-fade:12%; --sz-ring-r:21px; --sz-ring-bw:1px; --sz-glow:0px; --sz-glow-op:.35; --sz-off-op:.85; --sz-on-w:500; --sz-slide:.45s; --sz-in:.35s; --sz-in-delay:.15s; --sz-in-scale:.9;}
+.pc-sz .arr{width:24px;height:var(--pc-sz-h);display:grid;place-items:center;color:#111;flex:none;transition:color .2s}
+.pc-sz .arr:disabled{color:#ccc;cursor:default}
+.pc-sz .arr svg{width:7px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5}
+.pc-sz .rail{flex:1;min-width:0;overflow:hidden;padding:calc(var(--sz-glow) + 2px) 0;margin:calc(-1 * (var(--sz-glow) + 2px)) 0;
+  -webkit-mask:linear-gradient(90deg,transparent,#000 var(--sz-fade),#000 calc(100% - var(--sz-fade)),transparent);
+  mask:linear-gradient(90deg,transparent,#000 var(--sz-fade),#000 calc(100% - var(--sz-fade)),transparent);touch-action:pan-y}
+.pc-sz .rail > div{display:flex;gap:var(--sz-gap);width:max-content;transition:transform var(--sz-slide) cubic-bezier(.3,.7,.2,1)}
+.pc-sz .rail.no-tr > div{transition:none}
+.pc-sz button.s{flex:none;position:relative;width:var(--sz-w);height:var(--pc-sz-h);border:0;font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-sz-fs);color:#111;opacity:var(--sz-off-op);transition:color var(--sz-in) var(--ease),opacity var(--sz-in) var(--ease)}
+.pc-sz button.s::after{content:"";position:absolute;inset:0;border-radius:var(--sz-ring-r);border:var(--sz-ring-bw) solid #e64c3d;
+  box-shadow:0 0 var(--sz-glow) rgba(230,76,61,var(--sz-glow-op)),inset 0 0 calc(var(--sz-glow) * .5) rgba(230,76,61,calc(var(--sz-glow-op) * .6));
+  opacity:0;transform:scale(var(--sz-in-scale));transition:opacity .15s,transform .15s;pointer-events:none}
+.pc-sz button.s:hover{opacity:1}
+.pc-sz button.s.on{color:#e64c3d;opacity:1;font-weight:var(--sz-on-w);transition-delay:var(--sz-in-delay)}
+.pc-sz button.s.on::after{opacity:1;transform:none;transition:opacity var(--sz-in) var(--ease) var(--sz-in-delay),transform var(--sz-in) var(--ease) var(--sz-in-delay)}
+.pc h3{font-size:var(--pc-h3);font-weight:var(--pc-h3-w);line-height:var(--pc-h3-lh);word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
+.pc h3 .en{white-space:nowrap;font-family:"Gotham","Noto Sans TC",sans-serif}
+.pc .md{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:var(--pc-md);font-weight:var(--pc-md-w);color:var(--gray-500);margin-top:var(--pc-md-mt)}
+.pc ul{list-style:none;border-top:1px solid var(--gray-100);margin-top:var(--pc-ul-mt);padding-top:var(--pc-ul-pt);flex:1}
+.pc li{font-size:var(--pc-li);font-weight:var(--pc-li-w);line-height:var(--pc-li-lh);color:var(--gray-700);padding:var(--pc-li-py) 0 var(--pc-li-py) 12px;position:relative}
+.pc li::before{content:"";position:absolute;left:0;top:calc(var(--pc-li-py) + var(--pc-li) * var(--pc-li-lh) / 2);width:4px;height:1px;background:#999}
+.pc .act{margin-top:var(--pc-btn-mt)}
+.pc .act a{height:var(--pc-btn-h);border-radius:calc(var(--pc-btn-h) / 2);display:grid;place-items:center;font-size:var(--pc-btn-fs);font-weight:var(--pc-btn-w);background:#111;color:#fff;transition:background .25s}
+.pc .act a:hover{background:#333}
+.pc .cmp{display:flex;align-items:center;gap:8px;margin-top:var(--pc-cmp-mt);font-size:var(--pc-cmp-fs);color:var(--gray-700);cursor:pointer}
+.pc .cmp input{appearance:none;width:15px;height:15px;border:1px solid #999;border-radius:2px;display:grid;place-items:center}
+.pc .cmp input:checked{background:#111;border-color:#111}
+.pc .cmp input:checked::after{content:"";width:7px;height:3.5px;border:solid #fff;border-width:0 0 1.5px 1.5px;transform:translate(0,-1px) rotate(-45deg)}
+.pg-empty{grid-column:1/-1;background:#fff;padding:72px 24px;text-align:center;color:var(--gray-700)}
+.pg-empty button{margin-top:16px;text-decoration:underline}
+
+/* 比較列 */
+.cmp-bar{visibility:hidden;position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;box-shadow:0 -6px 24px rgba(0,0,0,.08);transform:translateY(100%);transition:transform .45s var(--ease)}
+.cmp-bar.on{transform:none;visibility:visible}
+.cmp-bar .wrap{display:flex;align-items:center;gap:16px;height:84px}
+.cmp-items{display:flex;gap:12px;flex:1;min-width:0}
+.cmp-items div{display:flex;align-items:center;gap:10px;background:#f5f5f5;padding:6px 12px 6px 6px;min-width:0;border-radius:6px}
+.cmp-items img{width:52px;height:40px;object-fit:contain}
+.cmp-items button{font-size:18px;line-height:1;color:var(--gray-500)}
+.cmp-items{position:relative}
+.cmp-items .c-new{opacity:0;transform:translateX(var(--fc-in-x))}
+.cmp-items .c-in{opacity:1;transform:none;transition:opacity var(--fc-in-dur) var(--ease) var(--fc-in-delay),transform var(--fc-in-dur) var(--fc-ease) var(--fc-in-delay)}
+.cmp-items .c-shift{transition:transform var(--fc-shift-dur) var(--fc-ease)}
+.cmp-items .c-leave{position:absolute;margin:0;pointer-events:none;opacity:1;transform:none}
+.cmp-items .c-leave.c-out{opacity:0;transform:translateX(var(--fc-in-x));transition:opacity var(--fc-out-dur) var(--ease),transform var(--fc-out-dur) var(--ease)}
+.cmp-items .nm{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.cmp-items .nm b{font-family:"Gotham","Noto Sans TC",sans-serif;font-size:14px;font-weight:600;color:#111}
+.cmp-items .nm small{font-size:12px;color:var(--gray-500)}
+.cmp-bar .go{height:40px;padding:0 28px;border-radius:20px;background:#111;color:#fff;font-size:14px;font-weight:500}
+.cmp-bar .go:disabled{background:#ccc}
+.cmp-bar .tip{font-size:13px;color:var(--gray-500)}
+
+/* SEO 文案＋FAQ */
+.seo{background:#fff;padding:72px 0 24px}
+.seo h2,.faq h2{font-size:28px;font-weight:600;margin-bottom:20px}
+.seo p{font-size:15px;line-height:1.85;color:var(--gray-700);max-width:980px}
+.seo p+p{margin-top:12px}
+.faq{background:#fff;padding:48px 0 96px}
+.faq details{border-bottom:1px solid var(--gray-100)}
+.faq summary{list-style:none;display:flex;justify-content:space-between;gap:24px;padding:22px 0;font-size:16px;font-weight:500;cursor:pointer}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary i{position:relative;width:14px;height:14px;flex:none;margin-top:5px}
+.faq summary i::before,.faq summary i::after{content:"";position:absolute;left:0;top:6.5px;width:14px;height:1.3px;background:#111;transition:transform .3s var(--ease)}
+.faq summary i::after{transform:rotate(90deg)}
+.faq details[open] summary i::after{transform:rotate(0)}
+.faq details p{font-size:15px;line-height:1.8;color:var(--gray-700);padding:0 40px 24px 0}
+
+@media (max-width:1200px){:root{--pl-cols:2}.pl.collapsed .pg{--pl-cols:3}}
+@media (max-width:1024px){:root{--pl-side:220px}}
+/* ---------- 手機 ---------- */
+@media (max-width:720px){
+  .crumb .wrap{height:44px;font-size:12px}
+  .pl-bar{top:0}
+  .pl-bar .wrap{height:56px;gap:12px}
+  .pl-count{font-size:13px;padding-left:12px}
+  .pl-sort > span{display:none}
+  .pl-sort select{padding:6px 30px 6px 12px;font-size:13px}
+  .pl-body{display:block;padding-top:12px}
+  .pg{--pl-cols:1!important;gap:var(--m-pl-gap)}
+  :root{--pc-pad:var(--m-pc-pad);--pc-img-w:var(--m-pc-img-w);--pc-img-ar:var(--m-pc-img-ar);--pc-sz-fs:var(--m-pc-sz-fs);--pc-sz-h:var(--m-pc-sz-h);
+    --pc-h3:var(--m-pc-h3);--pc-h3-w:var(--m-pc-h3-w);--pc-h3-lh:var(--m-pc-h3-lh);--pc-md:var(--m-pc-md);--pc-li:var(--m-pc-li);--pc-li-lh:var(--m-pc-li-lh);--pc-li-py:var(--m-pc-li-py);
+    --pc-btn-h:var(--m-pc-btn-h);--pc-btn-fs:var(--m-pc-btn-fs)}
+  /* 篩選改為由下往上的面板 */
+  .pf{position:fixed;inset:auto 0 0 0;top:auto;max-height:82vh;height:82vh;z-index:120;margin:0!important;opacity:1!important;padding:8px 24px 96px;border-radius:16px 16px 0 0;
+      transform:translateY(105%);visibility:hidden;transition:transform .42s var(--ease),visibility 0s .42s;pointer-events:auto!important}
+  .pl.sheet .pf,.pl.sheet .pf-foot{transform:none;visibility:visible;transition:transform .42s var(--ease)}
+  .pf::before{content:"篩選";display:block;font-size:18px;font-weight:600;padding:16px 0 8px}
+  .pf-foot{display:flex;gap:10px;position:fixed;left:0;right:0;bottom:0;padding:14px 24px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--gray-100);z-index:121;
+      transform:translateY(105%);visibility:hidden;transition:transform .42s var(--ease),visibility 0s .42s}
+  .pl.sheet .pf-foot{transform:none}
+  .pf-foot button{flex:1;height:44px;border-radius:22px;font-size:15px;font-weight:500;border:1px solid #111}
+  .pf-foot .ok{background:#111;color:#fff}
+  .pf-dim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:119;opacity:0;pointer-events:none;transition:opacity .35s}
+  .pl.sheet .pf-dim{opacity:1;pointer-events:auto}
+  .cmp-bar .wrap{height:auto;padding-top:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom));flex-wrap:wrap}
+  .cmp-items img{display:none}
+  .cmp-bar .tip{display:none}
+  .seo{padding:48px 0 8px}.seo h2,.faq h2{font-size:22px}
+  .seo p,.faq details p{font-size:14px}
+  .faq summary{font-size:15px;padding:18px 0}
+}
+@media (prefers-reduced-motion:reduce){.pc{opacity:1;transform:none;transition:none}}
+</style>
+<style id="pdp-css">
+/* ================= 商品頁（X11L） ================= */
+:root{--pd-gold:#d9b98a;--pd-gold2:#f3dfbd;--pd-dark:#000;--pd-dark2:#0d0d0d;--pd-line:rgba(255,255,255,.14);--pd-sub-h:56px;--pd-top:64px}
+
+/* ---------- 購買區 ---------- */
+.pd-buy{padding:24px 0 72px;background:#fff}
+.pd-buy .wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:64px;align-items:start}
+.pd-gal{position:sticky;top:calc(var(--pd-top) + var(--pd-sub-h) + 16px)}
+.pd-main{position:relative;aspect-ratio:4/3;background:var(--gray-50);border-radius:16px;overflow:hidden}
+.pd-main img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .45s var(--ease)}
+.pd-main img.on{opacity:1}
+.pd-main .nav{position:absolute;top:50%;width:40px;height:40px;margin-top:-20px;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 2px 10px rgba(0,0,0,.08);display:grid;place-items:center;z-index:2;opacity:0;transition:opacity .25s}
+.pd-main:hover .nav{opacity:1}
+.pd-main .nav.l{left:14px}.pd-main .nav.r{right:14px}
+.pd-main .nav svg{width:8px;height:14px;fill:none;stroke:#111;stroke-width:1.6}
+.pd-main .cnt{position:absolute;right:14px;bottom:12px;font-size:12px;color:var(--gray-500);z-index:2}
+.pd-thumbs{display:flex;gap:10px;margin-top:12px;overflow-x:auto;scrollbar-width:none}
+.pd-thumbs::-webkit-scrollbar{display:none}
+.pd-thumbs button{flex:none;width:72px;aspect-ratio:4/3;border-radius:8px;background:var(--gray-50);border:1.5px solid transparent;overflow:hidden;transition:border-color .2s}
+.pd-thumbs button.on{border-color:#111}
+.pd-thumbs img{width:100%;height:100%;object-fit:contain}
+
+.pd-info .tags{display:flex;gap:8px;margin-bottom:14px}
+.pd-info .tags span{font-size:12px;line-height:1;padding:6px 10px;border-radius:999px;background:var(--gray-100);color:var(--gray-700)}
+.pd-info .tags .new{background:var(--red);color:#fff}
+.pd-info .md{font-size:15px;color:var(--gray-500);letter-spacing:.04em}
+.pd-info h1{font-size:30px;line-height:1.35;font-weight:600;margin:6px 0 18px;word-break:keep-all;overflow-wrap:anywhere}
+.pd-feat{list-style:none;display:grid;gap:8px;padding:18px 0;border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-100)}
+.pd-feat li{position:relative;padding-left:16px;font-size:15px;color:var(--gray-700)}
+.pd-feat li::before{content:"";position:absolute;left:2px;top:.62em;width:5px;height:5px;border-radius:50%;background:#111}
+.pd-lab{font-size:14px;font-weight:600;margin:24px 0 10px;display:flex;justify-content:space-between;align-items:baseline}
+.pd-lab a{font-size:13px;font-weight:400;color:var(--gray-500);text-decoration:underline;text-underline-offset:3px}
+.pd-size{display:flex;gap:10px;flex-wrap:wrap}
+.pd-size button{min-width:84px;height:48px;padding:0 18px;border-radius:10px;border:1.5px solid var(--gray-300);font-size:16px;font-weight:500;transition:border-color .2s,background .2s}
+.pd-size button small{font-size:12px;margin-left:1px}
+.pd-size button:hover{border-color:#111}
+.pd-size button.on{border-color:#111;background:#111;color:#fff}
+.pd-price{margin-top:26px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pd-price small{font-size:13px;color:var(--gray-500)}
+.pd-price b{font-size:28px;font-weight:600;letter-spacing:.01em}
+.pd-price em{font-style:normal;font-size:12px;color:var(--gray-500);width:100%}
+.pd-cta{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:20px}
+.pd-btn{height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:500;transition:background .2s,color .2s,border-color .2s}
+.pd-btn.pri{background:#111;color:#fff}
+.pd-btn.pri:hover{background:#333}
+.pd-btn.sec{border:1.5px solid var(--gray-300);padding:0 24px}
+.pd-btn.sec:hover{border-color:#111}
+.pd-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6}
+.pd-ch{margin-top:12px;border-radius:12px;background:var(--gray-50);overflow:hidden;max-height:0;transition:max-height .45s var(--ease)}
+.pd-ch.open{max-height:400px}
+.pd-ch ul{list-style:none;padding:8px 18px}
+.pd-ch li a{display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-size:15px;border-bottom:1px solid var(--gray-100)}
+.pd-ch li:last-child a{border:0}
+.pd-ch li a span{font-size:13px;color:var(--gray-500)}
+.pd-ch p{font-size:12px;color:var(--gray-500);padding:0 18px 14px}
+.pd-links{display:flex;gap:22px;flex-wrap:wrap;margin-top:22px;font-size:14px}
+.pd-links a{display:flex;align-items:center;gap:6px;color:var(--gray-700)}
+.pd-links a:hover{color:#111}
+.pd-links svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5}
+
+/* ---------- 頁內選單 ---------- */
+.pd-sub{position:sticky;top:var(--pd-top);z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--gray-100);transition:top .35s var(--ease)}
+.pd-sub .wrap{display:flex;align-items:center;gap:28px;height:var(--pd-sub-h)}
+.pd-sub .nm{font-weight:600;font-size:16px;margin-right:8px;white-space:nowrap}
+.pd-sub nav{display:flex;gap:28px;flex:1;overflow-x:auto;scrollbar-width:none;height:100%}
+.pd-sub nav::-webkit-scrollbar{display:none}
+.pd-sub nav a{position:relative;display:flex;align-items:center;font-size:14px;color:var(--gray-500);white-space:nowrap;transition:color .2s}
+.pd-sub nav a.on,.pd-sub nav a:hover{color:#111}
+.pd-sub nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:#111;transform:scaleX(0);transition:transform .3s var(--ease)}
+.pd-sub nav a.on::after{transform:none}
+.pd-sub .go{height:36px;padding:0 20px;border-radius:999px;background:#111;color:#fff;font-size:13px;display:flex;align-items:center;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s}
+.pd-sub.past .go{opacity:1;pointer-events:auto}
+
+/* ---------- 詳細規格 ---------- */
+.pd-spec{padding:110px 0 40px;background:#fff}
+.pd-sec-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px;flex-wrap:wrap}
+.pd-sec-hd h2{font-size:32px;font-weight:600}
+.pd-seg{display:inline-flex;background:var(--gray-100);border-radius:999px;padding:4px}
+.pd-seg button{height:36px;padding:0 18px;border-radius:999px;font-size:14px;color:var(--gray-700);transition:background .25s,color .25s}
+.pd-seg button.on{background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.sp-grp{border-top:1px solid var(--gray-100)}
+.sp-grp:last-of-type{border-bottom:1px solid var(--gray-100)}
+.sp-grp > button{width:100%;display:flex;justify-content:space-between;align-items:center;padding:26px 0;font-size:20px;font-weight:600;text-align:left}
+.sp-grp > button i{position:relative;width:14px;height:14px;flex:none}
+.sp-grp > button i::before,.sp-grp > button i::after{content:"";position:absolute;left:0;top:6px;width:14px;height:1.6px;background:#111;transition:transform .3s var(--ease)}
+.sp-grp > button i::after{transform:rotate(90deg)}
+.sp-grp.open > button i::after{transform:rotate(0)}
+.sp-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--ease)}
+.sp-grp.open .sp-body{grid-template-rows:1fr}
+.sp-body > div{overflow:hidden}
+.sp-tb{display:grid;grid-template-columns:repeat(2,1fr);column-gap:64px;padding-bottom:20px}
+.sp-row{display:grid;grid-template-columns:180px 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--gray-100);font-size:15px}
+.sp-row dt{color:var(--gray-500)}
+.sp-row dd{word-break:keep-all;overflow-wrap:anywhere}
+.sp-row dd.na{color:#bbb}
+.sp-row dd svg{width:18px;height:18px;fill:none;stroke:#111;stroke-width:2;vertical-align:-3px}
+.sp-fn{font-size:12px;color:var(--gray-500);margin-top:22px;line-height:1.8}
+
+/* ---------- 權益說明／說明書 ---------- */
+.pd-more{padding:70px 0 110px;background:#fff}
+.pd-more .wrap{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.pd-card{border-radius:18px;background:var(--gray-50);padding:34px 34px 30px}
+.pd-card h2{font-size:22px;font-weight:600;margin-bottom:14px}
+.pd-card p{font-size:14px;color:var(--gray-700);line-height:1.8}
+.pd-card .ph{display:inline-block;margin-top:14px;font-size:12px;padding:5px 10px;border-radius:6px;background:#fff1c9;color:#7a5a00}
+.pd-dl{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px;padding:16px 20px;border-radius:12px;background:#fff;font-size:15px;transition:box-shadow .2s}
+.pd-dl:hover{box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.pd-dl span{font-size:12px;color:var(--gray-500)}
+.pd-dl svg{width:18px;height:18px;fill:none;stroke:#111;stroke-width:1.6;flex:none}
+
+/* ---------- 其他同類商品 ---------- */
+.pd-rel{padding:0 0 120px;background:#fff}
+.pd-rel h2{font-size:28px;font-weight:600;margin-bottom:26px}
+.pd-rel .row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.pd-rel a{display:block;border-radius:16px;background:var(--gray-50);padding:22px 22px 26px;transition:box-shadow .25s}
+.pd-rel a:hover{box-shadow:0 8px 24px rgba(0,0,0,.07)}
+.pd-rel img{aspect-ratio:600/372;object-fit:contain;width:100%;mix-blend-mode:multiply}
+.pd-rel .tag{display:inline-block;font-size:11px;padding:4px 8px;border-radius:999px;background:var(--red);color:#fff;margin-top:14px}
+.pd-rel h3{font-size:18px;font-weight:600;margin-top:8px}
+.pd-rel p{font-size:13px;color:var(--gray-500);margin-top:4px}
+
+/* ---------- 手機底部購買列 ---------- */
+.pd-bar{display:none}
+
+@media (max-width:1024px){
+  .pd-buy .wrap{gap:36px}
+  .pd-rel .row{grid-template-columns:repeat(2,1fr)}
+  .sp-tb{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  :root{--pd-sub-h:48px}
+  .pd-buy{padding:8px 0 48px}
+  .pd-buy .wrap{grid-template-columns:1fr;gap:22px;padding:0}
+  .pd-gal{position:static}
+  .pd-main{border-radius:0}
+  .pd-main .nav{display:none}
+  .pd-thumbs{display:none}
+  .pd-dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+  .pd-dots i{width:6px;height:6px;border-radius:50%;background:var(--gray-300);transition:background .2s,width .3s}
+  .pd-dots i.on{background:#111;width:18px;border-radius:3px}
+  .pd-info{padding:0 20px}
+  .pd-info h1{font-size:23px}
+  .pd-feat li{font-size:14px}
+  .pd-size button{flex:1;min-width:0}
+  .pd-cta{grid-template-columns:1fr}
+  .pd-btn.sec{order:2}
+  .pd-sub .wrap{gap:16px;padding:0 0 0 20px}
+  .pd-sub .nm{display:none}
+  .pd-sub nav{gap:22px;padding-right:20px}
+  .pd-sub .go{display:none}
+  .pd-spec{padding:72px 0 24px}
+  .pd-sec-hd h2{font-size:26px}
+  .pd-seg{width:100%}.pd-seg button{flex:1}
+  .sp-grp > button{font-size:17px;padding:22px 0}
+  .sp-row{grid-template-columns:120px 1fr;font-size:14px}
+  .pd-more{padding:40px 0 70px}
+  .pd-more .wrap{grid-template-columns:1fr;gap:16px}
+  .pd-card{padding:26px 22px}
+  .pd-rel{padding-bottom:100px}
+  .pd-rel h2{font-size:22px}
+  .pd-rel .row{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 24px;margin:0 -24px;padding:0 24px;gap:12px;scrollbar-width:none}
+  .pd-rel .row::-webkit-scrollbar{display:none}
+  .pd-rel a{flex:0 0 66%;scroll-snap-align:start}
+  .pd-bar{display:flex;align-items:center;gap:12px;position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);box-shadow:0 -6px 20px rgba(0,0,0,.06);padding:10px 16px calc(10px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .4s var(--ease)}
+  .pd-bar.on{transform:none}
+  .pd-bar .t{flex:1;min-width:0}
+  .pd-bar .t b{display:block;font-size:14px}
+  .pd-bar .t span{font-size:12px;color:var(--gray-500)}
+  .pd-bar a{height:42px;padding:0 22px;border-radius:999px;background:#111;color:#fff;font-size:14px;display:flex;align-items:center}
+}
+@media (min-width:721px){.pd-dots{display:none}}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+</style><style id="twi-css">
+/* ===== 台灣官網 X11L 商品介紹（樣式取自 tcl-shop.com.tw：bootstrap、style.css、tcl.css、tcl-pro-detail.css，限定在 .twi 內） ===== */
+.twi{font-size:15px;line-height:1.5;color:#4d4d4d;padding-bottom:100px;background:#fff}
+.twi *,.twi ::after,.twi ::before{box-sizing:border-box}
+.twi h2,.twi h3,.twi h4{margin-top:0;margin-bottom:.5rem;font-weight:600;line-height:1.2;font-family:var(--font)}
+.twi h2{font-size:36px}.twi h3{font-size:27px}.twi h4{font-size:20px}
+.twi p{margin-top:0;margin-bottom:15px;line-height:24px}
+.twi ul{margin:0;padding:0}.twi li{list-style:none}
+.twi img{vertical-align:middle;border-style:none;display:inline-block}
+.twi picture{position:relative;display:block}
+.twi picture img{width:100%}
+.twi .container,.twi .container-fluid{width:100%;padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}
+@media (min-width:576px){.twi .container{max-width:540px}}
+@media (min-width:768px){.twi .container{max-width:720px}}
+@media (min-width:992px){.twi .container{max-width:960px}}
+@media (min-width:1200px){.twi .container{max-width:1140px}}
+.twi .row{display:flex;flex-wrap:wrap;margin-right:-15px;margin-left:-15px}
+.twi .col-12,.twi .col-xl-12{position:relative;width:100%;padding-right:15px;padding-left:15px;flex:0 0 100%;max-width:100%}
+.twi .text-center{text-align:center!important}
+.twi .mt-0{margin-top:0!important}.twi .mb-0{margin-bottom:0!important}
+.twi .mt-20{margin-top:20px}.twi .mt-30{margin-top:30px}.twi .mt-50{margin-top:50px}.twi .mt-80{margin-top:80px}.twi .mt-100{margin-top:100px}
+.twi .mb-10{margin-bottom:10px}.twi .mb-20{margin-bottom:20px}
+.twi .block-bk{background-color:#000!important}
+.twi .text-white{color:#fff!important}
+.twi .text-white h2,.twi .text-white h3,.twi .text-white h4,.twi .text-white p,.twi .text-white span,.twi .text-white li{color:#fff!important}
+.twi .product__details-des p{color:#606060;font-size:18px;line-height:28px}
+.twi .product__details-des img{max-width:100%}
+.twi .product__details-des .container-fluid,.twi .product__details-des .container-fluid .col-12{padding-right:0;padding-left:0}
+.twi .product__details-des .container-fluid .row{margin-right:0;margin-left:0}
+.twi .X11L p,.twi .X11L div{font-size:18px}
+.twi .X11K-color-1,.twi h4.X11K-color-1,.twi p.X11K-color-1{color:#f3d69e!important}
+.twi .X11K-color-4,.twi p.X11K-color-4{color:#939393!important;font-size:15px}
+.twi .X11L-color-1,.twi h2.X11L-color-1,.twi h3.X11L-color-1,.twi h4.X11L-color-1,.twi p.X11L-color-1{color:#d9c0ab!important}
+.twi p.X11L-color-p{color:#b0b0b0!important}
+.twi p.X11L-color-grey{font-size:13px;text-align:left;color:#7e7e7e!important}
+.twi{--tw-wel-pt:120px;--tw-wel-gap:20px;--tw-wel-pb:40px;--tw-wel-img-mt:0px;--m-tw-wel-pt:64px;--m-tw-wel-gap:12px;--m-tw-wel-pb:24px;--m-tw-wel-img-mt:0px}
+.twi .X11L-01{position:relative;z-index:1;padding-top:var(--tw-wel-pt);padding-bottom:var(--tw-wel-pb)}
+.twi .X11L-01 h2.mb-20{margin-bottom:var(--tw-wel-gap)}
+.twi .X11L-01 + picture{margin-top:var(--tw-wel-img-mt)}
+@media (max-width:720px){.twi .X11L-01{padding-top:var(--m-tw-wel-pt);padding-bottom:var(--m-tw-wel-pb)}.twi .X11L-01 h2.mb-20{margin-bottom:var(--m-tw-wel-gap)}.twi .X11L-01 + picture{margin-top:var(--m-tw-wel-img-mt)}}
+.twi .X11L-02{padding-top:70px;padding-bottom:0}
+/* 分頁按鈕（原 bootstrap nav-tabs + tcl-pro-detail.css） */
+.twi .nav{display:flex;flex-wrap:wrap;padding-left:0;margin-bottom:0;list-style:none}
+.twi .collapse-menu ul{justify-content:center;border-bottom:none}
+.twi .nav-tabs .nav-item{margin-bottom:-1px}
+.twi .collapse-menu .nav-tabs .nav-link{display:block;padding:8px 24px;border-radius:20px;margin-right:16px;border:1px solid rgba(0,0,0,.12);color:#000;font-weight:700;background:transparent;cursor:pointer;font-size:15px;transition:.3s ease-out}
+.twi .collapse-menu .nav-tabs .nav-link:hover,.twi .collapse-menu .nav.nav-tabs .nav-item .nav-link.active{border:1px solid #000}
+.twi .block-bk .collapse-menu .nav-tabs .nav-link{color:#fff;border:1px solid rgba(255,255,255,.12)}
+.twi .block-bk .collapse-menu .nav-tabs .nav-link:hover,.twi .block-bk .collapse-menu .nav.nav-tabs .nav-item .nav-link.active{border:1px solid #fff}
+.twi .collapse-menu .tab-content{margin-top:50px}
+.twi .tab-content > .tab-pane{display:none}
+.twi .tab-content > .active{display:block}
+.twi .fade{transition:opacity .15s linear}
+.twi .fade:not(.show){opacity:0}
+/* 輪播（原 Swiper：一次一張、循環、左右按鈕在下方） */
+.twi .swiper{margin-left:auto;margin-right:auto;position:relative;overflow:hidden;width:100%;max-width:100%}
+.twi .swiper-wrapper{position:relative;width:100%;display:flex;transition:transform .3s ease}
+.twi .swiper-slide{flex-shrink:0;width:100%;position:relative}
+.twi .swiper-pagination-custom{display:flex;justify-content:center;margin-top:20px}
+.twi .swiper-button-prev,.twi .swiper-button-next{position:relative;margin:0 15px;width:35px;height:35px;border:2px solid #fff;border-radius:50%;cursor:pointer;transition:opacity .3s}
+.twi .swiper-button-prev:hover,.twi .swiper-button-next:hover{opacity:.8}
+.twi .swiper-button-prev::after,.twi .swiper-button-next::after{content:"";position:absolute;top:50%;left:50%;width:9px;height:9px;border-top:2px solid #fff;border-right:2px solid #fff}
+.twi .swiper-button-prev::after{transform:translate(-30%,-50%) rotate(-135deg)}
+.twi .swiper-button-next::after{transform:translate(-70%,-50%) rotate(45deg)}
+@media (max-width:720px){.twi h2{font-size:26px}.twi h3{font-size:21px}.twi h4{font-size:17px}.twi .collapse-menu .nav-tabs .nav-link{padding:7px 16px;margin:0 4px 8px;font-size:14px}.twi .common-title-img{width:260px!important}}
+</style>
+<style id="tune">
+.tp{position:fixed;right:16px;top:16px;z-index:5000;width:360px;max-height:calc(100vh - 32px);overflow:auto;background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.2);font:13px/1.4 "Gotham","Noto Sans TC",sans-serif;color:#111}
+.tp header{position:sticky;top:0;background:#111;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.tp header button{color:#fff;opacity:.7;font-size:12px}
+.tp.min .tb{display:none}
+.tb{padding:8px 16px 16px}
+.tg{border-top:1px solid #eee;padding:12px 0 4px}.tg:first-child{border-top:0}
+.tg h5{font-size:12px;color:#888;font-weight:500;margin-bottom:8px}
+.tc{display:grid;grid-template-columns:104px 1fr 56px;align-items:center;gap:8px;margin-bottom:8px}
+.tc input{width:100%;accent-color:#E64C3D}
+.tc output{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.tc select{grid-column:2/4;padding:4px 6px;border:1px solid #ddd;border-radius:6px;font:inherit}
+.tbtns{display:flex;gap:8px;margin-top:10px}
+.tbtns button{flex:1;height:34px;border-radius:999px;border:1px solid #111;font-size:12px;font-weight:600}
+.tbtns button.p{background:#111;color:#fff}
+.thint{font-size:11px;color:#999;margin-top:10px;line-height:1.6}
+.tframe{position:fixed;left:calc(50% - 190px - 180px);top:16px;z-index:4999;width:390px;height:calc(100vh - 32px);max-height:844px;border:0;border-radius:24px;box-shadow:0 12px 40px rgba(0,0,0,.35);background:#fff}
+.tback{position:fixed;inset:0;z-index:4998;background:rgba(20,20,20,.85)}
+.ttoast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;z-index:6000;opacity:0;transition:.3s}
+.ttoast.on{opacity:1}
+body.inframe .tp,body.inframe .tback,body.inframe .tframe,body.inframe .demo-tag{display:none}
+.ttoast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;z-index:6000;opacity:0;transition:.3s}
+body.tune-d{padding-right:392px}
+body.tune-d .header{margin-right:0}
+body:not(.tune-m) .tframe,body:not(.tune-m) .tback{display:none}
+.tmode{display:flex;gap:6px;margin:4px 0 6px}
+.tmode button{flex:1;height:32px;border-radius:999px;border:1px solid #111;font-size:12px;font-weight:600}
+.tmode button.on{background:#111;color:#fff}
+body.inframe .tp,body.inframe .tframe,body.inframe .tback,body.inframe .ttoast{display:none!important}
+.demo-tag{display:none}
+</style>
+</head>
+<body>
+
+<div class="demo-tag">DEMO 示意稿・非正式網站</div>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="hd-bar">
+    <a class="logo" href="index.html"><img src="images/tcl_logo.svg" alt="TCL"></a>
+    <ul class="nav">
+      <li class="has-mega"><a class="nav-link" href="#">顯示器 &amp; Soundbar</a><div class="mega"><div class="mm-inner"><div class="mm-row"><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_x11l.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">全部電視</h4><ul class="mm-list"><li style="--i:0"><a href="tvs.html?tech=SQD-Mini+LED">SQD-Mini LED 顯示器</a></li><li style="--i:1"><a href="tvs.html?tech=RGB-Mini+LED">RGB-Mini LED 顯示器</a></li><li style="--i:2"><a href="tvs.html?tech=QD-Mini+LED">QD-Mini LED 顯示器</a></li><li style="--i:3"><a href="tvs.html?tech=SQD-Mini+LED,RGB-Mini+LED,QD-Mini+LED">Mini LED 顯示器</a></li><li style="--i:4"><a href="tvs.html?tech=QLED">QLED 顯示器</a></li><li style="--i:5"><a href="tvs.html?tech=4K+HDR">4K HDR 顯示器</a></li><li style="--i:6"><a href="tvs.html?feat=gtv">Google TV</a></li><li style="--i:7"><a href="tvs.html">全部顯示器</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_c8l.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">精選推薦</h4><ul class="mm-list"><li style="--i:0"><a href="tvs.html?feat=theater">家庭劇院</a></li><li style="--i:1"><a href="tvs.html?feat=gaming">電玩專用</a></li><li style="--i:2"><a href="tvs.html?feat=sports">賽事專用</a></li><li style="--i:3"><a href="tvs.html?feat=big">大尺寸螢幕</a></li><li style="--i:4"><a href="#">TCL 畫質技術</a></li><li style="--i:5"><a href="#">選購指南</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_c7l.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">依尺寸</h4><ul class="mm-list"><li style="--i:0"><a href="tvs.html?size=98%2B">98 吋以上</a></li><li style="--i:1"><a href="tvs.html?size=85-97">85 吋</a></li><li style="--i:2"><a href="tvs.html?size=75-84">75–84 吋</a></li><li style="--i:3"><a href="tvs.html?size=65-74">65–74 吋</a></li><li style="--i:4"><a href="tvs.html?size=55-64">55–64 吋</a></li><li style="--i:5"><a href="tvs.html?size=44-50">44–50 吋</a></li><li style="--i:6"><a href="tvs.html?size=43">43 吋以下</a></li></ul></div></div></div><div class="mm-row"><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_rm9l.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">最新產品</h4><ul class="mm-list"><li style="--i:0"><a href="#">X11L</a></li><li style="--i:1"><a href="#">C8L</a></li><li style="--i:2"><a href="#">C7L</a></li><li style="--i:3"><a href="#">RM9L</a></li><li style="--i:4"><a href="#">A400 Pro</a></li><li style="--i:5"><a href="#">A400M</a></li><li style="--i:6"><a href="#">A400</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_q85h.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">Soundbar</h4><ul class="mm-list"><li style="--i:0"><a href="#">Q85H</a></li><li style="--i:1"><a href="#">Q75H</a></li><li style="--i:2"><a href="#">S45H</a></li><li style="--i:3"><a href="#">了解更多</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb cut"><img src="images/menu_32x3b.webp" alt=""></div><div class="mm-body"><h4 class="mm-title">電競顯示器</h4><ul class="mm-list"><li style="--i:0"><a href="#">32X3B</a></li><li style="--i:1"><a href="#">34R83Q</a></li><li style="--i:2"><a href="#">27R83U</a></li><li style="--i:3"><a href="#">了解更多</a></li></ul></div></div></div></div></div></li>
+      <li class="has-mega"><a class="nav-link" href="#">生活家電</a><div class="mega"><div class="mm-inner"><div class="mm-row"><div class="mm-col"><div class="mm-thumb"><img src="https://www.tcl-shop.com.tw/upload/products/b_2506021006360000001.jpg" alt=""></div><div class="mm-body"><h4 class="mm-title">電冰箱</h4><ul class="mm-list"><li style="--i:0"><a href="#">P415TM 智慧變頻雙門</a></li><li style="--i:1"><a href="#">P333TM 智慧變頻雙門</a></li><li style="--i:2"><a href="#">了解更多</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb"><img src="https://www.tcl-shop.com.tw/upload/products/b_2602111724420000001.jpg" alt=""></div><div class="mm-body"><h4 class="mm-title">洗衣機</h4><ul class="mm-list"><li style="--i:0"><a href="#">P315TLG 直立式變頻</a></li><li style="--i:1"><a href="#">P312TLG 直立式變頻</a></li><li style="--i:2"><a href="#">了解更多</a></li></ul></div></div><div class="mm-col"><div class="mm-thumb"><img src="https://www.tcl-shop.com.tw/upload/products/b_2306201832010000001.jpg" alt=""></div><div class="mm-body"><h4 class="mm-title">冷凍櫃</h4><ul class="mm-list"><li style="--i:0"><a href="#">F408CFW 臥式變頻</a></li><li style="--i:1"><a href="#">F200CFW 臥式</a></li><li style="--i:2"><a href="#">P272SDS 直立式</a></li><li style="--i:3"><a href="#">了解更多</a></li></ul></div></div></div></div></div></li>
+      <li><a class="nav-link" href="#">最新消息</a></li>
+      <li><a class="nav-link" href="#">銷售據點</a></li>
+    </ul>
+    <ul class="nav nav-right">
+      <li class="has-mega"><a class="nav-link" href="#">支援</a><div class="mega"><div class="mm-inner"><div class="mm-row"><div class="mm-col noimg"><div class="mm-body"><h4 class="mm-title">服務</h4><ul class="mm-list"><li style="--i:0"><a href="#">線上報修</a></li><li style="--i:1"><a href="#">產品註冊</a></li><li style="--i:2"><a href="#">保固說明</a></li></ul></div></div><div class="mm-col noimg"><div class="mm-body"><h4 class="mm-title">資源</h4><ul class="mm-list"><li style="--i:0"><a href="#">使用手冊下載</a></li><li style="--i:1"><a href="#">常見問題</a></li><li style="--i:2"><a href="#">軟體更新</a></li></ul></div></div><div class="mm-col noimg"><div class="mm-body"><h4 class="mm-title">聯絡我們</h4><ul class="mm-list"><li style="--i:0"><a href="#">客服中心</a></li><li style="--i:1"><a href="#">服務據點</a></li></ul></div></div></div></div></div></li>
+      <li><a class="nav-link" href="#">關於 TCL</a></li>
+    </ul>
+    <div class="tools">
+      <a href="#" aria-label="搜尋"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></a>
+      <a href="#" aria-label="會員"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></a>
+      <a href="#" aria-label="購物車"><svg viewBox="0 0 24 24"><path d="M5 7h14l-1.2 12.1a2 2 0 0 1-2 1.9H8.2a2 2 0 0 1-2-1.9z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count">0</span></a>
+      <button class="burger" aria-label="選單" aria-expanded="false"><i></i><i></i><i></i></button>
+    </div>
+  </div>
+</header>
+<div class="hd-dim"></div>
+
+<nav class="drawer" aria-hidden="true"><div class="dr-inner">
+  <div class="dr-l1" style="--i:0"><button class="dr-head" aria-expanded="false"><span>顯示器 &amp; Soundbar</span><i class="dr-ico"></i></button>
+    <div class="dr-acc"><div class="dr-acc-in"><div class="dr-sec"><h5>全部電視</h5><ul><li><a href="tvs.html?tech=SQD-Mini+LED">SQD-Mini LED 顯示器</a></li><li><a href="tvs.html?tech=RGB-Mini+LED">RGB-Mini LED 顯示器</a></li><li><a href="tvs.html?tech=QD-Mini+LED">QD-Mini LED 顯示器</a></li><li><a href="tvs.html?tech=SQD-Mini+LED,RGB-Mini+LED,QD-Mini+LED">Mini LED 顯示器</a></li><li><a href="tvs.html?tech=QLED">QLED 顯示器</a></li><li><a href="tvs.html?tech=4K+HDR">4K HDR 顯示器</a></li><li><a href="tvs.html?feat=gtv">Google TV</a></li><li><a href="tvs.html">全部顯示器</a></li></ul></div><div class="dr-sec"><h5>精選推薦</h5><ul><li><a href="tvs.html?feat=theater">家庭劇院</a></li><li><a href="tvs.html?feat=gaming">電玩專用</a></li><li><a href="tvs.html?feat=sports">賽事專用</a></li><li><a href="tvs.html?feat=big">大尺寸螢幕</a></li><li><a href="#">TCL 畫質技術</a></li><li><a href="#">選購指南</a></li></ul></div><div class="dr-sec"><h5>依尺寸</h5><ul><li><a href="tvs.html?size=98%2B">98 吋以上</a></li><li><a href="tvs.html?size=85-97">85 吋</a></li><li><a href="tvs.html?size=75-84">75–84 吋</a></li><li><a href="tvs.html?size=65-74">65–74 吋</a></li><li><a href="tvs.html?size=55-64">55–64 吋</a></li><li><a href="tvs.html?size=44-50">44–50 吋</a></li><li><a href="tvs.html?size=43">43 吋以下</a></li></ul></div><div class="dr-sec"><h5>最新產品</h5><ul><li><a href="#">X11L</a></li><li><a href="#">C8L</a></li><li><a href="#">C7L</a></li><li><a href="#">RM9L</a></li><li><a href="#">A400 Pro</a></li><li><a href="#">A400M</a></li><li><a href="#">A400</a></li></ul></div><div class="dr-sec"><h5>Soundbar</h5><ul><li><a href="#">Q85H</a></li><li><a href="#">Q75H</a></li><li><a href="#">S45H</a></li></ul></div><div class="dr-sec"><h5>電競顯示器</h5><ul><li><a href="#">32X3B</a></li><li><a href="#">34R83Q</a></li><li><a href="#">27R83U</a></li></ul></div></div></div></div>
+  <div class="dr-l1" style="--i:1"><button class="dr-head" aria-expanded="false"><span>生活家電</span><i class="dr-ico"></i></button>
+    <div class="dr-acc"><div class="dr-acc-in"><div class="dr-sec"><h5>電冰箱</h5><ul><li><a href="#">P415TM 智慧變頻雙門</a></li><li><a href="#">P333TM 智慧變頻雙門</a></li></ul></div><div class="dr-sec"><h5>洗衣機</h5><ul><li><a href="#">P315TLG 直立式變頻</a></li><li><a href="#">P312TLG 直立式變頻</a></li></ul></div><div class="dr-sec"><h5>冷凍櫃</h5><ul><li><a href="#">F408CFW 臥式變頻</a></li><li><a href="#">F200CFW 臥式</a></li><li><a href="#">P272SDS 直立式</a></li></ul></div></div></div></div>
+  <div class="dr-l1" style="--i:2"><a class="dr-head dr-link" href="#"><span>最新消息</span><i class="dr-arr"></i></a></div>
+  <div class="dr-l1" style="--i:3"><a class="dr-head dr-link" href="#"><span>銷售據點</span><i class="dr-arr"></i></a></div>
+  <div class="dr-l1" style="--i:4"><button class="dr-head" aria-expanded="false"><span>支援</span><i class="dr-ico"></i></button>
+    <div class="dr-acc"><div class="dr-acc-in"><div class="dr-sec"><h5>服務</h5><ul><li><a href="#">線上報修</a></li><li><a href="#">產品註冊</a></li><li><a href="#">保固說明</a></li></ul></div><div class="dr-sec"><h5>資源</h5><ul><li><a href="#">使用手冊下載</a></li><li><a href="#">常見問題</a></li><li><a href="#">軟體更新</a></li></ul></div><div class="dr-sec"><h5>聯絡我們</h5><ul><li><a href="#">客服中心</a></li><li><a href="#">服務據點</a></li></ul></div></div></div></div>
+  <div class="dr-l1" style="--i:5"><a class="dr-head dr-link" href="#"><span>關於 TCL</span><i class="dr-arr"></i></a></div>
+  <div class="dr-foot" style="--i:6"><a href="#">會員登入</a><span>台灣 / 繁體中文</span></div>
+</div></nav>
+
+<main>
+
+
+<nav class="crumb"><div class="wrap"><a href="index.html">首頁</a><svg viewBox="0 0 6 10"><path d="M1 1l4 4-4 4"/></svg><a href="tvs.html">全部顯示器</a><svg viewBox="0 0 6 10"><path d="M1 1l4 4-4 4"/></svg><b>X11L</b></div></nav>
+
+<!-- ================= 購買區 ================= -->
+<section class="pd-buy" id="buy">
+  <div class="wrap">
+    <div class="pd-gal">
+      <div class="pd-main" id="pdMain">
+        <button class="nav l" aria-label="上一張"><svg viewBox="0 0 8 14"><path d="M7 1 1 7l6 6"/></svg></button>
+        <button class="nav r" aria-label="下一張"><svg viewBox="0 0 8 14"><path d="m1 1 6 6-6 6"/></svg></button>
+        <span class="cnt"></span>
+      </div>
+      <div class="pd-thumbs" id="pdThumbs"></div>
+      <div class="pd-dots" id="pdDots"></div>
+    </div>
+    <div class="pd-info">
+      <div class="tags"><span class="new">2026 NEW</span><span>SQD-Mini LED</span></div>
+      <div class="md" id="pdModel">98X11L</div>
+      <h1>X11L 頂級 SQD-Mini LED 量子智能連網液晶顯示器</h1>
+      <ul class="pd-feat">
+        <li>高達 100% BT.2020 全景廣色域</li>
+        <li>20,736 區精準區域控光<sup>*</sup></li>
+        <li>高達 HDR 10,000 尼特峰值亮度<sup>*</sup></li>
+        <li>WHVA 2.0 Ultra 面板，色彩精準</li>
+        <li>Super QLED 卓越穩定的色彩表現</li>
+        <li>純平至薄外觀設計</li>
+        <li>Audio by Bang &amp; Olufsen 音效體驗</li>
+        <li>TSR AiPQ 處理器，極致運算</li>
+        <li>TCL AI 全面升級多場景體驗</li>
+      </ul>
+      <div class="pd-lab">尺寸<a href="#size">尺寸怎麼選？</a></div>
+      <div class="pd-size" id="pdSize">
+        <button data-s="98" class="on">98<small>吋</small></button>
+        <button data-s="85">85<small>吋</small></button>
+        <button data-s="75">75<small>吋</small></button>
+      </div>
+      <div class="pd-price"><small>建議售價</small><b id="pdPrice">NT$ 369,990</b><em>實際售價依各通路公告為準</em></div>
+      <div class="pd-cta">
+        <button class="pd-btn pri" id="pdBuy">前往通路購買<svg viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"/></svg></button>
+        <a class="pd-btn sec" id="pdCmp" href="compare.html?m=X11L-98">加入比較</a>
+      </div>
+      <div class="pd-ch" id="pdCh">
+        <ul>
+          <li><a href="#">電商通路 A<span>前往購買 ›</span></a></li>
+          <li><a href="#">電商通路 B<span>前往購買 ›</span></a></li>
+          <li><a href="#">電商通路 C<span>前往購買 ›</span></a></li>
+        </ul>
+        <p>※ 示意：通路名稱與連結由後台依尺寸、檔期設定。</p>
+      </div>
+      <div class="pd-links">
+        <a href="#spec"><svg viewBox="0 0 16 16"><rect x="2.5" y="2" width="11" height="12" rx="1.5"/><path d="M5 5.5h6M5 8h6M5 10.5h4"/></svg>詳細規格</a>
+        <a href="#manual"><svg viewBox="0 0 16 16"><path d="M8 2v8m-3.5-3L8 10.5 11.5 7M3 13.5h10"/></svg>說明書下載</a>
+        <a href="#warranty"><svg viewBox="0 0 16 16"><path d="M8 1.8 13 3.8v4c0 3-2.2 5.3-5 6.4-2.8-1.1-5-3.4-5-6.4v-4z"/><path d="m5.8 8 1.6 1.6 3-3.2"/></svg>權益說明</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 頁內選單 ================= -->
+<div class="pd-sub" id="pdSub"><div class="wrap">
+  <span class="nm">X11L</span>
+  <nav><a href="#intro" class="on">商品介紹</a><a href="#spec">詳細規格</a><a href="#warranty">權益說明</a><a href="#manual">說明書</a></nav>
+  <button class="go" data-go>前往購買</button>
+</div></div>
+
+<!-- ================= 商品介紹（照台灣官網排序） ================= -->
+<div class="twi" id="intro"><div class="container-fluid"><div class="row"><div class="col-xl-12"><div class="product__details-des"><div class="X11L block-bk text-white"><div class="container-fluid"><div class="row mt-80"><div class="col-12"><picture><source media="(max-width: 834px)" srcset="images/x11l_kv_mb.jpg"><source media="(min-width: 835px)" srcset="images/x11l_kv_pc.jpg"><img src="images/x11l_kv_pc.jpg" alt="X11L Mini LED 巔峰之作 SQD-Mini LED TV" loading="lazy"></picture></div></div><div class="row "><div class="col-12 text-center"><div class="X11L-01"><div class="container"><h2 class="mb-20 X11L-color-1">歡迎來到顯示技術巔峰</h2><h2 class="mb-20 X11L-color-1">SQD-Mini LED 的新時代</h2><p class="mb-20 X11L-color-p">TCL SQD-Mini LED 代表 Mini LED 技術的一次革命性躍進。它將傳統的區域控光升級為「精準分區調光」，在明亮璀璨與深邃暗部之間，呈現絕佳的表現。</p></div></div><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Welcome%20to%20the%20Pinnacle%20of%20Display%20Technology.jpg" alt="極致色彩、極致對比、極致亮度、極致設計" loading="lazy"></picture></div></div><div class="row mt-100"><div class="col-12 text-center"><h2 class="mb-10 X11L-color-1">掌握明暗 革命性升級 極致色彩</h2></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row mt-20"><div class="col-12 text-center"><div class="container"><h3 class="mb-0 X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-big-2.svg" alt="" width="120" height="80">面板全面進化</h3><h3 class="X11L-color-1">極彩濾光面板 提升色域<img style="margin: 0 0 35px 15px;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/33-pc-4.svg" alt="" width="175" height="62"></h3></div><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Panel%20Evolved.jpg" alt="面板全面進化" loading="lazy"></picture><div class="container"><p class="X11L-color-grey" style="text-align: center;">*33%是指 98 吋 X11L 相較於 TCL 前代旗艦 98 吋 X11K，在 BT.2020 標準下色域覆蓋率的提升幅度。<br>*相關數據來自TCL實驗室，不同的測試環境或標準可能導致測試結果不一致。<br>*對比圖僅用於展示相關顯示技術的價值，可能與實際顯示效果不同。請以實物為準。</p></div></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><h3 class="mb-20 X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-big-2.svg" alt="" width="120" height="80">QLED 進化</h3><h3 class="X11L-color-1">Super QLED 技術，提升色點精準度<img style="margin: 0 0 35px 15px;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/69-3.svg" alt="" width="177" height="65"></h3></div><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/QLED%20Evolved.jpg" alt="QLED 進化" loading="lazy"></picture></div></div><div class="row mt-30"><div class="col-12 text-center"><h2 class="mb-10 X11L-color-1">五大優勢，定義顯示技術的巔峰</h2></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row X11L-02" style="background-image: url('https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-bg.jpg'); background-position: bottom center; background-repeat: no-repeat; background-size: 100%;"><div class="col-12 text-center"><div class="container"><h3 class="X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-11.svg" alt="" width="80" height="60">全景廣色域</h3></div></div></div><div class="row mt-20"><div class="col-12 text-center"><div class="container"><p class="X11L-color-1">全場景呈現純淨穩定色彩──無論單色或多彩，都令人驚豔！</p></div></div></div><div class="row mt-20"><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/All%20Scenes%20Wide%20Colo.jpg" alt="全景廣色域" loading="lazy"></picture></div></div><div class="row mt-20"><div class="col-12 text-center"><div class="container"><p class="X11L-color-1">SQD-Mini LED技術採用超級量子點，打造極純白光，實現全場景卓越穩定與出色表現。</p></div></div></div><div class="row mt-20"><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/s5-super-quantum.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s5-super-quantum-2.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s5-super-quantum-2.jpg" alt="純淨穩定色彩" loading="lazy"></picture></div></div><div class="row mt-50 X11L-02" style="background-image: url('https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-bg.jpg'); background-position: bottom center; background-repeat: no-repeat; background-size: 100%;"><div class="col-12 text-center"><div class="container"><h3 class="X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-22.svg" alt="" width="80" height="60">精準調色</h3></div></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><p class="X11K-color-4">在 SQD-Mini LED 顯示器中，相鄰分區可獨立發射白光，互不干擾，有效消除色彩串擾。結合卓越光控技術，可大幅減少色偏與光暈現象，確保色彩持續鮮明。</p></div></div></div><div class="row mt-0"><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Precise%20Color%20Contro.jpg" alt="精準調色" loading="lazy"></picture></div></div><div class="row mt-50 X11L-02" style="background-image: url('https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-bg.jpg'); background-position: bottom center; background-repeat: no-repeat; background-size: 100%;"><div class="col-12 text-center"><div class="container"><h3 class="X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-33.svg" alt="" width="80" height="60">更多區域控光</h3></div></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><p class="X11L-color-1">作為 Mini LED 影像品質的重要指標，更多的控光分區可帶來更卓越的對比效果</p></div></div></div><div class="row mt-0"><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/More%20Dimming%20Zones.jpg" alt="更多區域控光" loading="lazy"></picture></div></div><div class="row mt-0"><div class="col-12"><div class="container"><p class="X11L-color-grey" style="text-align: center;">*20,000區 區域控光為98吋X11L型號。功能、規格和認證因型號、螢幕尺寸和接收方式而異。<br>*對比圖僅用於說明相關顯示技術的價值，可能與實際顯示效果不同。請以實物為準。</p></div></div></div><div class="row mt-50 X11L-02" style="background-image: url('https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-bg.jpg'); background-position: bottom center; background-repeat: no-repeat; background-size: 100%;"><div class="col-12 text-center"><div class="container"><h3 class="X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-44.svg" alt="" width="80" height="60">更高亮度</h3></div></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><p class="X11L-color-1">作為 Mini LED 影像品質的另一重要指標，峰值亮度越高，高光和陰影的細節就越豐富。</p></div></div></div><div class="row mt-0"><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/10000nits-mob-0206.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/10000nits-pc-0206.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/10000nits-pc-0206.jpg" alt="更高亮度" loading="lazy"></picture></div></div><div class="row mt-0"><div class="col-12"><p class="X11L-color-grey" style="text-align: center;">*10,000尼特峰值亮度指的是98吋和85吋的X11L型號。功能、規格和認證會因型號、螢幕尺寸和接收方式而異。<br>*相關數據來自TCL實驗室，不同的測試環境或標準可能會導致測試結果不一致。<br>*對比圖僅用於說明相關顯示技術的價值，可能與實際顯示效果不同。請以實物為準。</p></div></div><div class="row mt-50 X11L-02" style="background-image: url('https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-bg.jpg'); background-position: bottom center; background-repeat: no-repeat; background-size: 100%;"><div class="col-12 text-center"><div class="container"><h3 class="X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-55.svg" alt="" width="80" height="60">純平至薄</h3></div></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><p class="X11L-color-1">纖薄設計，提升居家質感。</p></div></div></div><div class="row mt-0"><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/s9-thinner.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s9-thinner.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s9-thinner.jpg" alt="純平至薄" loading="lazy"></picture></div></div><div class="row mt-0"><div class="col-12"><p class="X11L-color-grey" style="text-align: center;">*約2公分是指98吋和85吋X11L最薄處的厚度。功能、規格和認證因型號、螢幕尺寸和解析度而異。</p></div></div><div class="row mt-100"><div class="col-12 text-center"><h2 class="mb-10 X11L-color-1">全球首款 SQD-Mini LED旗艦機種</h2></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row mt-0"><div class="col-12 text-center"><picture><source media="(max-width: 834px)" srcset="https://www.tcl-shop.com.tw/upload/image/products/X11L/98X11L-%E4%B8%80%E5%9B%BE%E7%9C%8B%E6%87%82-%E7%9A%87%E5%86%A0-MOB.jpg"><source media="(min-width: 835px)" srcset="https://www.tcl-shop.com.tw/upload/image/products/X11L/98X11L-%E4%B8%80%E5%9B%BE%E7%9C%8B%E6%87%82-%E7%9A%87%E5%86%A0.jpg"><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/98X11L-%E4%B8%80%E5%9B%BE%E7%9C%8B%E6%87%82-%E7%9A%87%E5%86%A0.jpg" alt="X11L 全球首款 SQD-Mini LED 旗艦機種" loading="lazy"></picture></div></div><div class="row mt-0"><div class="col-12"><p class="X11L-color-grey" style="text-align: center;">*100% BT.2020 指的是 BT.2020 色域標準下典型面積比值。測試數據來自 TCL 實驗室。由於測試環境/測試標準/測試設備以及其他合理客觀因素（例如不同產品/生產批次）的差異，可能存在 ≤5% 的偏差。<br>*對比圖僅用於展示相關顯示技術的價值，可能與實際顯示效果不同。請以實物為準。</p></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><h4 class="mb-10">繼續閱讀<br>有關X11L資訊</h4><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/arrow.svg" alt="" width="28" height="28" style="display:inline-block"></div></div></div><div class="row mt-0"><div class="col-12 text-center"><div class="container"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/%E6%A5%B5%E8%87%B4%E8%89%B2%E5%BD%A9_title.jpg" alt="極致色彩" loading="lazy"></picture></div></div></div><div class="row mt-100"><div class="col-12 text-center"><h2 class="mb-10 X11L-color-1">高達100%BT全景廣色域</h2></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row mt-20"><div class="col-12 text-center"><div class="container"><p class="X11L-color-1">色域的巔峰之作</p></div></div></div><div class="row mt-0"><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/The%20Pinnacle%20of%20Colo.jpg" alt="色域的巔峰之作" loading="lazy"></picture></div></div><div class="row mt-0"><div class="col-12"><p class="X11L-color-grey" style="text-align: center;">*100% BT.2020 指的是 BT.2020 色域標準下典型面積比值。測試數據來自 TCL 實驗室。由於測試環境/測試標準/測試設備以及其他合理客觀因素（例如不同產品/生產批次）的差異，可能存在 ≤5% 的偏差。<br>*對比圖僅用於展示相關顯示技術的價值，可能與實際顯示效果不同。請以實物為準。</p></div></div><div class="row mt-0"><div class="col-12 text-center"><div class="container"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/%E6%A5%B5%E8%87%B4%E9%9D%A2%E6%9D%BF_title.jpg" alt="極致面板" loading="lazy"></picture></div></div></div><div class="row mt-100"><div class="col-12 text-center"><h2 class="mb-10 X11L-color-1">WHVA 2.0 Ultra面板</h2></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row mt-20"><div class="col-12 text-center"><h4 class="X11L-color-1 mb-20">極彩濾光片、高對比、低反射、極彩廣色可視角、無限視角</h4><p class="X11K-color-4">採用華星光電最新技術，WHVA 2.0 Ultra 面板在效能上實現跨世代躍進。其搭載大幅升級的色彩濾光片，重現前所未有的色彩精準度。</p><p class="X11K-color-4">面板的核心結構，運用奈米級仿生技術，將聚醯亞胺整合至液晶分子中，形成獨特的蝶翼狀微結構。</p><p class="X11K-color-4">此設計可精準控制光線通過，大幅提升原生對比度。再結合奈米級低反射薄膜，有效降低反光干擾，呈現純淨畫面與銳利細節。</p></div></div><div class="row mt-0"><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/WHVA%202.0%20Ultra%20Panel.jpg" alt="WHVA 2.0 Ultra 面板" loading="lazy"></picture></div></div><div class="row mt-0"><div class="col-12 text-center"><div class="swiper swiper-pro-detail"><div class="swiper-wrapper"><div class="swiper-slide"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/High%20Contrast.jpg" alt="高對比" loading="lazy"></picture></div><div class="swiper-slide"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/0.5_%20Low%20Reflection.jpg" alt="0.5% 低反射" loading="lazy"></picture></div><div class="swiper-slide"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Ultra-wide%20Color%20Vie.jpg" alt="極彩廣色可視角" loading="lazy"></picture></div></div><div class="swiper-pagination swiper-pagination-custom"><div class="swiper-button-prev" role="button" aria-label="上一張"></div><div class="swiper-button-next" role="button" aria-label="下一張"></div></div></div></div></div><div class="row mt-0"><div class="col-12 text-center"><div class="container"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/%E6%A5%B5%E7%B7%BB%E5%B0%8D%E6%AF%94_title.jpg" alt="極致對比" loading="lazy"></picture></div></div></div><div class="row mt-100"><div class="col-12 text-center"><h2 class="mb-10 X11L-color-1">20,736區* 精準區域控光</h2></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row mt-20"><div class="col-12 text-center"><h4 class="X11L-color-1 mb-20">TCL全域光暈控制技術 極致黑暗 璀璨明亮</h4><p class="X11K-color-4">TCL的MiniLED 顯示器系列中的精準控光，是採用全域光暈控制技術。</p><p class="X11K-color-4">新一代強效發光晶片、聚光微透鏡與微距OD 技術，使各個分區的光型更加完美，其光暈控制能力是普通分區的數倍。</p><p class="X11K-color-4">結合具有更高原生對比度的華星光電 WHVA 2.0 面板技術，以及全球領先的光影控制演算法，</p><p class="X11K-color-4">精準控光系列能塑造真實光影，使整體畫質大幅提升，帶來絕佳的影像體驗。</p><p class="X11L-color-grey" style="text-align: center;">*20,736區為98吋X11L之規格。</p></div><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/20%2C736%20Precise%20Dimming%20Zones.jpg" alt="20,736 區精準區域控光" loading="lazy"></picture></div></div><div class="row mt-30"><div class="col-12 text-center"><div class="container"><p class="mb-20 X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-small.svg" alt="" width="87" height="57">TCL全域光暈控制技術</p><h3 class="mb-20">聚核光晶片</h3><h4 class="mb-20 X11L-color-1">掌控明暗，細節盡現</h4><p class="X11K-color-4">相較前一代傳統發光晶片，X11L 劃時代的聚核光晶片在亮度與能源效率上皆大幅提升，能清晰重現自然場景中的明暗層次，呈現真實而細膩的畫面表現。</p><p class="X11K-color-1">超能高亮基底｜ALD 抗腐蝕技術<br>亮度提升｜能源效率提升</p></div></div><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/powerful-light-emitting-chip-pc-2.jpg" alt="聚核光晶片" loading="lazy"></picture></div></div><div class="row mt-30"><div class="col-12 text-center"><div class="container"><p class="mb-20 X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-small.svg" alt="" width="87" height="57">TCL全域光暈控制技術</p><h3 class="mb-20">超聚光微透鏡</h3><h4 class="mb-20 X11L-color-1">微透鏡科技 掌控光影</h4><p class="X11K-color-4">TCL 自主研發的超聚光微透鏡技術，透過拱橋式調光設計，精準控制光線行進方向。採用高延展性的奈米光學材料，塑造具備卓越聚光特性的黃金曲率結構，逐點精準控光，大幅提升背光均勻度與光暈抑制能力，使畫面細節更加清晰純粹。</p><p class="X11K-color-1">光暈控制能力提升｜背光均勻性強化｜光學穩定性提升 8 倍</p></div></div></div><div class="row mt-0"><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Micro%20Lens%20Technolog.jpg" alt="超聚光微透鏡" loading="lazy"></picture></div><div class="col-12"><p class="X11L-color-grey" style="text-align: center;">*對比圖僅用於展示相關顯示技術的價值，可能與實際顯示效果不同。請以實物為準。</p></div><div class="col-12 text-center"><picture><source media="(max-width: 834px)" srcset="https://www.tcl-shop.com.tw/upload/image/products/X11L/Super%20Condensed%20Micro%20Lens-MOB.jpg"><source media="(min-width: 835px)" srcset="https://www.tcl-shop.com.tw/upload/image/products/X11L/Super%20Condensed%20Micro%20Lens.jpg"><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Super%20Condensed%20Micro%20Lens.jpg" alt="超聚光微透鏡" loading="lazy"></picture></div></div><div class="row mt-30"><div class="col-12 text-center"><div class="container"><p class="mb-20 X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-small.svg" alt="" width="87" height="57">TCL全域光暈控制技術</p><h3 class="mb-20">無陰影均勻光輔助</h3><h4 class="mb-20 X11L-color-1">呈現極致暗部細節</h4></div></div></div><div class="row mt-0"><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Shadowless%20Uniform%20Light%20Support.jpg" alt="無陰影均勻光輔助" loading="lazy"></picture></div><div class="col-12"><p class="X11L-color-grey" style="text-align: center;">*對比圖僅用於展示相關顯示技術的價值，可能與實際顯示效果不同。請以實物為準。</p></div></div><div class="row mt-30"><div class="col-12 text-center"><div class="container"><p class="mb-20 X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-small.svg" alt="" width="87" height="57">TCL全域光暈控制技術</p><h3 class="mb-20">微距OD</h3><h4 class="mb-20 X11L-color-1">卓越畫質 輕薄外觀</h4><p class="X11K-color-4">TCL強大的 Mini LED 光學技術，讓X11L 展現驚人的微距OD 表現。<br>不僅實現更輕薄的機身，還透過超聚光微透鏡與高分區技術，有效減少 Mini LED 光暈問題，讓夜空中的星辰呈現更加深邃細膩的效果。</p></div></div></div><div class="row mt-0"><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Super%20Micro-OD.jpg" alt="微距 OD" loading="lazy"></picture></div><div class="col-12"><p class="X11L-color-grey" style="text-align: center;">*所有圖片僅供參考，請以實物為準。<br>*對比圖片僅用於展示相關顯示技術的價值，可能與實際顯示效果有所不同，請以實物為準。</p></div></div><div class="row mt-30"><div class="col-12 text-center"><div class="container"><p class="mb-20 X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-small.svg" alt="" width="87" height="57">TCL全域光暈控制技術</p><h3 class="mb-20">光影控制演算法</h3><h4 class="mb-20 X11L-color-1">明暗細節 影像更動人</h4></div></div></div><div class="row mt-0"><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Light%20and%20Shadow%20Control%20Algorithm.jpg" alt="光影控制演算法" loading="lazy"></picture></div><div class="col-12"><p class="X11L-color-grey" style="text-align: center;">*對比圖僅用於展示相關顯示技術的價值，可能與實際顯示效果不同。請以實物為準。</p></div></div><div class="row mt-0"><div class="col-12 text-center"><div class="swiper swiper-pro-detail"><div class="swiper-wrapper"><div class="swiper-slide"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Transient%20Response.jpg" alt="瞬態響應" loading="lazy"></picture></div><div class="swiper-slide"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/26%20bit%20Dynamic%20Dimming.jpg" alt="26bit 動態調光" loading="lazy"></picture><p class="X11L-color-grey" style="text-align: center;">*對比圖僅用於展示相關顯示技術的價值，可能與實際顯示效果不同。請以實物為準。</p></div></div><div class="swiper-pagination swiper-pagination-custom"><div class="swiper-button-prev" role="button" aria-label="上一張"></div><div class="swiper-button-next" role="button" aria-label="下一張"></div></div></div></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><p class="mb-20 X11L-color-1"><img style="margin: 0 15px 35px 0;" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/star-small.svg" alt="" width="87" height="57">TCL全域光暈控制技術</p><h3 class="mb-20">華星光電 WHVA2.0 面板技術</h3><h4 class="mb-20 X11L-color-1">超廣色域｜超高對比｜超廣視角 Mini LED 顯示器的最佳夥伴</h4><p class="X11K-color-4">搭載華星光電最新核心技術，WHVA 2.0 Ultra面板實現跨世代的性能躍進。<br>面板配備大幅升級的色彩濾光片，帶來前所未有的色彩精準度。</p></div></div></div><div class="row mt-0"><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/CSOT%20WHVA2.0%20Panel%20Technology.jpg" alt="華星光電 WHVA2.0 面板技術" loading="lazy"></picture></div><div class="col-12"><p class="X11L-color-grey" style="text-align: center;">*對比圖僅用於展示相關顯示技術的價值，可能與實際顯示效果不同。請以實物為準。</p></div></div><div class="row mt-0"><div class="col-12 text-center"><div class="container"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/%E6%A5%B5%E7%B7%BB%E4%BA%AE%E5%BA%A6_title.jpg" alt="極致亮度" loading="lazy"></picture></div></div></div><div class="row mt-100"><div class="col-12 text-center"><h2 class="mb-10 X11L-color-1">高達HDR 10,000尼特峰值亮度</h2></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row mt-20"><div class="col-12 text-center"><h4 class="X11L-color-1 mb-20">高亮度點燃您的感官體驗</h4></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/s24-10000nits.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s25-10000nits.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s25-10000nits.jpg" alt="高達 HDR 10,000 尼特" loading="lazy"></picture></div><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/HDR%20content.jpg" alt="X11L 10000nits 還原真實" loading="lazy"></picture></div></div><div class="row mt-0"><div class="col-12 text-center"><div class="container"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/%E6%A5%B5%E7%B7%BB%E8%A8%AD%E8%A8%88_title.jpg" alt="極致設計" loading="lazy"></picture></div></div></div><div class="row mt-100"><div class="col-12 text-center"><h2 class="mb-10 X11L-color-1">纖薄設計</h2></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/%E5%B9%B3%E6%9D%BF%E8%96%84.jpg" alt="約 2 公分纖薄設計" loading="lazy"></picture></div><div class="col-12"><p class="X11L-color-grey" style="text-align: center;">*所有圖片僅供參考，請以實物為準。<br>*零邊框僅指在正常觀看場景和距離下，影像邊緣幾乎無法察覺的黑邊區域。</p></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><h3 class="mb-20 X11L-color-1">貼心設計</h3><p class="X11K-color-4">使用方便順手</p></div></div></div><div class="row mt-0"><div class="col-12 text-center"><div class="swiper swiper-pro-detail"><div class="swiper-wrapper"><div class="swiper-slide"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/USB%203.jpg" alt="側邊 USB 3.0" loading="lazy"></picture></div><div class="swiper-slide"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Cable%20Management%20Design.jpg" alt="理線設計" loading="lazy"></picture></div><div class="swiper-slide"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Ultra-Slim%20Magnetic%20Mount.jpg" alt="超薄磁吸壁掛" loading="lazy"></picture></div></div><div class="swiper-pagination swiper-pagination-custom"><div class="swiper-button-prev" role="button" aria-label="上一張"></div><div class="swiper-button-next" role="button" aria-label="下一張"></div></div></div></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><h3 class="mb-20 X11L-color-1">完美融入家中空間</h3><p class="X11K-color-4">無論桌上擺放或壁掛，皆呈極致美感</p></div></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><div class="swiper swiper-pro-detail"><div class="swiper-wrapper"><div class="swiper-slide"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-1.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-1.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-1.jpg" alt="TCL X11L 居家情境" loading="lazy"></picture></div><div class="swiper-slide"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-2.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-2.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-2.jpg" alt="TCL X11L 居家情境" loading="lazy"></picture></div><div class="swiper-slide"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-3.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-3.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-3.jpg" alt="TCL X11L 居家情境" loading="lazy"></picture></div><div class="swiper-slide"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-4.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-4.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/lifestyle-image/pc/lifestyle-4.jpg" alt="TCL X11L 居家情境" loading="lazy"></picture></div></div><div class="swiper-pagination swiper-pagination-custom"><div class="swiper-button-prev" role="button" aria-label="上一張"></div><div class="swiper-button-next" role="button" aria-label="下一張"></div></div></div></div></div></div><div class="row mt-0"><div class="col-12 text-center"><div class="container"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/%E6%A5%B5%E7%B7%BB%E9%9F%B3%E6%95%88_title.jpg" alt="極致音效" loading="lazy"></picture></div></div></div><div class="row mt-100"><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><img class="common-title-img" style="width: 385px; display:inline-block" src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/svg/pc/audio-pc-3.svg" alt="Audio by Bang &amp; Olufsen"></picture></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row mt-50"><div class="col-12 text-center"><h3 class="mb-20 X11L-color-1">卓越音效，經典標誌</h3><p class="X11K-color-4">自 1925 年以來，Bang &amp; Olufsen 持續突破聲音的界限，打造出超越期待的聽覺體驗。如今，TCL 電視正式導入 B&amp;O 揚聲器，讓你在家中也能感受這份卓越音質。<br>這個音效標誌，代表顯示器的喇叭，由與 B&amp;O 經典音響相同團隊親自設計、調校與精煉。他們注入近百年的聲學工藝，只為讓每一道聲音純淨動人，觸動心弦。</p></div></div><div class="row mt-0"><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/s31-audio.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s31-audio.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s31-audio.jpg" alt="卓越音效，經典標誌" loading="lazy"></picture></div></div><div class="row mt-50"><div class="col-12 text-center"><h3 class="mb-20 X11L-color-1">極致純淨音質，源自完整嚴謹的聲學系統</h3></div></div><div class="row mt-50"><div class="col-12 text-center"><picture><source media="(max-width: 834px)" srcset="https://www.tcl-shop.com.tw/upload/image/products/X11L/B%26O-MOB.jpg"><source media="(min-width: 835px)" srcset="https://www.tcl-shop.com.tw/upload/image/products/X11L/B%26O.jpg"><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/B%26O.jpg" alt="完整嚴謹的聲學系統" loading="lazy"></picture></div></div><div class="row mt-50"><div class="col-12 text-center"><h3 class="mb-20 X11L-color-1">旗艦級揚聲器<br>超越 Hi-Fi 的極致音質</h3></div></div><div class="row mt-0"><div class="col-12 text-center"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/Hi-END%20Speakers.jpg" alt="旗艦級揚聲器" loading="lazy"></picture></div></div><div class="row mt-0"><div class="col-12 text-center"><div class="container"><picture><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/%E6%A5%B5%E8%87%B4%E9%81%8B%E7%AE%97%20%E7%9B%B4%E8%A6%BA%E4%BA%92%E5%8B%95_title.jpg" alt="極致運算 直覺互動" loading="lazy"></picture></div></div></div><div class="row mt-100"><div class="col-12 text-center"><h2 class="mb-10 X11L-color-1">TCL AI</h2></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row mt-30"><div class="col-12 text-center"><h3 class="mb-20 X11L-color-1">智慧核心，全面升級多場景體驗</h3><p class="X11K-color-4">TCL透過自主研發的AI，打造出強大的底層硬體運算能力。<br>其建構的量子級超級運算平台，整合多項自研專業模型，並建立業界領先的 Mariana 資料庫，使 TCL AI 模型得以持續進行深度學習與自我進化。<br>TCL 深度整合多元 AI 核心能力，並部署大量高效能的情境式智慧代理，全面強化系統智慧表現。</p><p class="X11K-color-4">最終從AI 四大維度-AI 畫質、AI 音質、AI 互動、AI 內容生成，為你帶來更聰明、更直覺、更便利的視聽娛樂體驗。</p></div></div><div class="row mt-30"><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/s340-ai.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s34-ai.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s34-ai.jpg" alt="TCL AI" loading="lazy"></picture></div></div><div class="row mt-100"><div class="col-12 text-center"><h3 class="mb-20">AI 智慧影院</h3><p class="X11L-color-1">急速搜尋 更加沉浸體驗</p></div></div><div class="row mt-30"><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/AI%C2%A0Cinematic%C2%A0Agent%20.jpg" alt="AI 智慧影院" loading="lazy"></picture></div></div><div class="row mt-100"><div class="col-12 text-center"><h2 class="mb-10">AI智慧遊戲</h2><h2 class="mb-10 X11L-color-1">快速贏得勝利</h2></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><div class="swiper swiper-pro-detail"><div class="swiper-wrapper"><div class="swiper-slide"><h3 class="mb-20">遊戲欄</h3><h4 class="mb-20 X11L-color-1">三大主流主機自適應遊戲畫面</h4><p class="X11K-color-4">針對三大主流遊戲主機量身打造專屬顯示畫面，完整呈現遊戲氛圍。遊戲欄整合多種顯示與遊戲模式，讓你在遊戲開始前即可進行個人化設定，快速疊加 BUFF，一開局即占先機。</p><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/s36-gamebar-1.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s36-gamebar-1.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s36-gamebar-1.jpg" alt="AI 智慧遊戲" loading="lazy"></picture></div><div class="swiper-slide"><h3 class="mb-20">遊戲欄</h3><h4 class="mb-20 X11L-color-1">&nbsp;</h4><p class="X11K-color-4">&nbsp;</p><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/s36-gamebar-2.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s36-gamebar.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s36-gamebar.jpg" alt="遊戲欄" loading="lazy"></picture></div></div><div class="swiper-pagination swiper-pagination-custom"><div class="swiper-button-prev" role="button" aria-label="上一張"></div><div class="swiper-button-next" role="button" aria-label="下一張"></div></div></div></div></div></div><div class="row mt-100"><div class="col-12 text-center"><h2 class="mb-10">AI智慧藝術</h2><h3 class="mb-10 X11L-color-1">螢幕之外 超越想像</h3></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row mt-30"><div class="col-12 text-center"><h3 class="mb-20">藝術畫廊</h3><h4 class="mb-20 X11L-color-1">把世界級藝術館帶回家</h4><p class="mb-20 X11K-color-4">即使顯示器關閉時，也能欣賞來自世界各地的名畫。<br>橫跨數個世紀、匯集數百幅經典名作，讓居家空間化身為專屬的私人藝廊。</p></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><div class="swiper swiper-pro-detail"><div class="swiper-wrapper"><div class="swiper-slide"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/s37-digital-art.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s37-digital-art.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s37-digital-art.jpg" alt="數位藝術" loading="lazy"></picture></div><div class="swiper-slide"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/s37-ambient-mode.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s37-ambient-mode.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s37-ambient-mode.jpg" alt="氛圍模式" loading="lazy"></picture></div><div class="swiper-slide"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/s37-art-gallery.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s37-art-gallery.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s37-art-gallery.jpg" alt="藝術畫廊" loading="lazy"></picture></div></div><div class="swiper-pagination swiper-pagination-custom"><div class="swiper-button-prev" role="button" aria-label="上一張"></div><div class="swiper-button-next" role="button" aria-label="下一張"></div></div></div></div></div></div><div class="row mt-50"><div class="col-12 text-center"><h3 class="mb-20">AI智慧辦公室</h3><h4 class="mb-20 X11L-color-1">您的行動辦公室</h4><p class="mb-20 X11K-color-4">多樣投放方式</p><p class="mb-20 X11L-color-1">Google Cast | AirPlay 2 | Chromecast | HDMI</p></div></div><div class="row mt-50"><div class="col-12 text-center"><div class="container"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/ai-office-2.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/ai-office-2.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/ai-office-2.jpg" alt="AI 智慧辦公室" loading="lazy"></picture><p class="mt-20 X11L-color-grey">*Google 和 Google Cast 是 Google LLC 的商標。<br>*AirPlay 2 是 Apple Inc. 在美國和其他國家註冊的商標。<br>*功能可用性可能因地區而異，並可能隨服務更新而變更。實際功能需要相容的設備和網路連線。</p></div></div></div><div class="row mt-100"><div class="col-12 text-center"><h2 class="mb-10 X11L-color-1">TSR AiPQ 處理器</h2></div><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/mob/title-line-big.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/title/pc/title-line-big.jpg" alt="" loading="lazy"></picture></div></div><div class="row mt-30"><div class="col-12 text-center"><h4 class="mb-20 X11L-color-1">智慧運算 影像優化</h4><p class="mb-20 X11K-color-4">TSR AiPQ 處理器為高度智慧化的旗艦晶片，具備強大的 AI 運算能力。</p><p class="mb-20 X11K-color-4">整合 TCL 專屬影像調校演算法，並搭載先進的智慧感知技術，能夠對畫面進行像素級優化。</p><p class="mb-20 X11K-color-4">並結合 TCL AI 模型的深度運算，讓每一幀影像鮮活動感、豐富層次與自然清晰度，帶來近乎真實的視覺體驗。</p></div></div><div class="row mt-30"><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-mob/s39-tsr.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/tsr-2.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/tsr-2.jpg" alt="TSR AiPQ 處理器" loading="lazy"></picture></div></div><div class="row mt-100"><div class="col-12 text-center"><div class="container"><div class="collapse-menu"><ul class="nav nav-tabs"><li class="nav-item"><button class="nav-link active" data-tw-tab="#AI-Clarity">AI清晰大師</button></li><li class="nav-item"><button class="nav-link" data-tw-tab="#AI-Contrast">AI對比大師</button></li><li class="nav-item"><button class="nav-link" data-tw-tab="#AI-Color">AI色彩大師</button></li><li class="nav-item"><button class="nav-link" data-tw-tab="#AI-Motion">AI流暢大師</button></li></ul><div class="tab-content"><div id="AI-Clarity" class="tab-pane fade show active"><div class="text-center"><h4 class="mb-20 X11K-color-1">極致清晰・極致銳利・極致真實</h4><picture style="width: 100%; font-size: 0;"><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/AI%20ClarityMaster-1200x675.jpg" alt="AI清晰大師" loading="lazy"></picture></div></div><div id="AI-Contrast" class="tab-pane fade"><div class="text-center"><h4 class="mb-20 X11K-color-1">逼真體驗 沉浸享受</h4><picture style="width: 100%; font-size: 0;"><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/AI%20ContrastMaster-1200x675.jpg" alt="AI對比大師" loading="lazy"></picture></div></div><div id="AI-Color" class="tab-pane fade"><div class="text-center"><h4 class="mb-20 X11K-color-1">自然美景 栩栩如生</h4><picture style="width: 100%; font-size: 0;"><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/AI%20ColorMaster-1200x675.jpg" alt="AI色彩大師" loading="lazy"></picture></div></div><div id="AI-Motion" class="tab-pane fade"><div class="text-center"><h4 class="mb-20 X11K-color-1">無抖動・無殘影・極致流暢</h4><picture style="width: 100%; font-size: 0;"><img src="https://www.tcl-shop.com.tw/upload/image/products/X11L/AI%20MotionMaster-1200x675.jpg" alt="AI流暢大師" loading="lazy"></picture></div></div></div></div></div></div></div><div class="row mt-100"><div class="col-12 text-center"><h3 class="mb-20">288 VRR 遊戲加速器* /144Hz 原生刷新率</h3><h4 class="mb-20 X11L-color-1">為卓越而生</h4><p class="mb-20 X11K-color-4">當連接 288Hz HDMI 信號源時，刷新率可提升至 288Hz。整個信號傳輸路徑支援 4K 144Hz 刷新率，確保高速動態畫面依然清晰流暢。</p><p class="mb-20 X11K-color-4">無論是奔跑、競賽或是射擊，都能減少卡頓、撕裂或模糊以快速獲得勝利。</p></div></div><div class="row mt-100"><div class="col-12 text-center"><picture style="width: 100%; font-size: 0;"><source media="(max-width: 834px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s41-288vrr.jpg"><source media="(min-width: 835px)" srcset="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s41-288vrr.jpg"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/ksp-pc/s41-288vrr.jpg" alt="288 VRR 遊戲加速器" loading="lazy"></picture></div></div></div></div><div class="container-fluid" id="size"><div class="row mt-100"><div class="col-12 text-center"><h2>顯示器尺寸</h2><div class="collapse-menu"><ul class="nav nav-tabs mt-50"><li class="nav-item"><button class="nav-link active" data-tw-tab="#Detail-Size-98">98"</button></li><li class="nav-item"><button class="nav-link" data-tw-tab="#Detail-Size-85">85"</button></li><li class="nav-item"><button class="nav-link" data-tw-tab="#Detail-Size-75">75"</button></li></ul><div class="tab-content"><div id="Detail-Size-98" class="tab-pane fade show active"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/screen-size/98-pc.jpg" alt="TCL X11L 98 吋" loading="lazy"></div><div id="Detail-Size-85" class="tab-pane fade"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/screen-size/85-pc.jpg" alt="TCL X11L 85 吋" loading="lazy"></div><div id="Detail-Size-75" class="tab-pane fade"><img src="https://aws-obg-image-lb-1.tcl.com/content/dam/brandsite/product/tv/x/x11l/screen-size/75-pc.jpg" alt="TCL X11L 75 吋" loading="lazy"></div></div></div></div></div></div></div></div></div></div></div>
+
+<!-- ================= 詳細規格 ================= -->
+<section class="pd-spec" id="spec"><div class="wrap">
+  <div class="pd-sec-hd"><h2>詳細規格</h2><div class="pd-seg" id="spSeg"><button data-s="98" class="on">98 吋</button><button data-s="85">85 吋</button><button data-s="75">75 吋</button></div></div>
+  <div id="spBody"></div>
+  <p class="sp-fn">※ 規格資料來源：TCL 台灣官網商品頁及原廠規格表，實際規格以產品包裝為準。<br>※「—」表示原廠未公布此項資料，不代表不支援。</p>
+</div></section>
+
+<!-- ================= 權益說明／說明書 ================= -->
+<section class="pd-more"><div class="wrap">
+  <div class="pd-card" id="warranty">
+    <h2>權益說明</h2>
+    <p>保固期限、到府安裝、壁掛服務與退換貨規範等說明，會統一放在這個區塊，由後台依商品設定。</p>
+    <span class="ph">台灣官網此商品目前未填寫，內容待 TCL 台灣提供</span>
+  </div>
+  <div class="pd-card" id="manual">
+    <h2>說明書</h2>
+    <p>98X11L／85X11L／75X11L 共用操作手冊。</p>
+    <a class="pd-dl" href="https://drive.google.com/file/d/1wXLBogN3cHByTvoijv--dv2zbrcle0dR/view" target="_blank" rel="noopener"><div>X11L 系列使用說明書<br><span>PDF</span></div><svg viewBox="0 0 18 18"><path d="M9 2.5v9m-4-4 4 4 4-4M3 15.5h12"/></svg></a>
+  </div>
+</div></section>
+
+<!-- ================= 其他同類商品 ================= -->
+<section class="pd-rel"><div class="wrap">
+  <h2>其他同類型商品</h2>
+  <div class="row">
+    <a href="#"><img src="images/tv/c8l.webp" alt="C8L" loading="lazy"><span class="tag">2026 NEW</span><h3>C8L</h3><p>頂級 SQD-Mini LED｜55–98 吋</p></a>
+    <a href="#"><img src="images/tv/c7l.webp" alt="C7L" loading="lazy"><span class="tag">2026 NEW</span><h3>C7L</h3><p>SQD-Mini LED｜55–98 吋</p></a>
+    <a href="#"><img src="images/tv/q7d-pro.webp" alt="Q7D Pro" loading="lazy"><span class="tag">2026 NEW</span><h3>Q7D Pro</h3><p>SQD-Mini LED｜55–85 吋</p></a>
+    <a href="#"><img src="images/tv/rm9l.webp" alt="RM9L" loading="lazy"><span class="tag">2026 NEW</span><h3>RM9L</h3><p>RGB-Mini LED</p></a>
+  </div>
+</div></section>
+
+<div class="pd-bar" id="pdBar"><div class="t"><b id="pdBarM">98X11L</b><span id="pdBarP">建議售價 NT$ 369,990</span></div><a href="#buy" data-go>前往購買</a></div>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="f-grid">
+      <div class="f-col">
+        <h4>顯示器 &amp; Soundbar</h4>
+        <ul><li><a href="#">SQD-Mini LED</a></li><li><a href="#">RGB-Mini LED</a></li><li><a href="#">QD-Mini LED</a></li><li><a href="#">QLED</a></li><li><a href="#">Soundbar</a></li><li><a href="#">電競顯示器</a></li></ul>
+        <h4>生活家電</h4>
+        <ul><li><a href="#">電冰箱</a></li><li><a href="#">洗衣機</a></li><li><a href="#">冷凍櫃</a></li></ul>
+      </div>
+      <div class="f-col">
+        <h4>新品推薦</h4>
+        <ul><li><a href="#">X11L</a></li><li><a href="#">C8L</a></li><li><a href="#">C7L</a></li><li><a href="#">RM9L</a></li><li><a href="#">A400 Pro</a></li></ul>
+        <h4>購物</h4>
+        <ul><li><a href="#">線上商城</a></li><li><a href="#">銷售據點</a></li><li><a href="#">購物說明</a></li></ul>
+      </div>
+      <div class="f-col">
+        <h4>支援</h4>
+        <ul><li><a href="#">線上報修</a></li><li><a href="#">產品註冊</a></li><li><a href="#">使用手冊下載</a></li><li><a href="#">常見問題</a></li><li><a href="#">保固說明</a></li></ul>
+      </div>
+      <div class="f-col">
+        <h4>關於 TCL</h4>
+        <ul><li><a href="#">品牌故事</a></li><li><a href="#">最新消息</a></li><li><a href="#">奧林匹克合作夥伴</a></li><li><a href="#">隱私權政策</a></li></ul>
+      </div>
+      <div class="f-col">
+        <h4>追蹤我們</h4>
+        <div class="social">
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 7.3A4.7 4.7 0 1 0 12 16.7 4.7 4.7 0 0 0 12 7.3zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm5-8.9a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 3c-2.4 0-2.7 0-3.7.1C5.1 3.2 3.2 5 3.1 8.3 3 9.3 3 9.6 3 12s0 2.7.1 3.7c.1 3.2 2 5.1 5.2 5.2 1 .1 1.3.1 3.7.1s2.7 0 3.7-.1c3.2-.1 5.1-2 5.2-5.2.1-1 .1-1.3.1-3.7s0-2.7-.1-3.7C20.8 5 19 3.2 15.7 3.1 14.7 3 14.4 3 12 3z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3z"/></svg></a>
+          <a href="#" aria-label="LINE"><svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 6.6 2 11.1c0 4 3.6 7.4 8.4 8 .3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5 1.1-.5 5.9-3.5 8-5.9 1.5-1.6 2.2-3.2 2.2-5C22 6.6 17.5 3 12 3z"/></svg></a>
+        </div>
+        <div class="f-cs">客服專線<strong>0800-000-000</strong>週一至週五 09:00–18:00<br><span style="font-size:11px;color:var(--gray-500)">※ 示意號碼，正式上線前替換</span></div>
+      </div>
+    </div>
+    <div class="f-bottom">
+      <img src="images/tcl_logo.svg" alt="TCL">
+      <div class="f-links"><a href="#">使用條款</a><a href="#">隱私權政策</a><a href="#">Cookie 政策</a><a href="#">網站地圖</a></div>
+      <div class="f-lang"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3z"/></svg>台灣 / 繁體中文</div>
+      <div class="f-copy">Copyright © 2026 TCL Taiwan. All Rights Reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- Mega menu（參照 TCL Global：hover 開啟、白底瞬間展開、內容下滑淡入、背景變暗） ---------- */
+(function(){
+  const header=document.querySelector('.header'),dim=document.querySelector('.hd-dim'),items=[...document.querySelectorAll('.nav > li')];
+  /* 共用白底：切換選單時不重新展開，只改變高度 */
+  const bg=document.createElement('div');bg.className='mega-bg';header.appendChild(bg);
+  const sw=()=>parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--switch-dur'))*1000||400;
+  let closeT=null,swT=null;
+  const clearInline=m=>{m.style.transition='';m.style.clipPath=''};
+  const closeAll=()=>{items.forEach(i=>{i.classList.remove('active');const m=i.querySelector('.mega');if(m)clearInline(m)});dim.classList.remove('on');bg.classList.remove('on')};
+  items.forEach(li=>{
+    li.addEventListener('mouseenter',()=>{
+      clearTimeout(closeT);
+      if(li.classList.contains('active'))return;
+      const prev=items.find(i=>i!==li&&i.classList.contains('active')&&i.classList.contains('has-mega'));
+      const wasOpen=bg.classList.contains('on'),oldH=prev?prev.querySelector('.mega').offsetHeight:0;
+      items.forEach(i=>{if(i!==li&&i.classList.contains('active')){i.classList.add('no-tr');i.classList.remove('active');const m=i.querySelector('.mega');if(m)clearInline(m);void i.offsetWidth;requestAnimationFrame(()=>i.classList.remove('no-tr'))}});
+      if(li.classList.contains('has-mega')){
+        const m=li.querySelector('.mega'),newH=m.offsetHeight;
+        li.classList.remove('active');void li.offsetWidth;  // 內容（縮圖、標題、連結）照常重播進場動畫
+        if(wasOpen&&prev){
+          /* 切換：面板不再由上往下展開，只從舊高度延伸到新高度；白底同步改變高度 */
+          m.style.transition='none';m.style.clipPath=`inset(0 0 ${Math.max(0,newH-oldH)}px 0)`;
+          li.classList.add('active');void m.offsetWidth;
+          m.style.transition=`clip-path ${sw()}ms var(--ease)`;m.style.clipPath='inset(0 0 0 0)';
+          clearTimeout(swT);swT=setTimeout(()=>clearInline(m),sw()+50);
+        }else{
+          /* 白底還在收起中（例如從「最新消息」移回來）：不重新展開，面板從白底目前可見的位置接續往下 */
+          const cp=getComputedStyle(bg).clipPath,mm=cp.match(/inset\(([^)]*)\)/),parts=mm?mm[1].trim().split(/\s+/):['0'],bot=parts.length>=3?parts[2]:parts[0];
+          const visPx=bg.offsetHeight*(1-(bot.endsWith('%')?parseFloat(bot)/100:parseFloat(bot)/(bg.offsetHeight||1)));
+          if(!wasOpen&&visPx>2){
+            m.style.transition='none';m.style.clipPath=`inset(0 0 ${Math.max(0,newH-visPx)}px 0)`;li.classList.add('active');void m.offsetWidth;
+            const pd=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--panel-dur'))*1000||600;
+            m.style.transition=`clip-path ${pd}ms var(--ease)`;m.style.clipPath='inset(0 0 0 0)';clearTimeout(swT);swT=setTimeout(()=>clearInline(m),pd+50);
+            const fromPx=bg.offsetHeight-visPx;bg.style.transition='none';bg.style.height=newH+'px';bg.style.clipPath=`inset(0 0 ${Math.max(0,newH-visPx)}px 0)`;void bg.offsetWidth;bg.style.transition='';bg.style.clipPath='';
+            bg.classList.add('on');dim.classList.add('on');return;
+          }
+          li.classList.add('active');
+        }
+        if(!wasOpen){bg.style.transition='none';bg.style.height=newH+'px';void bg.offsetWidth;bg.style.transition=''}   /* 第一次打開：高度直接定位，只跑由上往下展開，與面板同步 */
+        else bg.style.height=newH+'px';
+        bg.classList.add('on');dim.classList.add('on');
+      }else{dim.classList.remove('on');bg.classList.remove('on');li.classList.add('active')}
+    });
+  });
+  header.addEventListener('mouseleave',()=>{closeT=setTimeout(closeAll,parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--close-delay'))*1000)});
+  header.addEventListener('mouseenter',()=>clearTimeout(closeT));
+})();
+
+/* ---------- 手機版頂部選單：捲動時顯示，停止 1 秒後淡出（回到頁首或開啟選單時保持顯示） ---------- */
+(function(){
+  const hd=document.querySelector('.header'),drawer=document.querySelector('.drawer');let t=null;
+  const mob=()=>innerWidth<=720;
+  const atTop=()=>scrollY<=hd.offsetHeight;
+  const show=()=>{hd.classList.remove('hd-hide');clearTimeout(t);
+    t=setTimeout(()=>{if(mob()&&!atTop()&&!(drawer&&drawer.classList.contains('open')))hd.classList.add('hd-hide')},1000)};
+  addEventListener('scroll',()=>{if(mob())show();else hd.classList.remove('hd-hide')},{passive:true});
+  addEventListener('resize',()=>{if(!mob())hd.classList.remove('hd-hide')});
+})();
+
+
+/* ---------- 手機選單：開關、手風琴展開 ---------- */
+(function(){
+  const dr=document.querySelector('.drawer'),bg=document.querySelector('.burger');
+  dr.querySelectorAll('.dr-sec ul').forEach(u=>[...u.children].forEach((li,j)=>li.style.setProperty('--j',j)));
+  const set=on=>{if(on)document.querySelector('.header').classList.remove('hd-hide');dr.classList.toggle('open',on);bg.classList.toggle('on',on);bg.setAttribute('aria-expanded',on);dr.setAttribute('aria-hidden',!on);document.documentElement.classList.toggle('dr-lock',on);
+    if(!on)dr.querySelectorAll('.dr-l1.open').forEach(l=>l.classList.remove('open'))};
+  bg.addEventListener('click',()=>set(!dr.classList.contains('open')));
+  dr.querySelectorAll('button.dr-head').forEach(h=>h.addEventListener('click',()=>{
+    const l=h.parentElement,on=!l.classList.contains('open');
+    if(!document.documentElement.classList.contains('acc-multi'))dr.querySelectorAll('.dr-l1.open').forEach(x=>x!==l&&x.classList.remove('open'));
+    l.classList.toggle('open',on);h.setAttribute('aria-expanded',on)}));
+  addEventListener('resize',()=>{if(innerWidth>1024)set(false)});
+  window.__drawer=set;
+})();
+
+/* ================= 商品頁（X11L） ================= */
+(()=>{
+  const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+  const mob=()=>matchMedia('(max-width:720px)').matches;
+  const PIC='https://www.tcl-shop.com.tw/upload/products_pic/';
+  const GAL=['images/tv/x11l.webp',...['9ca9dd459430c460915c6fd119b36f83-rnr1','02f495700d207617e99b59776ba18da8-kg63','1aea6a56f15b32acd3abbb2a83acb468-o4pu','500929692ccdd83e0e81cf1875eeca71-Miqb','500929692ccdd83e0e81cf1875eeca71-FDwv','957b509bc360c838776c846473bcacda-J61W','957b509bc360c838776c846473bcacda-IYOG','8f920e1d9bbae2634529bbf79682b3e9-0rPA'].map(x=>PIC+x+'.webp')];
+  const SIZE={98:{price:'369,990'},85:{price:'299,990'},75:{price:'169,990'}};
+  const SPEC=[{"k": "basic", "h": "基本資訊", "r": [["型號", {"98": "98X11L", "85": "85X11L", "75": "75X11L"}], ["推出年份", "2026"], ["顯示技術", "SQD-Mini LED"], ["作業系統", "Google TV"]]}, {"k": "disp", "h": "畫質", "r": [["螢幕尺寸", {"98": "98 吋", "85": "85 吋", "75": "75 吋"}], ["面板", "WHVA 2.0 Ultra"], ["解析度", "4K UHD（3840 × 2160）"], ["長寬比", "16:9"], ["刷新率", "144Hz（VRR 48–288Hz／DLG 288Hz）"], ["峰值亮度", {"98": "10,000 nits", "85": "10,000 nits", "75": "9,000 nits"}], ["對比度", {"98": "5300:1", "85": "5300:1", "75": "5400:1"}], ["區域控光", {"98": "20,736 區", "85": null, "75": null}], ["色域", "100% BT.2020"], ["HDR 格式", "Dolby Vision IQ、Dolby Vision、HDR10+、HDR10、HLG"], ["反應時間", "6.5 ms（typ.）"], ["可視角度", "178° / 178°（H/V）"]]}, {"k": "snd", "h": "音效", "r": [["音響系統", "Audio by Bang & Olufsen"], ["輸出功率", null], ["Dolby Atmos", "✓"], ["DTS", "DTS Virtual:X"]]}, {"k": "smart", "h": "智慧功能", "r": [["語音控制", "✓"], ["Google 助理", "✓"], ["IMAX Enhanced", "✓"], ["Miracast 無線投影", "✓"], ["投放方式", "Google Cast、AirPlay 2、Chromecast"]]}, {"k": "game", "h": "遊戲", "r": [["Game Master", "✓"], ["AMD FreeSync", "Premium Pro"]]}, {"k": "conn", "h": "連接", "r": [["HDMI", "HDMI 2.1 × 4"], ["eARC / ARC", "✓"], ["USB（多媒體）", "× 3"], ["RJ45 網路", "× 1"], ["光纖輸出", "× 1"], ["藍牙", "5.4"], ["Wi-Fi", "Wi-Fi 6"]]}, {"k": "pwr", "h": "電源", "r": [["額定電壓／頻率／電流", {"98": "100–240V 50/60Hz 8.7A", "85": "100–240V 50/60Hz 7.4A", "75": "100–240V 50/60Hz 4.8A"}], ["消耗功率", {"98": "870W", "85": "740W", "75": "480W"}], ["待機功率", "< 0.5W"]]}, {"k": "dim", "h": "尺寸與重量", "r": [["顯示器尺寸（不含底座）", {"98": "2168 × 1267 × 21 mm", "85": "1880 × 1104 × 21 mm", "75": "1658 × 979 × 24 mm"}], ["顯示器尺寸（含底座）", {"98": "2168 × 1313 × 420 mm", "85": "1880 × 1150 × 380 mm", "75": "1658 × 1024 × 380 mm"}], ["底座尺寸（寬 × 深）", {"98": "2005 × 420 mm", "85": "1718 × 380 mm", "75": "1496 × 380 mm"}], ["壁掛孔距（VESA）", "600 × 400 mm"], ["包裝尺寸", {"98": "2395 × 330 × 1594 mm", "85": "2060 × 291 × 1288 mm", "75": "1850 × 164 × 1125 mm"}], ["淨重（不含包裝）", {"98": "67.5 kg", "85": "52.6 kg", "75": "40.5 kg"}], ["毛重（含包裝）", {"98": "115.5 kg", "85": "76.3 kg", "75": "51.2 kg"}]]}, {"k": "env", "h": "使用環境與配件", "r": [["工作溫度", "5°C 至 35°C"], ["工作濕度", "20% 至 80%（非冷凝）"], ["儲存溫度", "-15°C 至 45°C"], ["儲存濕度", "10% 至 90%（非冷凝）"], ["附件", "遙控器、電池、操作手冊、電源線、底座螺絲、保修卡"]]}];
+  let size='98';
+
+  /* ---------- 圖庫 ---------- */
+  const main=$('#pdMain'),th=$('#pdThumbs'),dots=$('#pdDots'),cnt=main.querySelector('.cnt');let gi=0;
+  main.insertAdjacentHTML('afterbegin',GAL.map((s,i)=>`<img src="${s}" alt="X11L 商品圖 ${i+1}" ${i?'loading="lazy"':'fetchpriority="high"'} decoding="async">`).join(''));
+  th.innerHTML=GAL.map((s,i)=>`<button aria-label="第 ${i+1} 張"><img src="${s}" alt="" loading="lazy"></button>`).join('');
+  dots.innerHTML=GAL.map(()=>'<i></i>').join('');
+  const imgs=[...main.querySelectorAll('img')],tbs=[...th.children],ds=[...dots.children];
+  const show=i=>{gi=(i+GAL.length)%GAL.length;imgs.forEach((m,k)=>m.classList.toggle('on',k===gi));tbs.forEach((b,k)=>b.classList.toggle('on',k===gi));ds.forEach((d,k)=>d.classList.toggle('on',k===gi));cnt.textContent=`${gi+1} / ${GAL.length}`;
+    const b=tbs[gi];th.scrollTo({left:b.offsetLeft-th.clientWidth/2+b.offsetWidth/2,behavior:'smooth'})};
+  tbs.forEach((b,k)=>b.onclick=()=>show(k));
+  main.querySelector('.nav.l').onclick=()=>show(gi-1);main.querySelector('.nav.r').onclick=()=>show(gi+1);
+  let sx=null;main.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+  main.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)show(gi+(dx<0?1:-1));sx=null});
+  show(0);
+
+  /* ---------- 尺寸（購買區、尺寸區、規格表同步） ---------- */
+  const setSize=s=>{size=s;
+    $$('#pdSize button,#ksSize button,#spSeg button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));
+    $$('#size .stage img').forEach(m=>m.classList.toggle('on',m.dataset.s===s));
+    $('#pdModel').textContent=s+'X11L';$('#pdBarM').textContent=s+'X11L';
+    $('#pdPrice').textContent='NT$ '+SIZE[s].price;$('#pdBarP').textContent='建議售價 NT$ '+SIZE[s].price;
+    $('#pdCmp').href='compare.html?m=X11L-'+s;
+    drawSpec()};
+  $$('#pdSize button,#ksSize button,#spSeg button').forEach(b=>b.onclick=()=>setSize(b.dataset.s));
+
+  /* ---------- 通路購買 ---------- */
+  const ch=$('#pdCh');
+  $('#pdBuy').onclick=()=>ch.classList.toggle('open');
+  $$('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();ch.classList.add('open');
+    scrollTo({top:$('.pd-info').getBoundingClientRect().top+scrollY-($('.header').offsetHeight)-20,behavior:'smooth'})}));
+
+  /* ---------- 規格表 ---------- */
+  const CHK='<svg viewBox="0 0 18 18"><path d="m3.5 9.5 3.5 3.5 7.5-8"/></svg>';
+  const open=new Set(['disp']);
+  function drawSpec(){
+    $('#spBody').innerHTML=SPEC.map(g=>`<div class="sp-grp${open.has(g.k)?' open':''}" data-k="${g.k}"><button>${g.h}<i></i></button><div class="sp-body"><div><dl class="sp-tb">`+
+      g.r.map(([l,v])=>{const x=typeof v==='object'&&v!==null?v[size]:v;const na=x==null||x==='—';
+        return `<div class="sp-row"><dt>${l}</dt><dd${na?' class="na"':''}>${na?'—':x==='✓'?CHK:x}</dd></div>`}).join('')+
+      `</dl></div></div></div>`).join('');
+    $$('#spBody .sp-grp > button').forEach(b=>b.onclick=()=>{const g=b.parentElement;g.classList.toggle('open');g.classList.contains('open')?open.add(g.dataset.k):open.delete(g.dataset.k)});
+  }
+
+  /* ---------- 頁內選單：位置、目前區塊 ---------- */
+  const sub=$('#pdSub'),hd=$('.header'),links=$$('#pdSub nav a');
+  const syncTop=()=>{const hidden=hd.classList.contains('hd-hide');document.documentElement.style.setProperty('--pd-top',(mob()&&hidden?0:hd.offsetHeight)+'px')};
+  const secs=links.map(a=>$(a.getAttribute('href')));
+  const onScroll=()=>{syncTop();
+    const y=sub.getBoundingClientRect().bottom+40;let cur=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<=y)cur=i});
+    links.forEach((a,i)=>a.classList.toggle('on',i===cur));
+    const past=$('.pd-cta').getBoundingClientRect().bottom<0;sub.classList.toggle('past',past);$('#pdBar').classList.toggle('on',past)};
+  addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);
+  new MutationObserver(syncTop).observe(hd,{attributes:true,attributeFilter:['class']});
+  links.forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=$(a.getAttribute('href'));
+    scrollTo({top:t.getBoundingClientRect().top+scrollY-hd.offsetHeight-sub.offsetHeight+1,behavior:'smooth'})}));
+  $$('.pd-links a,.pd-lab a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const t=$(a.getAttribute('href'));
+    scrollTo({top:t.getBoundingClientRect().top+scrollY-hd.offsetHeight-sub.offsetHeight-10,behavior:'smooth'})}));
+
+  /* ---------- 進場動畫 ---------- */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});
+  $$('.rv').forEach(el=>io.observe(el));
+
+  setSize('98');onScroll();
+})();
+
+/* ---------- 台灣官網商品介紹：輪播、分頁 ---------- */
+document.querySelectorAll('.twi .swiper').forEach(sw=>{
+  const w=sw.querySelector('.swiper-wrapper'),n=w.children.length;let i=0;
+  const go=k=>{i=(k+n)%n;w.style.transform=`translateX(${-i*100}%)`};
+  sw.querySelector('.swiper-button-prev').onclick=()=>go(i-1);
+  sw.querySelector('.swiper-button-next').onclick=()=>go(i+1);
+  let sx=null;sw.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+  sw.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)go(i+(dx<0?1:-1));sx=null});
+});
+document.querySelectorAll('.twi [data-tw-tab]').forEach(b=>b.onclick=()=>{
+  const m=b.closest('.collapse-menu');m.querySelectorAll('.nav-link').forEach(x=>x.classList.toggle('active',x===b));
+  m.querySelectorAll('.tab-pane').forEach(p=>{const on='#'+p.id===b.dataset.twTab;p.classList.toggle('active',on);p.classList.toggle('show',on)});
+});
+
+</script>
+
+<div class="tback"></div>
+<iframe class="tframe" id="tframe" title="手機預覽"></iframe>
+<aside class="tp" id="tp"><header><b>X11L 商品頁 數值調整</b><button id="tmin">收合 / 展開</button></header><div class="tb" id="tb"></div></aside>
+<div class="ttoast" id="ttoast"></div>
+<script>
+(function(){
+  const root=document.documentElement,inFrame=location.search.includes('frame=1');
+  const pl=document.querySelector('.X11L-01');
+  if(inFrame){document.body.classList.add('inframe');
+    let done=false;const go=()=>{if(done||!innerHeight)return;done=true;scrollTo({top:pl.getBoundingClientRect().top+scrollY-8,behavior:'instant'})};
+    addEventListener('message',e=>{const d=e.data||{};if(d.vars)Object.entries(d.vars).forEach(([k,v])=>document.querySelector('.twi').style.setProperty(k,v));setTimeout(go,80)});return;}
+  const G={d:[["歡迎來到顯示技術巔峰", [["--tw-wel-pt", "上方留白", 0, 400, 2, "px"], ["--tw-wel-gap", "兩行標題間距", 0, 60, 1, "px"], ["--tw-wel-pb", "文字與圖片距離", 0, 300, 2, "px"], ["--tw-wel-img-mt", "圖片往上移（負值＝往上）", -600, 200, 2, "px"]]]],m:[["歡迎來到顯示技術巔峰", [["--m-tw-wel-pt", "上方留白", 0, 200, 1, "px"], ["--m-tw-wel-gap", "兩行標題間距", 0, 40, 1, "px"], ["--m-tw-wel-pb", "文字與圖片距離", 0, 200, 1, "px"], ["--m-tw-wel-img-mt", "圖片往上移（負值＝往上）", -300, 100, 1, "px"]]]]};
+  const DEF={};Object.values(G).flat().forEach(([,cs])=>cs.forEach(c=>DEF[c[0]]=parseFloat(getComputedStyle(document.querySelector('.twi')).getPropertyValue(c[0]))));
+  const val={...DEF};let mode='d';
+  const tb=document.getElementById('tb'),fr=document.getElementById('tframe');
+  const mvars=()=>{const v={};G.m.forEach(([,cs])=>cs.forEach(c=>v[c[0]]=val[c[0]]+c[5]));return v};
+  const push=()=>fr.contentWindow&&fr.contentWindow.postMessage({vars:mvars()},'*');
+  const apply=(k,u)=>document.querySelector('.twi').style.setProperty(k,val[k]+u);
+  function build(){
+    document.body.classList.toggle('tune-d',mode==='d');document.body.classList.toggle('tune-m',mode==='m');
+    tb.innerHTML='<div class="tmode"><button data-m="d" class="'+(mode==='d'?'on':'')+'">桌機版</button><button data-m="m" class="'+(mode==='m'?'on':'')+'">手機版</button></div>'+
+      G[mode].map(([g,cs])=>'<div class="tg"><h5>'+g+'</h5>'+cs.map(([k,l,mn,mx,st,u])=>`<div class="tc"><label>${l}</label><input type="range" data-k="${k}" data-u="${u}" min="${mn}" max="${mx}" step="${st}" value="${val[k]}"><output>${val[k]}${u}</output></div>`).join('')+'</div>').join('')+
+      `<div class="tbtns"><button id="treset">還原預設</button><button class="p" id="tcopy">複製目前數值</button></div>
+       <p class="thint">・桌機版直接看背後的頁面（已自動捲到這一段）；切到「手機版」會出現手機預覽。<br>・「複製目前數值」會一次複製桌機＋手機兩組。</p>`;
+    tb.querySelectorAll('.tmode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;build();if(mode==='m')push()});
+    tb.querySelectorAll('input').forEach(r=>r.addEventListener('input',()=>{val[r.dataset.k]=+r.value;r.nextElementSibling.textContent=r.value+r.dataset.u;
+      if(mode==='d')apply(r.dataset.k,r.dataset.u);else push()}));
+    document.getElementById('treset').onclick=()=>{G[mode].forEach(([,cs])=>cs.forEach(c=>{val[c[0]]=DEF[c[0]];root.style.removeProperty(c[0])}));build();push();toast('已還原預設值')};
+    document.getElementById('tcopy').onclick=()=>{const L=['/* TCL X11L 商品頁 — 定案數值 */'];
+      [['d','桌機'],['m','手機']].forEach(([m,n])=>G[m].forEach(([g,cs])=>{L.push('/* '+n+'｜'+g+' */');cs.forEach(c=>L.push('  '+c[0]+': '+val[c[0]]+c[5]+';  /* '+c[1]+' */'))}));
+      const t=L.join('\n');(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('已複製！直接貼給 Claude 就好'),()=>prompt('複製以下數值：',t))};
+  }
+  function toast(t){const el=document.getElementById('ttoast');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1800)}
+  document.getElementById('tmin').onclick=()=>document.getElementById('tp').classList.toggle('min');
+  build();
+  fr.src=location.pathname.split('/').pop()+'?frame=1';fr.onload=()=>setTimeout(push,500);
+  setTimeout(()=>scrollTo({top:pl.getBoundingClientRect().top+scrollY-60,behavior:'instant'}),400);
+})();
+</script>
+<script>addEventListener('load',()=>{if(location.search.includes('frame=1'))return;document.documentElement.style.scrollBehavior='auto';const e=document.querySelector('.X11L-01');scrollTo(0,e.getBoundingClientRect().top+scrollY-140)})</script>
+</body>
+</html>
